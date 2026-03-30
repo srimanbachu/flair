@@ -9,20 +9,22 @@
 
     .main {
         height: 100vh;
+        background-color: black;
         color: rgb(255, 255, 255);
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: center;
+        align-items:start;
         margin: 0px;
+        border: 0px;
     }
 
     .flairImg {
-        height: 40px;
+        height: 60px;
     }
 
     .flairText {
-        font-size: 50px;
+        font-size: 75px;
         margin: 0px;
     }
 
@@ -35,6 +37,8 @@
         border-radius: 40px;
         height: 40px;
         width: 90px;
+        background-color: #7da7a5;
+        color: aliceblue;
     }
 
     .startButton:hover {
@@ -42,14 +46,15 @@
         border-radius: 40px;
         height: 40px;
         width: 90px;
-        background-color: rgba(169, 167, 167, 0.615);
+        background-color: #698d8b;
+        cursor:pointer;
     }
 
 
     .child{
         padding-left: 10px;
-        padding-right: 10px;
-        
+        padding-right: 10px;     
+        position: sticky;
     }
 
     .fake{
@@ -58,11 +63,12 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: rgba(0, 0, 0, 0.478);
         width: 100%;
         height: 100vh;
         border: none;
-
+        background: rgba(0, 0, 0, 0.08);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(10px);   
     }
 
     .backgroundVideo {
@@ -74,3 +80,67 @@
         object-fit: cover;
       }
 
+      .info{
+        height: 100vh;
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(10px);   
+        border: 0px;
+      }
+
+      .info-card {
+        max-width: 800px;
+        margin: auto;
+        padding: 40px;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        color: white;
+      }
+      
+      .title {
+        font-size: 42px;
+        margin-bottom: 20px;
+      }
+      
+      .description {
+        font-size: 18px;
+        line-height: 1.7;
+        margin-bottom: 30px;
+        color: rgba(255, 255, 255, 0.8);
+      }
+      
+      .features {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      
+      .feature-box {
+        flex: 1;
+        min-width: 180px;
+        padding: 20px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.08);
+      }
+      
+      .feature-box h2 {
+        font-size: 20px;
+        margin-bottom: 10px;
+      }
+      
+      .feature-box p {
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 15px;
+      } 
+
+      .infosection,h1,h2{
+        color: white;
+      }
+
+      .infosection,p{
+        color: #7da7a5;
+      }
+
+      .infosection,h1{
+        font-size: 60px;
+      }
