@@ -29,7 +29,7 @@ const OpeningPage = () => {
     <div className="info2">
   </div>
 <div className="info3">
-this is intro to the alskf
+  this is something new 
 </div>
 
     </div>
