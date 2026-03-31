@@ -25,8 +25,13 @@ const OpeningPage = () => {
       </div>
     </div>
     <div className="info">
+ </div>
+    <div className="info2">
+  </div>
+<div className="info3">
 
-    </div>
+</div>
+
     </div>
   )
 }
