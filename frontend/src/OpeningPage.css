@@ -1,98 +1,107 @@
-    :root {
-        margin: 0px;
-        padding: 0px;
-    }
+:root {
+    margin: 0px;
+    padding: 0px;
+}
 
-    body {
-        margin: 0px;
-    }
+* {
+    box-sizing: border-box;
+}
 
-    .main {
-        height: 100vh;
-        background-color: black;
-        color: rgb(255, 255, 255);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items:start;
-        margin: 0px;
-        border: 0px;
-    }
+body {
+    margin: 0px;
+    scrollbar-width: none;
+}
 
-    .flairImg {
-        height: 60px;
-    }
+.parent {
+    position: relative;
+}
 
-    .flairText {
-        font-size: 75px;
-        margin: 0px;
-    }
+.main {
+    height: 100vh;
+    background-color: black;
+    color: rgb(255, 255, 255);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    margin: 0px;
+    border: 0px;
+    z-index: 1;
+    position: sticky;
+    top: 0;
+    overflow: hidden;
 
-    p {
-        margin: 0px;
-    }
+}
 
-    .startButton {
-        border: 0px;
-        border-radius: 40px;
-        height: 40px;
-        width: 90px;
-        background-color: #7da7a5;
-        color: aliceblue;
-    }
+.flairImg {
+    height: 60px;
+}
 
-    .startButton:hover {
-        border: 0px;
-        border-radius: 40px;
-        height: 40px;
-        width: 90px;
-        background-color: #698d8b;
-        cursor:pointer;
-    }
+.flairText {
+    font-size: 75px;
+    margin: 0px;
+}
 
+p {
+    margin: 0px;
+}
 
-    .child{
-        padding-left: 10px;
-        padding-right: 10px;     
-    }
+.startButton {
+    border: 0px;
+    border-radius: 40px;
+    height: 40px;
+    width: 90px;
+    background-color: #7da7a5;
+    color: aliceblue;
+}
 
-    .fake{
-        position: relative;
-        z-index: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100vh;
-        border: none;
-        background: rgba(0, 0, 0, 0.08);
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(10px); 
-        position: sticky;
-        top: 0;  
-    }
+.startButton:hover {
+    background-color: #698d8b;
+    cursor: pointer;
+}
 
-    .backgroundVideo {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
+.child {
+    padding-left: 10px;
+    padding-right: 10px;
+    position: relative;
+    z-index: 2;
+}
 
-      .info{
-        height: 100vh;
-        backdrop-filter: blur(25px);
-        -webkit-backdrop-filter: blur(10px);   
-        font-size: 20px;
-        color: white;
-        position: relative;
+.fake {
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    border: none;
+    background: rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
 
-    }
+.backgroundVideo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
 
-    .info > p {
-        color: rgba(255, 255, 255, 0.659);
-    }
+.info {
+    min-height: 100vh;
+    font-size: 20px;
+    color: rgb(144, 144, 144);
+    position: relative;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(35px);
+    padding: 40px 20px;
+}
 
-
+.info > p {
+    color: rgba(255, 255, 255, 0.84);
+}

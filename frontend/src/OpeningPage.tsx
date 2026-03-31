@@ -19,7 +19,6 @@ const OpeningPage = () => {
             <p>Create. Style. Download. Repeat
             </p>
             <br />
-            
             <button className='startButton'>Get Started </button>
             
           </div>
