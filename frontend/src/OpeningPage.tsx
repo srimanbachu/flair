@@ -1,9 +1,13 @@
 import { useState } from 'react'
+import {  useNavigate } from 'react-router-dom';
 import flair from "./assets/flair.png";
 import video from './assets/background.mp4'
 import './OpeningPage.css'
 
 const OpeningPage = () => {
+
+  const navigate = useNavigate()
+
   return (
     <div className="parent">
     <div className="main">
@@ -19,7 +23,7 @@ const OpeningPage = () => {
             <p>Create. Style. Download. Repeat
             </p>
             <br />
-            <button className='startButton'>Get Started </button>
+            <button className='startButton' onClick={() => navigate('/code')}>Get Started </button>
             
           </div>
       </div>
