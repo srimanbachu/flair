@@ -134,3 +134,101 @@ p {
     padding: 40px 20px;  
 }
 
+.infoContent {
+    max-width: 900px;
+    margin: 0 auto;
+    padding-top: 80px;
+}
+
+.miniTitle {
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: #7da7a5;
+    margin-bottom: 20px;
+}
+
+.infoContent h2 {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 1.05;
+    color: white;
+    margin: 0 0 24px 0;
+    max-width: 750px;
+}
+
+.infoContent > p {
+    max-width: 650px;
+    line-height: 1.8;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 60px;
+}
+
+.infoGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+}
+
+.infoGrid div,
+.numberGrid div {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 18px;
+}
+
+.infoGrid h3 {
+    color: white;
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.infoGrid p {
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+}
+
+.listSection {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.listSection p {
+    font-size: 28px;
+    color: rgba(255,255,255,0.85);
+    margin: 0;
+}
+
+.numberGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+}
+
+.numberGrid span {
+    display: block;
+    color: #7da7a5;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+
+.numberGrid p {
+    color: white;
+    font-size: 22px;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .infoGrid,
+    .numberGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .listSection p {
+        font-size: 20px;
+    }
+
+    .infoContent h2 {
+        font-size: 2.5rem;
+    }
+}
