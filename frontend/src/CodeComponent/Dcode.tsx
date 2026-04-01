@@ -2,7 +2,9 @@ import React from 'react'
 
 const Dcode = () => {
   return (
-    <div>dcode</div>
+    <div className='main'>
+      
+    </div>
   )
 }
 

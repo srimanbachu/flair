@@ -105,6 +105,21 @@ p {
     padding: 40px 20px;
 }
 
+.infobutton{
+    border: 0px;
+    border-radius: 40px;
+    height: 40px;
+    width: 90px;
+    background-color: #bae7e5;
+    color: rgb(0, 0, 0);
+}
+
+.infobutton:hover{
+    background-color: #698d8b;
+    color: white;
+    cursor: pointer;
+}
+
 .info > p {
     color: rgba(255, 255, 255, 0.84);
 }
@@ -139,6 +154,7 @@ p {
     max-width: 900px;
     margin: 0 auto;
     padding-top: 80px;
+    padding-bottom: 0px;
 }
 
 .miniTitle {
@@ -233,3 +249,35 @@ p {
         font-size: 2.5rem;
     }
 }
+
+.info2button{
+    border: 0px;
+    border-radius: 40px;
+    height: 40px;
+    width: 90px;
+    background-color: #bae7e5;
+    color: rgb(0, 0, 0);
+}
+
+.info2button:hover{
+    background-color: #698d8b;
+    color: white;
+    cursor: pointer;
+}
+
+.info3button{
+    border: 0px;
+    border-radius: 40px;
+    height: 40px;
+    width: 150px;
+    background-color: #bae7e5;
+    color: rgb(0, 0, 0);
+    margin-top: 130px;
+}
+
+.info3button:hover{
+    background-color: #698d8b;
+    color: white;
+    cursor: pointer;
+}
+

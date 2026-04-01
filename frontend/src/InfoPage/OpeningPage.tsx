@@ -6,6 +6,12 @@ import './OpeningPage.css'
 
 const OpeningPage = () => {
 
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({
+      behavior: "smooth",
+    });
+  };
+
   const navigate = useNavigate()
 
   return (
@@ -23,12 +29,12 @@ const OpeningPage = () => {
             <p>Create. Style. Download. Repeat
             </p>
             <br />
-            <button className='startButton' onClick={() => navigate('/code')}>Get Started </button>
+            <button className='startButton' onClick={() => scrollToSection("info")}>Get Started </button>
             
           </div>
       </div>
     </div>
-    <div className="info">
+    <div className="info" id='info'>
   <div className="infoContent">
     <p className="miniTitle">WHAT IS FLAIR</p>
 
@@ -63,9 +69,11 @@ const OpeningPage = () => {
       </div>
     </div>
   </div>
+
+  <button className='infobutton'  onClick={() => scrollToSection("info2")}>Next</button>
 </div>
 
-<div className="info2">
+<div className="info2" id='info2'>
   <div className="infoContent">
     <p className="miniTitle">WHY PEOPLE USE IT</p>
 
@@ -86,9 +94,11 @@ const OpeningPage = () => {
       <p>— Show your work in a premium way</p>
     </div>
   </div>
+  <button className='info2button'  onClick={() => scrollToSection("info3")}>Next</button>
+
 </div>
 
-<div className="info3">
+<div className="info3" id='info3'>
   <div className="infoContent">
     <p className="miniTitle">CUSTOMIZE EVERYTHING</p>
 
@@ -123,9 +133,10 @@ const OpeningPage = () => {
       </div>
     </div>
   </div>
+  <button className='info3button' onClick={() => navigate('/code')}>Lets Get Started</button>
 </div>
     </div>
   )
 }
 
-export default OpeningPage  
+export default OpeningPage
