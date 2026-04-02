@@ -1,14 +1,14 @@
 import { useState } from 'react'
-import './Dcode.css'
+import './Dimage.css'
 import flair from '../assets/flair.png'
 import { Menu } from 'lucide-react'
 import {  useNavigate } from 'react-router-dom';
 
-const Dcode = () => {
 
-  const navigate = useNavigate()
+const Dimage = () => {
+
+    const navigate = useNavigate()  
   const [show, setShow] = useState(false)
-  
 
   return (
     <div className='main'>
@@ -17,8 +17,8 @@ const Dcode = () => {
           <Menu className='menuicon' />
         {show && (
           <div className="switch">
-            <div className="imagecard" onClick={ () => navigate('/image') }>imagecard</div>
-            <div className="codecard">codecard</div>
+            <div className="imagecard">imagecard</div>
+            <div className="codecard" onClick={() => navigate('/code') }>codecard</div>
           </div>
 
         )}
@@ -40,4 +40,4 @@ const Dcode = () => {
   )
 }
 
-export default Dcode
+export default Dimage

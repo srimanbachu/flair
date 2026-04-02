@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import {  useNavigate } from 'react-router-dom';
+  import {  useNavigate } from 'react-router-dom';
 import flair from "../assets/flair.png"
 import video from '../assets/background.mp4'
 import './OpeningPage.css'
