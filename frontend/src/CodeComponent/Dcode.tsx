@@ -11,7 +11,7 @@ const Dcode = () => {
   
 
   return (
-    <div className='main'>
+    <div className='maindiv'>
       <div className="nav">
         <div className="menudiv" onClick={() => setShow(!show)}>
           <Menu className='menuicon' />
