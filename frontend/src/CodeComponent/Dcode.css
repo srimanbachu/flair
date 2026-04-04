@@ -282,7 +282,7 @@
 }
 
 .panelcard{
-    background: rgba(255,255,255,0.18);
+    background: rgba(255, 255, 255, 0.039);
     border-radius: 28px;
     padding: 18px;
     backdrop-filter: blur(16px);
@@ -345,7 +345,7 @@
     cursor: pointer;
 }
 
-.bg1{ background: linear-gradient(135deg, #000000, #2d2d2d); }
+.bg1{ background: black; }
 .bg2{ background: linear-gradient(135deg, #7dd3fc, #0f766e); }
 .bg3{ background: linear-gradient(135deg, #f8fafc, #cbd5e1); }
 .bg4{ background: linear-gradient(135deg, #0f172a, #14b8a6); }
@@ -545,25 +545,13 @@
 }
 
 .previewWindow.glass{
-    background: rgba(255,255,255,0.12);
-    color: #ffffff;
+    background: rgba(255, 255, 255, 0.315);
+    color: #000000;
     backdrop-filter: blur(20px);
 }
 
 .previewOuter.bg1{
-    background: linear-gradient(135deg, #0f172a, #020617);
-}
-
-.previewOuter.bg2{
-    background: linear-gradient(135deg, #0f766e, #164e63);
-}
-
-.previewOuter.bg3{
-    background: linear-gradient(135deg, #e2e8f0, #94a3b8);
-}
-
-.previewOuter.bg4{
-    background: linear-gradient(135deg, #1e1b4b, #14b8a6);
+    background: black;
 }
 
 .chip{

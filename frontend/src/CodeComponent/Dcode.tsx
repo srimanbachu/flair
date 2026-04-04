@@ -6,7 +6,6 @@ import {
   Download,
   Copy,
   Palette,
-  Image,
   Code2,
   Sparkles,
   Settings2,
@@ -74,12 +73,7 @@ export default function App() {
           <Menu className='menuicon' />
           {show && (
             <div className="switch">
-              <div
-                className="imagecard"
-                onClick={() => navigate('/image')}
-              >
-                imagecard
-              </div>
+
               <div
                 className="codecard"
                 onClick={() => {
@@ -119,13 +113,6 @@ export default function App() {
             </div>
 
             <div
-              className={activeSection === 'background' ? 'sideicon activeSide' : 'sideicon'}
-              onClick={() => setActiveSection('background')}
-            >
-              <Image size={18} />
-            </div>
-
-            <div
               className={activeSection === 'customize' ? 'sideicon activeSide' : 'sideicon'}
               onClick={() => setActiveSection('customize')}
             >
@@ -157,13 +144,6 @@ export default function App() {
                   onClick={() => setActiveSection('theme')}
                 >
                   Theme
-                </div>
-
-                <div
-                  className={activeSection === 'background' ? 'chip activechip' : 'chip'}
-                  onClick={() => setActiveSection('background')}
-                >
-                  Background
                 </div>
 
                 <div
@@ -257,33 +237,6 @@ export default function App() {
                   </div>
                 )}
 
-                {activeSection === 'background' && (
-                  <div className="panelcard">
-                    <h3>Background</h3>
-                    <div className="backgroundgrid">
-                      <div
-                        className={background === 'bg1' ? 'bgbox bg1 activebg' : 'bgbox bg1'}
-                        onClick={() => setBackground('bg1')}
-                      ></div>
-
-                      <div
-                        className={background === 'bg2' ? 'bgbox bg2 activebg' : 'bgbox bg2'}
-                        onClick={() => setBackground('bg2')}
-                      ></div>
-
-                      <div
-                        className={background === 'bg3' ? 'bgbox bg3 activebg' : 'bgbox bg3'}
-                        onClick={() => setBackground('bg3')}
-                      ></div>
-
-                      <div
-                        className={background === 'bg4' ? 'bgbox bg4 activebg' : 'bgbox bg4'}
-                        onClick={() => setBackground('bg4')}
-                      ></div>
-                    </div>
-                  </div>
-                )}
-
                 {activeSection === 'customize' && (
                   <div className="panelcard">
                     <h3>Customize</h3>
@@ -333,17 +286,11 @@ export default function App() {
                       <button className="selectbox" onClick={() => setPadding(40)}>
                         Spacious
                       </button>
-                      <button className="selectbox" onClick={() => setRadius(18)}>
+                      <button className="selectbox" onClick={() => setRadius(5)}>
                         Sharp
                       </button>
-                      <button className="selectbox" onClick={() => setRadius(40)}>
+                      <button className="selectbox" onClick={() => setRadius(50)}>
                         Smooth
-                      </button>
-                      <button className="selectbox" onClick={() => setShadow(20)}>
-                        Soft Shadow
-                      </button>
-                      <button className="selectbox" onClick={() => setShadow(60)}>
-                        Deep Shadow
                       </button>
                     </div>
                   </div>
@@ -382,7 +329,6 @@ export default function App() {
                 <div className="previewfooter">
                   <div className="footerpill">{language}</div>
                   <div className="footerpill">{theme}</div>
-                  <div className="footerpill">{background}</div>
                   <div className="footerpill">{activeSection}</div>
                 </div>
               </div>
