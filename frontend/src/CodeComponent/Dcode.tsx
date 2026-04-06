@@ -279,6 +279,206 @@ export default function App() {
                         className={background === 'bg4' ? 'bgbox bg4 activebg' : 'bgbox bg4'}
                         onClick={() => setBackground('bg4')}
                       ></div>
+
+                      <div
+                        className={background === 'bg5' ? 'bgbox bg5 activebg' : 'bgbox bg5'}
+                        onClick={() => setBackground('bg5')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg6' ? 'bgbox bg6 activebg' : 'bgbox bg6'}
+                        onClick={() => setBackground('bg6')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg7' ? 'bgbox bg7 activebg' : 'bgbox bg7'}
+                        onClick={() => setBackground('bg7')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg8' ? 'bgbox bg8 activebg' : 'bgbox bg8'}
+                        onClick={() => setBackground('bg8')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg9' ? 'bgbox bg9 activebg' : 'bgbox bg9'}
+                        onClick={() => setBackground('bg9')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg10' ? 'bgbox bg10 activebg' : 'bgbox bg10'}
+                        onClick={() => setBackground('bg10')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg11' ? 'bgbox bg11 activebg' : 'bgbox bg11'}
+                        onClick={() => setBackground('bg11')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg12' ? 'bgbox bg12 activebg' : 'bgbox bg12'}
+                        onClick={() => setBackground('bg12')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg13' ? 'bgbox bg13 activebg' : 'bgbox bg13'}
+                        onClick={() => setBackground('bg13')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg14' ? 'bgbox bg14 activebg' : 'bgbox bg14'}
+                        onClick={() => setBackground('bg14')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg15' ? 'bgbox bg15 activebg' : 'bgbox bg15'}
+                        onClick={() => setBackground('bg15')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg16' ? 'bgbox bg16 activebg' : 'bgbox bg16'}
+                        onClick={() => setBackground('bg16')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg17' ? 'bgbox bg17 activebg' : 'bgbox bg17'}
+                        onClick={() => setBackground('bg17')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg18' ? 'bgbox bg18 activebg' : 'bgbox bg18'}
+                        onClick={() => setBackground('bg18')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg19' ? 'bgbox bg19 activebg' : 'bgbox bg19'}
+                        onClick={() => setBackground('bg19')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg20' ? 'bgbox bg20 activebg' : 'bgbox bg20'}
+                        onClick={() => setBackground('bg20')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg21' ? 'bgbox bg21 activebg' : 'bgbox bg21'}
+                        onClick={() => setBackground('bg21')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg22' ? 'bgbox bg22 activebg' : 'bgbox bg22'}
+                        onClick={() => setBackground('bg22')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg23' ? 'bgbox bg23 activebg' : 'bgbox bg23'}
+                        onClick={() => setBackground('bg23')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg24' ? 'bgbox bg24 activebg' : 'bgbox bg24'}
+                        onClick={() => setBackground('bg24')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg25' ? 'bgbox bg25 activebg' : 'bgbox bg25'}
+                        onClick={() => setBackground('bg25')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg26' ? 'bgbox bg26 activebg' : 'bgbox bg26'}
+                        onClick={() => setBackground('bg26')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg27' ? 'bgbox bg27 activebg' : 'bgbox bg27'}
+                        onClick={() => setBackground('bg27')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg28' ? 'bgbox bg28 activebg' : 'bgbox bg28'}
+                        onClick={() => setBackground('bg28')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg29' ? 'bgbox bg29 activebg' : 'bgbox bg29'}
+                        onClick={() => setBackground('bg29')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg30' ? 'bgbox bg30 activebg' : 'bgbox bg30'}
+                        onClick={() => setBackground('bg30')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg31' ? 'bgbox bg31 activebg' : 'bgbox bg31'}
+                        onClick={() => setBackground('bg31')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg32' ? 'bgbox bg32 activebg' : 'bgbox bg32'}
+                        onClick={() => setBackground('bg32')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg33' ? 'bgbox bg33 activebg' : 'bgbox bg33'}
+                        onClick={() => setBackground('bg33')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg34' ? 'bgbox bg34 activebg' : 'bgbox bg34'}
+                        onClick={() => setBackground('bg34')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg35' ? 'bgbox bg35 activebg' : 'bgbox bg35'}
+                        onClick={() => setBackground('bg35')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg36' ? 'bgbox bg36 activebg' : 'bgbox bg36'}
+                        onClick={() => setBackground('bg36')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg37' ? 'bgbox bg37 activebg' : 'bgbox bg37'}
+                        onClick={() => setBackground('bg37')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg38' ? 'bgbox bg38 activebg' : 'bgbox bg38'}
+                        onClick={() => setBackground('bg38')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg39' ? 'bgbox bg39 activebg' : 'bgbox bg39'}
+                        onClick={() => setBackground('bg39')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg40' ? 'bgbox bg40 activebg' : 'bgbox bg40'}
+                        onClick={() => setBackground('bg40')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg41' ? 'bgbox bg41 activebg' : 'bgbox bg41'}
+                        onClick={() => setBackground('bg41')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg42' ? 'bgbox bg42 activebg' : 'bgbox bg42'}
+                        onClick={() => setBackground('bg42')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg43' ? 'bgbox bg43 activebg' : 'bgbox bg43'}
+                        onClick={() => setBackground('bg43')}
+                      ></div>
+
+                      <div
+                        className={background === 'bg44' ? 'bgbox bg44 activebg' : 'bgbox bg44'}
+                        onClick={() => setBackground('bg44')}
+                      ></div>
                     </div>
                   </div>
                 )}
@@ -350,9 +550,8 @@ export default function App() {
               </div>
 
               <div className="previewPanel">
-                <div className={`previewOuter ${background}`}>
+                <div ref={previewRef} className={`previewOuter ${background}`}>
                   <div
-                    ref={previewRef}
                     className={`previewWindow ${theme}`}
                     style={{
                       borderRadius: `${radius}px`,
