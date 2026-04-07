@@ -12,7 +12,7 @@ import {
   Settings2,
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import html2canvas from 'html2canvas'
+import * as htmlToImage from 'html-to-image'
 
 const Dcode = () => {
   const navigate = useNavigate()
@@ -49,21 +49,31 @@ export default function App() {
 
   const handleDownload = async () => {
     if (!previewRef.current) return
-
-    const canvas = await html2canvas(previewRef.current, {
-      backgroundColor: null,
-      scale: 2,
-    })
-
-    const link = document.createElement('a')
-    link.download = 'flair-code.png'
-    link.href = canvas.toDataURL('image/png')
-    link.click()
+  
+    try {
+      const dataUrl = await htmlToImage.toPng(previewRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+        backgroundColor: 'transparent',
+      })
+  
+      const link = document.createElement('a')
+      link.download = 'flair-code.png'
+      link.href = dataUrl
+      link.click()
+    } catch (error) {
+      console.error('Download failed:', error)
+    }
   }
 
   const getFileName = () => {
     if (language === 'TypeScript') return 'App.tsx'
-    return 'App.js'
+    if (language === 'JavaScript') return 'App.js'
+    if (language === 'txt') return 'index.txt'
+
+    if (language === 'C') return 'index.C'
+
+    return 'index.C++'
   }
 
   return (
@@ -201,11 +211,34 @@ export default function App() {
                         </button>
 
                         <button
+                          className={language === 'C++' ? 'selectbox activeSelect' : 'selectbox'}
+                          onClick={() => setLanguage('C++')}
+                        >
+                          C++
+                        </button>
+
+                        <button
+                          className={language === 'txt' ? 'selectbox activeSelect' : 'selectbox'}
+                          onClick={() => setLanguage('txt')}
+                        >
+                          txt
+                        </button>
+
+                        <button
+                          className={language === 'C' ? 'selectbox activeSelect' : 'selectbox'}
+                          onClick={() => setLanguage('C')}
+                        >
+                          C
+                        </button>
+
+                        <button
                           className={language === 'JavaScript' ? 'selectbox activeSelect' : 'selectbox'}
                           onClick={() => setLanguage('JavaScript')}
                         >
                           JavaScript
                         </button>
+
+                        
                       </div>
                     </div>
 
