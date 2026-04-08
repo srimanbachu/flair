@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react'
 import './Dcode.css'
 import flair from '../assets/flair.png'
+import video from '../assets/background.mp4'
+
 import {
   Menu,
   Download,
@@ -78,6 +80,15 @@ export default function App() {
 
   return (
     <div className='maindiv'>
+      
+      <video className="backgroundVideo1" autoPlay loop muted playsInline>
+        <source src={video} type="video/mp4" />
+      </video>
+
+      <div className="blur">
+        
+      </div>
+
       <div className="nav">
         <div className="menudiv" onClick={() => setShow(!show)}>
           <Menu className='menuicon' />
