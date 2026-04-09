@@ -164,13 +164,6 @@ const Dcode = () => {
             >
               <Settings2 size={18} />
             </div>
-
-            <div
-              className={activeSection === 'effects' ? 'sideicon activeSide' : 'sideicon'}
-              onClick={() => setActiveSection('effects')}
-            >
-              <Sparkles size={18} />
-            </div>
           </div>
         </div>
 
@@ -582,32 +575,6 @@ const Dcode = () => {
                         value={shadow}
                         onChange={(e) => setShadow(Number(e.target.value))}
                       />
-                    </div>
-                  </div>
-                )}
-
-                {activeSection === 'effects' && (
-                  <div className="panelcard">
-                    <h3>Effects</h3>
-                    <div className="optionrow">
-                      <button className="selectbox" onClick={() => setPadding(20)}>
-                        Compact
-                      </button>
-                      <button className="selectbox" onClick={() => setPadding(40)}>
-                        Spacious
-                      </button>
-                      <button className="selectbox" onClick={() => setRadius(18)}>
-                        Sharp
-                      </button>
-                      <button className="selectbox" onClick={() => setRadius(40)}>
-                        Smooth
-                      </button>
-                      <button className="selectbox" onClick={() => setShadow(20)}>
-                        Soft Shadow
-                      </button>
-                      <button className="selectbox" onClick={() => setShadow(60)}>
-                        Deep Shadow
-                      </button>
                     </div>
                   </div>
                 )}
