@@ -67,7 +67,7 @@ const Dcode = () => {
     try {
       const dataUrl = await htmlToImage.toPng(previewRef.current, {
         cacheBust: true,
-        pixelRatio: 2,
+        pixelRatio: 5,
         backgroundColor: 'transparent',
       })
 
