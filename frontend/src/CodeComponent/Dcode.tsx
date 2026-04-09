@@ -8,6 +8,9 @@ import 'prismjs/components/prism-javascript'
 import 'prismjs/components/prism-typescript'
 import 'prismjs/components/prism-jsx'
 import 'prismjs/components/prism-tsx'
+import 'prismjs/components/prism-clike'
+import 'prismjs/components/prism-c'
+import 'prismjs/components/prism-cpp' 
 
 
 import {
@@ -45,7 +48,7 @@ const Dcode = () => {
 
   useEffect(() => {
     Prism.highlightAll()
-  }, [code])
+  }, [code, language])
 
 
 
@@ -602,9 +605,22 @@ const Dcode = () => {
                       className="codepreview"
                       style={{ padding: `${padding}px` }}
                     >
-  <code className="language-tsx">
-    {code}
-  </code>                    </pre>
+        <code
+          className={
+            language === 'TypeScript'
+              ? 'language-tsx'
+              : language === 'JavaScript'
+              ? 'language-javascript'
+              : language === 'C++'
+              ? 'language-cpp'
+              : language === 'C'
+              ? 'language-c'
+              : 'language-none'
+          }
+        >
+          {code}
+        </code>
+    </pre>
                   </div>
                 </div>
 
