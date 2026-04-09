@@ -414,7 +414,7 @@ code[class*="language-"] {
   .theme1 { background: linear-gradient(135deg, #0f172a, #1e293b); }
   .theme2 { background: linear-gradient(135deg, #0f766e, #155e75); }
   .theme3 { background: linear-gradient(135deg, #4c1d95, #0f766e); }
-  .theme4 { background: linear-gradient(135deg, #dbeafe, #f8fafc); color: #0f172a; }
+  .theme4 { background: linear-gradient(135deg, #dbeafe, #f8fafc); }
   
   .bg1 { background: linear-gradient(135deg, #111827, #374151); }
   .bg2 { background: linear-gradient(135deg, #a5f3fc, #14b8a6); }
@@ -590,9 +590,8 @@ code[class*="language-"] {
   }
   
   .previewWindow.glass {
-    background: rgba(255, 255, 255, 0.12);
+    background: #ffffff1f;
     color: #ffffff;
-    backdrop-filter: blur(20px);
   }
   
   .previewOuter.bg1 {
