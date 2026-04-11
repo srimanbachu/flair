@@ -5,10 +5,10 @@ import Dcode from "./CodeComponent/Dcode";
 function App() {
   return(
     <Routes>
-      <Route path="/"  element={ <OpeningPage/> }/>
-      <Route path="/code"  element={  <Dcode/> }/>
+      <Route path="/intro"  element={ <OpeningPage/> }/>
+      <Route path="/"  element={  <Dcode/> }/>
     </Routes>
   )
 }
 
-export default App
+export default App 
