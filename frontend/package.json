@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
-  "dependencies": {
+  "dependencies": { 
     "canvas": "^3.2.3",
     "html-to-image": "^1.11.13",
     "html2": "^1.0.0",

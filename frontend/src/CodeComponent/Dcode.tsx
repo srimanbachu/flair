@@ -11,7 +11,7 @@ import 'prismjs/components/prism-tsx'
 import 'prismjs/components/prism-clike'
 import 'prismjs/components/prism-c'
 import 'prismjs/components/prism-cpp'
-
+import 'prismjs/components/prism-json'
 
 import {
   Menu,
@@ -50,8 +50,6 @@ const Dcode = () => {
     Prism.highlightAll()
   }, [code, language])
 
-
-
   const previewRef = useRef<HTMLDivElement | null>(null)
 
   const handleCopy = async () => {
@@ -88,6 +86,7 @@ const Dcode = () => {
     if (language === 'txt') return 'index.txt'
     if (language === 'C') return 'index.C'
     if (language === 'C++') return 'index.C++'
+    if (language === 'Json') return 'package.json'
     return ''
   }
 
@@ -255,6 +254,13 @@ const Dcode = () => {
                           onClick={() => setLanguage('JavaScript')}
                         >
                           JavaScript
+                        </button>
+
+                        <button
+                          className={language === 'Json' ? 'selectbox activeSelect' : 'selectbox'}
+                          onClick={() => setLanguage('Json')}
+                        >
+                          Json
                         </button>
 
                         <button
@@ -610,11 +616,13 @@ const Dcode = () => {
             language === 'TypeScript'
               ? 'language-tsx'
               : language === 'JavaScript'
-              ? 'language-javascript'
+              ? 'language-js'
               : language === 'C++'
               ? 'language-cpp'
               : language === 'C'
               ? 'language-c'
+              : language === 'Json'
+              ? 'language-json'
               : 'language-none'
           }
         >
