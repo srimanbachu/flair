@@ -36,6 +36,7 @@ const Dcode = () => {
   const [padding, setPadding] = useState(28)
   const [radius, setRadius] = useState(28)
   const [shadow, setShadow] = useState(45)
+  
   const [code, setCode] = useState(`import React from "react";
     export default function App() {
       return (
@@ -50,8 +51,10 @@ const Dcode = () => {
     Prism.highlightAll()
   }, [code, language])
 
-  const previewRef = useRef<HTMLDivElement | null>(null)
-
+  const previewWithBgRef = useRef<HTMLDivElement | null>(null)
+  const previewOnlyRef = useRef<HTMLDivElement | null>(null)
+  const [exportMode, setExportMode] = useState<'with-bg' | 'without-bg'>('with-bg')  
+  
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(code)
@@ -62,17 +65,21 @@ const Dcode = () => {
   }
 
   const handleDownload = async () => {
-    if (!previewRef.current) return
+    const target =
+      exportMode === 'with-bg' ? previewWithBgRef.current : previewOnlyRef.current
+
+    if (!target) return;
 
     try {
-      const dataUrl = await htmlToImage.toPng(previewRef.current, {
+      const dataUrl = await htmlToImage.toPng(target, {
         cacheBust: true,
         pixelRatio: 5,
         backgroundColor: 'transparent',
       })
 
       const link = document.createElement('a')
-      link.download = 'flair-code.png'
+      link.download =
+        exportMode === 'with-bg' ? 'flair-code-with-bg.png' : 'flair-code.png'
       link.href = dataUrl
       link.click()
     } catch (error) {
@@ -141,6 +148,7 @@ const Dcode = () => {
             <div
               className={activeSection === 'code' ? 'sideicon activeSide' : 'sideicon'}
               onClick={() => setActiveSection('code')}
+              
             >
               <Code2 size={18} />
             </div>
@@ -561,6 +569,25 @@ const Dcode = () => {
                         value={padding}
                         onChange={(e) => setPadding(Number(e.target.value))}
                       />
+
+                      <div className="slidergroup">
+                        <label>Export Mode</label>
+                        <div className="optionrow">
+                          <button
+                            className={exportMode === 'with-bg' ? 'selectbox activeSelect' : 'selectbox'}
+                            onClick={() => setExportMode('with-bg')}
+                          >
+                            With Background
+                          </button>
+
+                          <button
+                            className={exportMode === 'without-bg' ? 'selectbox activeSelect' : 'selectbox'}
+                            onClick={() => setExportMode('without-bg')}
+                          >
+                            Without Background
+                          </button>
+                        </div>
+                      </div>
                     </div>
 
                     <div className="slidergroup">
@@ -589,48 +616,49 @@ const Dcode = () => {
               </div>
 
               <div className="previewPanel">
-                <div ref={previewRef} className={`previewOuter ${background}`}>
-                  <div
-                    className={`previewWindow ${theme}`}
-                    style={{
-                      borderRadius: `${radius}px`,
-                      boxShadow: `0 20px ${shadow}px rgba(0,0,0,0.45)`,
-                    }}
-                  >
-                    <div className="windowtop">
-                      <div className="dots">
-                        <span className="dot1"></span>
-                        <span className="dot2"></span>
-                        <span className="dot3"></span>
-                      </div>
+              <div ref={previewWithBgRef} className={`previewOuter ${background}`}>
+  <div
+    ref={previewOnlyRef}
+    className={`previewWindow ${theme}`}
+    style={{
+      borderRadius: `${radius}px`,
+      boxShadow: `0 20px ${shadow}px rgba(0,0,0,0.45)`,
+    }}
+  >
+    <div className="windowtop">
+      <div className="dots">
+        <span className="dot1"></span>
+        <span className="dot2"></span>
+        <span className="dot3"></span>
+      </div>
 
-                      <div className="filename">{getFileName()}</div>
-                    </div>
+      <div className="filename">{getFileName()}</div>
+    </div>
 
-                    <pre
-                      className="codepreview"
-                      style={{ padding: `${padding}px` }}
-                    >
-        <code
-          className={
-            language === 'TypeScript'
-              ? 'language-tsx'
-              : language === 'JavaScript'
-              ? 'language-js'
-              : language === 'C++'
-              ? 'language-cpp'
-              : language === 'C'
-              ? 'language-c'
-              : language === 'Json'
-              ? 'language-json'
-              : 'language-none'
-          }
-        >
-          {code}
-        </code>
+    <pre
+      className="codepreview"
+      style={{ padding: `${padding}px` }}
+    >
+      <code
+        className={
+          language === 'TypeScript'
+            ? 'language-tsx'
+            : language === 'JavaScript'
+            ? 'language-js'
+            : language === 'C++'
+            ? 'language-cpp'
+            : language === 'C'
+            ? 'language-c'
+            : language === 'Json'
+            ? 'language-json'
+            : 'language-none'
+        }
+      >
+        {code}
+      </code>
     </pre>
-                  </div>
-                </div>
+  </div>
+</div>
 
                 <div className="previewfooter">
                   <div className="footerpill">{language}</div>
