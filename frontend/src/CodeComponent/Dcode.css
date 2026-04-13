@@ -131,7 +131,9 @@ code[class*="language-"] {
 }
 
 .codepreview {
-  filter: brightness(var(--code-brightness, 0));
+  filter: brightness(var(--code-brightness, 0))
+  contrast(var(--code-contrast, 1.2));
+
 }
 
 .codepreview {
@@ -891,25 +893,7 @@ code[class*="language-"] {
     border: 1px solid rgba(15, 23, 42, 0.06);
   }
   
-  .previewWindow.midnight {
-    background: #0b1020;
-    color: #d7e3ff;
-  }
-  
-  .previewWindow.ocean {
-    background: #0b1f2a;
-    color: #c8f7ff;
-  }
-  
-  .previewWindow.aurora {
-    background: #1a1333;
-    color: #f3e8ff;
-  }
-  
-  .previewWindow.glass {
-    background: #ffffff1f;
-    color: #ffffff;
-  }
+
   
   .previewOuter.bg1 {
     background: linear-gradient(135deg, #111827, #1f2937);

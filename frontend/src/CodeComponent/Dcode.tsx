@@ -37,6 +37,8 @@ const Dcode = () => {
   const [radius, setRadius] = useState(28)
   const [shadow, setShadow] = useState(45)
   const [codeBrightness, setCodeBrightness] = useState(1)
+  const [codeContrast, setCodeContrast] = useState(1.2)
+  const [pixelRatio, setPixelRatio] = useState(2)
 
   const [code, setCode] = useState(`import React from "react";
     export default function App() {
@@ -322,6 +324,18 @@ const Dcode = () => {
                     <h3>Customize</h3>
 
                     <div className="slidergroup">
+                      <label>Export Quality: {pixelRatio.toFixed(1)}x</label>
+                      <input
+                        type="range"
+                        min="1"
+                        max="5"
+                        step="0.5"
+                        value={pixelRatio}
+                        onChange={(e) => setPixelRatio(Number(e.target.value))}
+                      />
+                    </div>
+
+                    <div className="slidergroup">
                       <label>Padding: {padding}px</label>
                       <input
                         type="range"
@@ -358,7 +372,7 @@ const Dcode = () => {
                       <label>Code Brightness: {codeBrightness.toFixed(1)}</label>
                       <input
                         type="range"
-                        min="0.4"
+                        min="0"
                         max="1.5"
                         step="0.1"
                         value={codeBrightness}
@@ -416,6 +430,8 @@ const Dcode = () => {
                       style={{
                         padding: `${padding}px`,
                         ['--code-brightness' as any]: codeBrightness,
+                        ['--code-contrast' as any]: codeContrast,
+
                       }}
                     >
                       <code
