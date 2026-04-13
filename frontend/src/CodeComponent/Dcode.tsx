@@ -3,6 +3,7 @@ import './Dcode.css'
 import flair from '../assets/flair.png'
 import video from '../assets/background.mp4'
 import Prism from 'prismjs'
+import { themes } from '../data/themes'
 import 'prismjs/themes/prism-tomorrow.css'
 import 'prismjs/components/prism-javascript'
 import 'prismjs/components/prism-typescript'
@@ -14,7 +15,6 @@ import 'prismjs/components/prism-cpp'
 import 'prismjs/components/prism-json'
 
 import {
-  Menu,
   Download,
   Copy,
   Palette,
@@ -36,7 +36,8 @@ const Dcode = () => {
   const [padding, setPadding] = useState(28)
   const [radius, setRadius] = useState(28)
   const [shadow, setShadow] = useState(45)
-  
+  const [codeBrightness, setCodeBrightness] = useState(1)
+
   const [code, setCode] = useState(`import React from "react";
     export default function App() {
       return (
@@ -53,8 +54,8 @@ const Dcode = () => {
 
   const previewWithBgRef = useRef<HTMLDivElement | null>(null)
   const previewOnlyRef = useRef<HTMLDivElement | null>(null)
-  const [exportMode, setExportMode] = useState<'with-bg' | 'without-bg'>('with-bg')  
-  
+  const [exportMode, setExportMode] = useState<'with-bg' | 'without-bg'>('with-bg')
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(code)
@@ -63,6 +64,8 @@ const Dcode = () => {
       alert('Copy failed')
     }
   }
+
+
 
   const handleDownload = async () => {
     const target =
@@ -109,31 +112,6 @@ const Dcode = () => {
       </div>
 
       <div className="nav">
-        <div className="menudiv" onClick={() => setShow(!show)}>
-          <Menu className='menuicon' />
-          {show && (
-            <div className="switch">
-              <div
-                className="imagecard"
-                onClick={() => navigate('/image')}
-              >
-                imagecard
-                <span className="tooltip">avalable in future updates</span>
-
-              </div>
-              <div
-                className="codecard"
-                onClick={() => {
-                  setShow(false)
-                  navigate('/code')
-                }}
-              >
-                codecard
-              </div>
-            </div>
-          )}
-        </div>
-
         <div className="logo">
           <h1>Flair</h1>
           <img src={flair} alt="flair_img" className='flairimg' />
@@ -148,7 +126,7 @@ const Dcode = () => {
             <div
               className={activeSection === 'code' ? 'sideicon activeSide' : 'sideicon'}
               onClick={() => setActiveSection('code')}
-              
+
             >
               <Code2 size={18} />
             </div>
@@ -192,6 +170,7 @@ const Dcode = () => {
                   onClick={() => setActiveSection('theme')}
                 >
                   Theme
+
                 </div>
 
                 <div
@@ -298,33 +277,23 @@ const Dcode = () => {
                   <div className="panelcard">
                     <h3>Theme</h3>
                     <div className="themegrid">
-                      <div
-                        className={theme === 'midnight' ? 'themebox theme1 activetheme' : 'themebox theme1'}
-                        onClick={() => setTheme('midnight')}
-                      >
-                        Midnight
-                      </div>
 
-                      <div
-                        className={theme === 'ocean' ? 'themebox theme2 activetheme' : 'themebox theme2'}
-                        onClick={() => setTheme('ocean')}
-                      >
-                        Ocean
-                      </div>
+                      {
+                        themes.map((item) => (
+                          <div
+                            key={item.key}
+                            className={
+                              theme === item.key
+                                ? `themebox ${item.className} activetheme`
+                                : `themebox ${item.className}`
+                            }
+                            onClick={() => setTheme(item.key)}
+                          >
+                            {item.label}
+                          </div>
+                        ))
+                      }
 
-                      <div
-                        className={theme === 'aurora' ? 'themebox theme3 activetheme' : 'themebox theme3'}
-                        onClick={() => setTheme('aurora')}
-                      >
-                        Aurora
-                      </div>
-
-                      <div
-                        className={theme === 'glass' ? 'themebox theme4 activetheme' : 'themebox theme4'}
-                        onClick={() => setTheme('glass')}
-                      >
-                        Glass
-                      </div>
                     </div>
                   </div>
                 )}
@@ -569,25 +538,6 @@ const Dcode = () => {
                         value={padding}
                         onChange={(e) => setPadding(Number(e.target.value))}
                       />
-
-                      <div className="slidergroup">
-                        <label>Export Mode</label>
-                        <div className="optionrow">
-                          <button
-                            className={exportMode === 'with-bg' ? 'selectbox activeSelect' : 'selectbox'}
-                            onClick={() => setExportMode('with-bg')}
-                          >
-                            With Background
-                          </button>
-
-                          <button
-                            className={exportMode === 'without-bg' ? 'selectbox activeSelect' : 'selectbox'}
-                            onClick={() => setExportMode('without-bg')}
-                          >
-                            Without Background
-                          </button>
-                        </div>
-                      </div>
                     </div>
 
                     <div className="slidergroup">
@@ -611,54 +561,92 @@ const Dcode = () => {
                         onChange={(e) => setShadow(Number(e.target.value))}
                       />
                     </div>
+
+                    <div className="slidergroup">
+  <label>Code Brightness: {codeBrightness.toFixed(1)}</label>
+  <input
+    type="range"
+    min="0.4"
+    max="1.5"
+    step="0.1"
+    value={codeBrightness}
+    onChange={(e) => setCodeBrightness(Number(e.target.value))}
+  />
+</div>
+
+                    <div className="slidergroup">
+                      <label>Export Mode</label>
+                      <div className="optionrow">
+                        <button
+                          className={exportMode === 'with-bg' ? 'selectbox activeSelect' : 'selectbox'}
+                          onClick={() => setExportMode('with-bg')}
+                        >
+                          With Background
+                        </button>
+
+                        <button
+                          className={exportMode === 'without-bg' ? 'selectbox activeSelect' : 'selectbox'}
+                          onClick={() => setExportMode('without-bg')}
+                        >
+                          Without Background
+                        </button>
+                      </div>
+
+                      
+                    </div>
                   </div>
                 )}
               </div>
 
               <div className="previewPanel">
-              <div ref={previewWithBgRef} className={`previewOuter ${background}`}>
-  <div
-    ref={previewOnlyRef}
-    className={`previewWindow ${theme}`}
-    style={{
-      borderRadius: `${radius}px`,
-      boxShadow: `0 20px ${shadow}px rgba(0,0,0,0.45)`,
-    }}
-  >
-    <div className="windowtop">
-      <div className="dots">
-        <span className="dot1"></span>
-        <span className="dot2"></span>
-        <span className="dot3"></span>
-      </div>
+                <div ref={previewWithBgRef} className={`previewOuter ${background}`}>
+                  <div
+                    ref={previewOnlyRef}
+                    className={`previewWindow ${
+                      themes.find((item) => item.key === theme)?.className
+                    }`}
+                    style={{
+                      borderRadius: `${radius}px`,
+                      boxShadow: `0 20px ${shadow}px rgba(0,0,0,0.45)`,
+                    }}
+                  >
+                    <div className="windowtop">
+                      <div className="dots">
+                        <span className="dot1"></span>
+                        <span className="dot2"></span>
+                        <span className="dot3"></span>
+                      </div>
 
-      <div className="filename">{getFileName()}</div>
-    </div>
+                      <div className="filename">{getFileName()}</div>
+                    </div>
 
-    <pre
-      className="codepreview"
-      style={{ padding: `${padding}px` }}
-    >
-      <code
-        className={
-          language === 'TypeScript'
-            ? 'language-tsx'
-            : language === 'JavaScript'
-            ? 'language-js'
-            : language === 'C++'
-            ? 'language-cpp'
-            : language === 'C'
-            ? 'language-c'
-            : language === 'Json'
-            ? 'language-json'
-            : 'language-none'
-        }
-      >
-        {code}
-      </code>
-    </pre>
-  </div>
-</div>
+                    <pre
+                      className="codepreview"
+                      style={{
+                        padding: `${padding}px`,
+                        ['--code-brightness' as any]: codeBrightness,
+                      }}
+                    >
+                      <code
+                        className={
+                          language === 'TypeScript'
+                            ? 'language-tsx'
+                            : language === 'JavaScript'
+                              ? 'language-js'
+                              : language === 'C++'
+                                ? 'language-cpp'
+                                : language === 'C'
+                                  ? 'language-c'
+                                  : language === 'Json'
+                                    ? 'language-json'
+                                    : 'language-none'
+                        }
+                      >
+                        {code}
+                      </code>
+                    </pre>
+                  </div>
+                </div>
 
                 <div className="previewfooter">
                   <div className="footerpill">{language}</div>

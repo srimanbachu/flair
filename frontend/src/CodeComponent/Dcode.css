@@ -48,7 +48,6 @@
     background: rgba(0, 0, 0, 0.55);
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 0 18px;
     border-radius: 22px;
     backdrop-filter: blur(18px);
@@ -129,6 +128,10 @@
 pre[class*="language-"],
 code[class*="language-"] {
   background: transparent !important;
+}
+
+.codepreview {
+  filter: brightness(var(--code-brightness, 0));
 }
 
 .codepreview {
@@ -411,10 +414,324 @@ code[class*="language-"] {
     height: 24px;
   }
   
-  .theme1 { background: linear-gradient(135deg, #0f172a, #1e293b); }
-  .theme2 { background: linear-gradient(135deg, #0f766e, #155e75); }
-  .theme3 { background: linear-gradient(135deg, #4c1d95, #0f766e); }
-  .theme4 { background: linear-gradient(135deg, #dbeafe, #f8fafc); }
+/* ---------- SOLID ---------- */
+
+.theme1 { background: #0f172a; }
+.theme2 { background: #1e293b; }
+.theme3 { background: #334155; }
+.theme4 { background: #475569; }
+.theme5 { background: #64748b; }
+.theme6 { background: #0f766e; }
+.theme7 { background: #155e75; }
+.theme8 { background: #164e63; }
+.theme9 { background: #4c1d95; }
+.theme10 { background: #581c87; }
+.theme11 { background: #7c3aed; }
+.theme12 { background: #1d4ed8; }
+.theme13 { background: #2563eb; }
+.theme14 { background: #0284c7; }
+.theme15 { background: #0ea5e9; }
+.theme16 { background: #0891b2; }
+.theme17 { background: #166534; }
+.theme18 { background: #15803d; }
+.theme19 { background: #65a30d; }
+.theme20 { background: #a16207; }
+
+/* ---------- GRADIENT ---------- */
+
+.theme21 { background: linear-gradient(135deg, #0f172a, #1e293b); }
+.theme22 { background: linear-gradient(135deg, #0f766e, #155e75); }
+.theme23 { background: linear-gradient(135deg, #4c1d95, #0f766e); }
+.theme24 { background: linear-gradient(135deg, #dbeafe, #f8fafc); }
+.theme25 { background: linear-gradient(135deg, #1e1b4b, #312e81); }
+.theme26 { background: linear-gradient(135deg, #0f172a, #4c1d95); }
+.theme27 { background: linear-gradient(135deg, #111827, #1f2937); }
+.theme28 { background: linear-gradient(135deg, #1e293b, #334155); }
+.theme29 { background: linear-gradient(135deg, #134e4a, #0f766e); }
+.theme30 { background: linear-gradient(135deg, #155e75, #0ea5e9); }
+.theme31 { background: linear-gradient(135deg, #4c1d95, #7c3aed); }
+.theme32 { background: linear-gradient(135deg, #581c87, #db2777); }
+.theme33 { background: linear-gradient(135deg, #7f1d1d, #dc2626); }
+.theme34 { background: linear-gradient(135deg, #78350f, #f59e0b); }
+.theme35 { background: linear-gradient(135deg, #14532d, #22c55e); }
+.theme36 { background: linear-gradient(135deg, #164e63, #06b6d4); }
+.theme37 { background: linear-gradient(135deg, #172554, #2563eb); }
+.theme38 { background: linear-gradient(135deg, #312e81, #8b5cf6); }
+.theme39 { background: linear-gradient(135deg, #0f172a, #64748b); }
+.theme40 { background: linear-gradient(135deg, #020617, #1e40af); }
+
+/* ---------- LIGHT GRADIENT ---------- */
+
+.theme41 { background: linear-gradient(135deg, #f8fafc, #e2e8f0); }
+.theme42 { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+.theme43 { background: linear-gradient(135deg, #cffafe, #e0f2fe); }
+.theme44 { background: linear-gradient(135deg, #dcfce7, #bbf7d0); }
+.theme45 { background: linear-gradient(135deg, #fef9c3, #fde68a); }
+.theme46 { background: linear-gradient(135deg, #fee2e2, #fecaca); }
+.theme47 { background: linear-gradient(135deg, #f3e8ff, #ddd6fe); }
+.theme48 { background: linear-gradient(135deg, #fce7f3, #fbcfe8); }
+.theme49 { background: linear-gradient(135deg, #f1f5f9, #cbd5e1); }
+.theme50 { background: linear-gradient(135deg, #ffffff, #e5e7eb); }
+
+/* ---------- GLASS ---------- */
+
+.theme51 {
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.theme52 {
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.theme53 {
+  background: rgba(76, 29, 149, 0.35);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.theme54 {
+  background: rgba(15, 118, 110, 0.35);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.theme55 {
+  background: rgba(14, 165, 233, 0.3);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.theme56 {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.theme57 {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+}
+
+.theme58 {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.theme59 {
+  background: rgba(17, 24, 39, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.theme60 {
+  background: rgba(88, 28, 135, 0.4);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+}
+
+/* ---------- GLASSMORPHISM ---------- */
+
+.theme61 { background: rgba(255, 255, 255, 0.10); }
+
+.theme62 { background: rgba(15, 23, 42, 0.35); }
+
+.theme63 { background: rgba(76, 29, 149, 0.28); }
+
+.theme64 { background: rgba(14, 165, 233, 0.22); }
+
+.theme65 { background: rgba(15, 118, 110, 0.22); }
+
+.theme66 { background: rgba(255, 255, 255, 0.14); }
+
+.theme67 { background: rgba(0, 0, 0, 0.28); }
+
+.theme68 { background: rgba(219, 234, 254, 0.18); }
+
+.theme69 { background: rgba(30, 41, 59, 0.30); }
+
+.theme70 { background: rgba(255, 255, 255, 0.06); }
+
+/* ---------- MESH GRADIENT ---------- */
+
+.theme71 {
+  background:
+    radial-gradient(circle at top left, #7c3aed, transparent 45%),
+    radial-gradient(circle at bottom right, #06b6d4, transparent 45%),
+    #0f172a;
+}
+
+.theme72 {
+  background:
+    radial-gradient(circle at top right, #22c55e, transparent 40%),
+    radial-gradient(circle at bottom left, #0ea5e9, transparent 40%),
+    #111827;
+}
+
+.theme73 {
+  background:
+    radial-gradient(circle at center, #f43f5e, transparent 35%),
+    radial-gradient(circle at top left, #8b5cf6, transparent 40%),
+    #1e1b4b;
+}
+
+.theme74 {
+  background:
+    radial-gradient(circle at top, #38bdf8, transparent 45%),
+    radial-gradient(circle at bottom, #14b8a6, transparent 45%),
+    #020617;
+}
+
+.theme75 {
+  background:
+    radial-gradient(circle at left, #f59e0b, transparent 40%),
+    radial-gradient(circle at right, #ef4444, transparent 40%),
+    #1c1917;
+}
+
+.theme76 {
+  background:
+    radial-gradient(circle at top left, #ec4899, transparent 45%),
+    radial-gradient(circle at bottom right, #8b5cf6, transparent 45%),
+    #18181b;
+}
+
+.theme77 {
+  background:
+    radial-gradient(circle at center, #06b6d4, transparent 40%),
+    radial-gradient(circle at bottom, #3b82f6, transparent 45%),
+    #0f172a;
+}
+
+.theme78 {
+  background:
+    radial-gradient(circle at top left, #84cc16, transparent 45%),
+    radial-gradient(circle at top right, #22c55e, transparent 45%),
+    #052e16;
+}
+
+.theme79 {
+  background:
+    radial-gradient(circle at bottom left, #a855f7, transparent 45%),
+    radial-gradient(circle at top right, #3b82f6, transparent 45%),
+    #111827;
+}
+
+.theme80 {
+  background:
+    radial-gradient(circle at top, #fb7185, transparent 40%),
+    radial-gradient(circle at bottom, #f472b6, transparent 40%),
+    #1f172a;
+}
+
+/* ---------- PREMIUM / SPECIAL ---------- */
+
+.theme81 {
+  background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+}
+
+.theme82 {
+  background: linear-gradient(135deg, #0b1120, #172554, #312e81);
+}
+
+.theme83 {
+  background: linear-gradient(135deg, #1f2937, #111827, #000000);
+}
+
+.theme84 {
+  background: linear-gradient(135deg, #581c87, #7c3aed, #c084fc);
+}
+
+.theme85 {
+  background: linear-gradient(135deg, #0f766e, #14b8a6, #67e8f9);
+}
+
+.theme86 {
+  background: linear-gradient(135deg, #111827, #7c2d12, #f59e0b);
+}
+
+.theme87 {
+  background: linear-gradient(135deg, #14532d, #22c55e, #bbf7d0);
+}
+
+.theme88 {
+  background: linear-gradient(135deg, #172554, #2563eb, #93c5fd);
+}
+
+.theme89 {
+  background: linear-gradient(135deg, #4a044e, #db2777, #f9a8d4);
+}
+
+.theme90 {
+  background: linear-gradient(135deg, #3f3f46, #71717a, #e4e4e7);
+}
+
+/* ---------- AURORA / NEON ---------- */
+
+.theme91 {
+  background:
+    linear-gradient(135deg, rgba(124,58,237,0.8), rgba(14,165,233,0.8)),
+    #0f172a;
+}
+
+.theme92 {
+  background:
+    linear-gradient(135deg, rgba(34,197,94,0.8), rgba(6,182,212,0.8)),
+    #111827;
+}
+
+.theme93 {
+  background:
+    linear-gradient(135deg, rgba(236,72,153,0.8), rgba(139,92,246,0.8)),
+    #18181b;
+}
+
+.theme94 {
+  background:
+    linear-gradient(135deg, rgba(251,146,60,0.8), rgba(239,68,68,0.8)),
+    #1c1917;
+}
+
+.theme95 {
+  background:
+    linear-gradient(135deg, rgba(56,189,248,0.8), rgba(45,212,191,0.8)),
+    #020617;
+}
+
+.theme96 {
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.theme97 {
+  background:
+    linear-gradient(135deg, #111827, #1f2937);
+  box-shadow: inset 0 0 60px rgba(124,58,237,0.25);
+}
+
+.theme98 {
+  background:
+    linear-gradient(135deg, #0f172a, #020617);
+  box-shadow: inset 0 0 80px rgba(14,165,233,0.25);
+}
+
+.theme99 {
+  background:
+    linear-gradient(135deg, #1e1b4b, #312e81);
+  box-shadow: inset 0 0 70px rgba(236,72,153,0.25);
+}
+
+.theme100 {
+  background:
+    linear-gradient(135deg, #052e16, #064e3b);
+  box-shadow: inset 0 0 70px rgba(34,197,94,0.3);
+}
   
   .bg1 { background: linear-gradient(135deg, #111827, #374151); }
   .bg2 { background: linear-gradient(135deg, #a5f3fc, #14b8a6); }
@@ -545,7 +862,7 @@ code[class*="language-"] {
   .dot3 { background: #28c840; }
   
   .filename {
-    color: rgba(255,255,255,0.75);
+    color: rgba(255, 255, 255, 0.75);
     font-size: 14px;
   }
   
@@ -767,11 +1084,11 @@ code[class*="language-"] {
   }
   
   .previewOuter.bg44 {
-    background: #e2e8f0;
+    background: #f9f9f9;
   }
   
   @media (max-width: 1100px) {
-    .workspace {
+    .workspace {  
       flex-direction: column;
     }
   
@@ -842,3 +1159,28 @@ code[class*="language-"] {
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
+
+  .exportGlassFix {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .exportGlassFix::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(255,255,255,0.18),
+      rgba(255,255,255,0.05)
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+  
+  .exportGlassFix .windowtop,
+  .exportGlassFix .codepreview {
+    position: relative;
+    z-index: 1;
+  }
+
