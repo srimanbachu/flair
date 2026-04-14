@@ -72,21 +72,41 @@ const Dcode = () => {
   const handleDownload = async () => {
     const target =
       exportMode === 'with-bg' ? previewWithBgRef.current : previewOnlyRef.current
-
-    if (!target) return;
-
+  
+    if (!target) return
+  
+    const isGlassTheme = ['theme51', 'theme52', 'theme53', 'theme54', 'theme55', 'theme56', 'theme57', 'theme58', 'theme59', 'theme60',
+      'theme61', 'theme62', 'theme63', 'theme64', 'theme65', 'theme66', 'theme67', 'theme68', 'theme69', 'theme70'
+    ].includes(themes.find((item) => item.key === theme)?.className || '')
+  
     try {
       const dataUrl = await htmlToImage.toPng(target, {
         cacheBust: true,
-        pixelRatio: 5,
-        backgroundColor: 'transparent',
+        pixelRatio,
+        backgroundColor: exportMode === 'with-bg' ? undefined : '#0f172a',        style: {
+          transform: 'scale(1)',
+          transformOrigin: 'top left',
+        },
+        filter: (node) => {
+          if (!(node instanceof HTMLElement)) return true
+  
+          if (isGlassTheme && node.classList.contains('previewWindow')) {
+            node.classList.add('exportGlassFix')
+          }
+  
+          return true
+        },
       })
-
+  
       const link = document.createElement('a')
       link.download =
         exportMode === 'with-bg' ? 'flair-code-with-bg.png' : 'flair-code.png'
       link.href = dataUrl
       link.click()
+  
+      if (isGlassTheme && previewOnlyRef.current) {
+        previewOnlyRef.current.classList.remove('exportGlassFix')
+      }
     } catch (error) {
       console.error('Download failed:', error)
     }
