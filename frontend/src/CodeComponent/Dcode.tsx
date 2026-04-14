@@ -23,11 +23,9 @@ import {
   Code2,
   Settings2,
 } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
 import * as htmlToImage from 'html-to-image'
 
 const Dcode = () => {
-  const navigate = useNavigate()
 
   const [activeSection, setActiveSection] = useState('code')
   const [language, setLanguage] = useState('TypeScript')
@@ -37,7 +35,7 @@ const Dcode = () => {
   const [radius, setRadius] = useState(28)
   const [shadow, setShadow] = useState(45)
   const [codeBrightness, setCodeBrightness] = useState(1)
-  const [codeContrast, setCodeContrast] = useState(1.2)
+  const [codeContrast] = useState(1.2)
   const [pixelRatio, setPixelRatio] = useState(2)
 
   const [code, setCode] = useState(`import React from "react";
