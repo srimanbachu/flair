@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react'
 import './Dcode.css'
 import flair from '../assets/flair.png'
 import video from '../assets/background.mp4'
+import { useNavigate } from 'react-router-dom'
 import Prism from 'prismjs'
 import { themes } from '../data/themes'
 import { backgrounds } from '../data/background'
@@ -25,6 +26,7 @@ import {
 } from 'lucide-react'
 import * as htmlToImage from 'html-to-image'
 
+
 const Dcode = () => {
 
   const [activeSection, setActiveSection] = useState('code')
@@ -37,6 +39,8 @@ const Dcode = () => {
   const [codeBrightness, setCodeBrightness] = useState(1)
   const [codeContrast] = useState(1.2)
   const [pixelRatio, setPixelRatio] = useState(2)
+  const navigate = useNavigate()
+
 
   const [code, setCode] = useState(`import React from "react";
     export default function App() {
@@ -133,7 +137,7 @@ const Dcode = () => {
 
       <div className="nav">
         <div className="logo">
-          <h1>Flair</h1>
+          <h1 onClick={() =>(navigate('/intro'))}>Flair</h1>
           <img src={flair} alt="flair_img" className='flairimg' />
         </div>
 
