@@ -17,7 +17,7 @@ const OpeningPage = () => {
     <div className="parent">
     <div className="main">
 
-      <video className="backgroundVideo" autoPlay loop muted playsInline>
+      <video className="backgroundVideo" autoPlay loop muted playsInline preload="auto">
         <source src={video} type="video/mp4" />
       </video>
       <div className="fake">
