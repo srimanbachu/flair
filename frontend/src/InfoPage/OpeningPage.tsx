@@ -1,9 +1,17 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import flair from "../assets/flair.png"
 import video from '../assets/background.mp4'
 import './OpeningPage.css'
 
 const OpeningPage = () => {
+
+  // Lock page scrolling only while the /intro page is mounted.
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
 
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({
