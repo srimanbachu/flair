@@ -518,3 +518,19 @@ test("solid background colors apply to the card", async ({ page }) => {
     "rgb(231, 229, 224)",
   );
 });
+test("auto-sized export matches the size shown on the card", async ({
+  page,
+}) => {
+  const label = await page.locator(".size-chip").textContent();
+  const [, w, h] = label!.match(/(\d+) × (\d+)/)!.map(Number);
+  await page
+    .getByRole("button", { name: "Export", exact: true })
+    .first()
+    .click();
+  const download = page.waitForEvent("download");
+  await page.getByRole("button", { name: "PNG image" }).click();
+  const { readFile } = await import("node:fs/promises");
+  const bytes = await readFile((await (await download).path())!);
+  expect(bytes.readUInt32BE(16)).toBe(w);
+  expect(bytes.readUInt32BE(20)).toBe(h);
+});
