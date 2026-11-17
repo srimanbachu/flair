@@ -6,6 +6,7 @@ import {
   backgroundNames,
   backgroundCSS,
   defaultCard,
+  isLight,
   palettes,
   sizes,
 } from "./model";
@@ -113,24 +114,30 @@ export function CardControls({
       <h2 className="inspector-title">{tab}</h2>
       {tab === "Typography" && (
         <>
-          <span className="menu-label">Theme</span>
-          <div className="theme-list">
-            {Object.entries(palettes).map(([name, p]) => (
-              <button
-                key={name}
-                aria-pressed={c.theme === name}
-                className={c.theme === name ? "on" : ""}
-                onClick={() => set("theme", name)}
-              >
-                <span className="theme-chip" style={{ background: p.bg }}>
-                  {[p.keyword, p.string, p.number].map((color) => (
-                    <i key={color} style={{ background: color }} />
+          {(["Dark", "Light"] as const).map((tone) => (
+            <div key={tone}>
+              <span className="menu-label">{tone} themes</span>
+              <div className="theme-list">
+                {Object.entries(palettes)
+                  .filter(([, p]) => isLight(p.bg) === (tone === "Light"))
+                  .map(([name, p]) => (
+                    <button
+                      key={name}
+                      aria-pressed={c.theme === name}
+                      className={c.theme === name ? "on" : ""}
+                      onClick={() => set("theme", name)}
+                    >
+                      <span className="theme-chip" style={{ background: p.bg }}>
+                        {[p.keyword, p.string, p.number].map((color) => (
+                          <i key={color} style={{ background: color }} />
+                        ))}
+                      </span>
+                      {name}
+                    </button>
                   ))}
-                </span>
-                {name}
-              </button>
-            ))}
-          </div>
+              </div>
+            </div>
+          ))}
           <span className="menu-label">Font</span>
           <div className="font-grid" role="group" aria-label="Font family">
             {fonts.map(([label, family]) => (
