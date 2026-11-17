@@ -12,6 +12,8 @@ import {
 import { cardTemplate, templateNames } from "./templates";
 import { readImage } from "./storage";
 
+// Built once: thumbnails show each template's real colours.
+const templatePreviews = templateNames.map((name) => cardTemplate(name));
 const effectKeys = [
   "shadow",
   "border",
@@ -366,22 +368,35 @@ export function CardControls({
             Replaces the current card. Undo with ⌘/Ctrl Z.
           </p>
           <div className="template-grid">
-            {templateNames.map((name, i) => (
-              <button key={name} onClick={() => change(cardTemplate(name))}>
-                <span
-                  className="template-art"
-                  style={{
-                    background: backgroundCSS({
-                      ...c,
-                      background: backgroundNames[i % 8],
-                    }),
-                  }}
+            {templatePreviews.map((t) => {
+              const p = palettes[t.theme] || palettes.Midnight;
+              return (
+                <button
+                  key={t.title}
+                  onClick={() => change(cardTemplate(t.title))}
                 >
-                  <i />
-                </span>
-                {name}
-              </button>
-            ))}
+                  <span
+                    className="template-art"
+                    style={{ background: backgroundCSS(t) }}
+                  >
+                    <span
+                      className="template-window"
+                      style={{ background: p.bg }}
+                    >
+                      <span className="template-dots">
+                        <i />
+                        <i />
+                        <i />
+                      </span>
+                      <span style={{ background: p.keyword, width: "34%" }} />
+                      <span style={{ background: p.string, width: "58%" }} />
+                      <span style={{ background: p.comment, width: "44%" }} />
+                    </span>
+                  </span>
+                  {t.title}
+                </button>
+              );
+            })}
           </div>
         </>
       )}

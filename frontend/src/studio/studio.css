@@ -508,21 +508,36 @@
   color: var(--text);
 }
 .template-art {
-  height: 62px;
-  border-radius: 6px;
+  height: 72px;
+  border-radius: 7px;
   display: grid;
   place-items: center;
+  border: 1px solid #ffffff10;
 }
-.template-art i {
-  width: 62%;
-  height: 52%;
-  border-radius: 4px;
-  background:
-    linear-gradient(#ffffff55, #ffffff55) 8px 9px / 30% 2px no-repeat,
-    linear-gradient(#ffffff33, #ffffff33) 8px 16px / 50% 2px no-repeat,
-    linear-gradient(#ffffff33, #ffffff33) 8px 23px / 40% 2px no-repeat,
-    #11131bdd;
-  box-shadow: 0 4px 12px #0005;
+.template-window {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 64%;
+  padding: 6px 7px 8px;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px #0004;
+}
+.template-window > span:not(.template-dots) {
+  height: 3px;
+  border-radius: 2px;
+  opacity: 0.85;
+}
+.template-dots {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 2px;
+}
+.template-dots i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #ffffff55;
 }
 .chip-grid {
   display: flex;
