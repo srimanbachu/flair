@@ -74,7 +74,10 @@ test("canvas shapes, history, comments and grouping", async ({ page }) => {
   await page.mouse.move(b.x + 400, b.y + 300, { steps: 8 });
   await page.mouse.up();
   await expect(page.locator("[data-item]")).toHaveCount(1);
-  await page.getByLabel("Text / code").fill("Frontend");
+  await page.locator("[data-item]").first().dblclick();
+  await page.getByLabel("Edit text").fill("Frontend");
+  await page.keyboard.press("Enter");
+  await expect(page.locator("[data-item]")).toContainText("Frontend");
   await page.getByText("Comments", { exact: true }).click();
   await page.getByLabel("Leave feedback").fill("Ship it");
   await page.getByRole("button", { name: "Add comment" }).click();
@@ -92,9 +95,9 @@ test("canvas attached connectors follow nodes and SVG exports", async ({
   await page.getByRole("button", { name: "Canvas", exact: true }).click();
   await page.getByRole("button", { name: "System architecture" }).click();
   await expect(page.locator("[data-item]")).toHaveCount(9);
-  await page.getByRole("button", { name: "Layers" }).click();
-  await page.locator(".layer-row").filter({ hasText: "Client" }).click();
-  await page.getByLabel("Text / code").fill("Browser");
+  await page.locator("[data-item]").filter({ hasText: "Client" }).dblclick();
+  await page.getByLabel("Edit text").fill("Browser");
+  await page.keyboard.press("Enter");
   await page.getByRole("button", { name: "Export", exact: true }).click();
   const promise = page.waitForEvent("download");
   await page.getByRole("button", { name: "SVG vector" }).click();
@@ -194,7 +197,9 @@ test("same-browser local room syncs between two tabs", async ({
   await expect(other.locator("[data-item]")).toHaveCount(7);
   await other.getByRole("button", { name: "Layers" }).click();
   await other.locator(".layer-row").filter({ hasText: "Design" }).click();
-  await other.getByLabel("Text / code").fill("Shared design");
+  await other.keyboard.press("Enter");
+  await other.getByLabel("Edit text").fill("Shared design");
+  await other.keyboard.press("Enter");
   await expect(
     page.locator("[data-item]").filter({ hasText: "Shared design" }),
   ).toHaveCount(1);
@@ -382,4 +387,30 @@ test("single-key canvas shortcuts switch tools and Escape returns to grab", asyn
   await expect(
     page.getByRole("dialog", { name: "Keyboard shortcuts" }),
   ).toBeVisible();
+});
+test("text is typed and edited directly on the canvas", async ({ page }) => {
+  await page.getByRole("button", { name: "Canvas", exact: true }).click();
+  const b = (await page.locator(".canvas-surface").boundingBox())!;
+  await page.keyboard.press("t");
+  await page.mouse.click(b.x + 400, b.y + 300);
+  const editor = page.getByLabel("Edit text");
+  await expect(editor).toBeFocused();
+  await page.keyboard.type("Hello canvas");
+  await page.keyboard.press("Enter");
+  await expect(editor).toHaveCount(0);
+  const item = page.locator("[data-item]").filter({ hasText: "Hello canvas" });
+  await expect(item).toHaveCount(1);
+  await expect(
+    page.getByRole("button", { name: "Hand", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await item.dblclick();
+  await editor.fill("Edited in place");
+  await page.keyboard.press("Escape");
+  await expect(page.locator("[data-item]")).toContainText("Edited in place");
+  await page.getByRole("button", { name: "Undo", exact: true }).click();
+  await expect(page.locator("[data-item]")).toContainText("Hello canvas");
+  await page.keyboard.press("t");
+  await page.mouse.click(b.x + 200, b.y + 500);
+  await page.keyboard.press("Escape");
+  await expect(page.locator("[data-item]")).toHaveCount(1);
 });

@@ -135,6 +135,9 @@ const fillColors = [
   "#f4d985",
 ];
 const freehand = ["pen", "pencil", "brush"];
+const editable = (kind: string) =>
+  !freehand.includes(kind) &&
+  !["image", "arrow", "line", "icon"].includes(kind);
 function Swatches({
   label,
   value,
@@ -214,6 +217,9 @@ export function Canvas({
   const [comment, setComment] = useState("");
   const [panel, setPanel] = useState<"board" | "layers" | "keys" | null>(null);
   const imageInput = useRef<HTMLInputElement>(null);
+  const [editing, setEditing] = useState<{ id: string; text: string } | null>(
+    null,
+  );
   const [marquee, setMarquee] = useState<{
     x: number;
     y: number;
@@ -375,6 +381,12 @@ export function Canvas({
     );
     setSelected([]);
   };
+  const startEditing = (id: string) => {
+    const item = board.items.find((i) => i.id === id);
+    if (!item || !editable(item.kind) || present >= 0) return;
+    setSelected([id]);
+    setEditing({ id, text: item.text });
+  };
   const fit = (target: CanvasItem[] = board.items, max = 2) => {
     const b = bounds(target);
     const r = host.current!.getBoundingClientRect();
@@ -427,6 +439,11 @@ export function Canvas({
       if (e.shiftKey && e.code === "Digit1") {
         e.preventDefault();
         fit();
+        return;
+      }
+      if (e.key === "Enter" && active.length === 1 && editable(first.kind)) {
+        e.preventDefault();
+        startEditing(first.id);
         return;
       }
       if (e.key === "?") {
@@ -580,6 +597,19 @@ export function Canvas({
         kind: resize ? "resize" : "move",
         view,
       };
+      return;
+    }
+    if (tool === "text") {
+      const t = {
+        ...makeItem("text", p.x, p.y - 22),
+        text: "",
+        w: 200,
+        h: 44,
+      };
+      commit([...board.items, t]);
+      setSelected([t.id]);
+      setEditing({ id: t.id, text: "" });
+      setTool("hand");
       return;
     }
     const n = makeItem(tool === "square" ? "rectangle" : tool, p.x, p.y);
@@ -774,10 +804,44 @@ export function Canvas({
     setPanel(null);
     fit(next.items, 1);
   };
+  /* Commit inline edits as a single history step. Empty text boxes are
+     removed; free text boxes grow to fit what was typed. */
+  const finishEditing = () => {
+    if (!editing) return;
+    const item = board.items.find((i) => i.id === editing.id);
+    setEditing(null);
+    if (!item) return;
+    if (item.kind === "text" && !editing.text.trim()) {
+      commit(board.items.filter((i) => i.id !== item.id));
+      setSelected([]);
+      return;
+    }
+    if (editing.text === item.text) return;
+    const lines = editing.text.split("\n");
+    const fitted =
+      item.kind === "text"
+        ? {
+            w: Math.max(
+              item.w,
+              Math.max(...lines.map((l) => l.length)) * item.fontSize * 0.6 +
+                24,
+            ),
+            h: Math.max(item.h, lines.length * item.fontSize * 1.3 + 20),
+          }
+        : {};
+    commit(
+      board.items.map((i) =>
+        i.id === item.id ? { ...i, text: editing.text, ...fitted } : i,
+      ),
+    );
+  };
+  const editItem = editing && board.items.find((i) => i.id === editing.id);
   const presentationFrame = present >= 0 ? frames[present] : undefined;
-  const renderItems = presentationFrame
-    ? board.items.filter((i) => i.id !== presentationFrame.id)
-    : items;
+  const renderItems = (
+    presentationFrame
+      ? board.items.filter((i) => i.id !== presentationFrame.id)
+      : items
+  ).map((i) => (editing && i.id === editing.id ? { ...i, text: "" } : i));
   const isLine = first && ["arrow", "line"].includes(first.kind);
   const hasText =
     first &&
@@ -836,14 +900,18 @@ export function Canvas({
                   key={i.id}
                   data-item={i.id}
                   onPointerDown={(e) => {
-                    if (
-                      !spaceHeld &&
-                      ["select", "hand", "eraser"].includes(tool)
-                    ) {
+                    if (spaceHeld) return;
+                    if (tool === "text" && editable(i.kind)) {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      startEditing(i.id);
+                      setTool("hand");
+                    } else if (["select", "hand", "eraser"].includes(tool)) {
                       e.stopPropagation();
                       down(e, i.id);
                     }
                   }}
+                  onDoubleClick={() => startEditing(i.id)}
                 >
                   <CanvasShape
                     item={i}
@@ -884,12 +952,76 @@ export function Canvas({
               )}
             </g>
           </svg>
+          {editItem &&
+            editing &&
+            !presentationFrame &&
+            (() => {
+              const z = view.z;
+              const lines = Math.max(1, editing.text.split("\n").length);
+              const lineH = editItem.fontSize * 1.3 * z;
+              const height = lines * lineH + 8;
+              const isCode = editItem.kind === "code";
+              const isFrame = editItem.kind === "frame";
+              const top = isFrame
+                ? view.y + (editItem.y - editItem.fontSize * 1.6) * z
+                : isCode
+                  ? view.y + (editItem.y + 14) * z
+                  : view.y + (editItem.y + editItem.h / 2) * z - height / 2;
+              return (
+                <textarea
+                  className="canvas-text-editor"
+                  aria-label="Edit text"
+                  autoFocus
+                  spellCheck={!isCode}
+                  value={editing.text}
+                  placeholder={editItem.kind === "text" ? "Type something" : ""}
+                  onChange={(e) =>
+                    setEditing({ id: editing.id, text: e.target.value })
+                  }
+                  onFocus={(e) => {
+                    const end = e.currentTarget.value.length;
+                    e.currentTarget.setSelectionRange(end, end);
+                  }}
+                  onBlur={finishEditing}
+                  onKeyDown={(e) => {
+                    e.stopPropagation();
+                    if (e.key === "Escape") e.currentTarget.blur();
+                    if (
+                      e.key === "Enter" &&
+                      (isCode ? e.metaKey || e.ctrlKey : !e.shiftKey)
+                    ) {
+                      e.preventDefault();
+                      e.currentTarget.blur();
+                    }
+                  }}
+                  style={{
+                    left: view.x + (editItem.x + (isCode ? 12 : 0)) * z,
+                    top,
+                    width: Math.max(80, (editItem.w - (isCode ? 24 : 0)) * z),
+                    height: isCode
+                      ? Math.max(height, (editItem.h - 28) * z)
+                      : height,
+                    fontSize: editItem.fontSize * z,
+                    lineHeight: `${lineH}px`,
+                    fontFamily: isCode ? "monospace" : editItem.font,
+                    fontWeight: editItem.bold ? 700 : 400,
+                    textAlign: isCode || isFrame ? "left" : "center",
+                    color:
+                      editItem.kind === "sticky"
+                        ? "#30281b"
+                        : isCode
+                          ? "#bfe3c2"
+                          : editItem.stroke,
+                  }}
+                />
+              );
+            })()}
           {board.items.length === 0 && (
             <div className="canvas-empty">
               <h2>Start sketching</h2>
               <p>
-                Pick a tool above, or begin from a template. Press <kbd>?</kbd>{" "}
-                for shortcuts.
+                Pick a tool above or begin from a template. Double-click
+                anything to edit its text, and press <kbd>?</kbd> for shortcuts.
               </p>
               <div className="template-chips">
                 {boardTemplates
@@ -1066,14 +1198,15 @@ export function Canvas({
                 <X size={14} />
               </button>
             </div>
-            {hasText && (
-              <Field label="Text / code">
-                <textarea
-                  rows={3}
-                  value={first.text}
-                  onChange={(e) => patch({ text: e.target.value })}
-                />
-              </Field>
+            {active.length === 1 && editable(first.kind) && (
+              <button
+                className="edit-hint"
+                onClick={() => startEditing(first.id)}
+              >
+                <Type size={13} strokeWidth={1.75} />
+                Edit text on canvas
+                <kbd>Enter</kbd>
+              </button>
             )}
             {first.kind === "icon" && (
               <Field label="Developer icon">
