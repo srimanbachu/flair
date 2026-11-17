@@ -74,13 +74,13 @@ export default function Studio() {
       : null;
   const workspacePath = (kind: Workspace["kind"]) =>
     kind === "canvas" ? "/canvas" : "/cards";
+  const onProjects = location.pathname === "/projects";
   const [past, setPast] = useState<Workspace[]>([]);
   const [future, setFuture] = useState<Workspace[]>([]);
   const [activeBlock, setActiveBlock] = useState(0);
   const [toast, setToast] = useState("");
   const [saved, setSaved] = useState(false);
   const [draftStatus, setDraftStatus] = useState("Saving draft…");
-  const [library, setLibrary] = useState(false);
   const [projects, setProjects] = useState<SavedProject[]>(readProjects);
   const [menu, setMenu] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -106,34 +106,15 @@ export default function Studio() {
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(() => setToast(""), 5000);
   }, []);
+  // Escape on the projects page returns to the last workspace.
   useEffect(() => {
-    if (!library) return;
-    const previous = document.activeElement as HTMLElement | null;
-    const modal = document.querySelector<HTMLElement>('[role="dialog"]');
-    const selector =
-      'button:not(:disabled), input, select, textarea, [tabindex="0"]';
-    modal?.querySelector<HTMLElement>(selector)?.focus();
-    const key = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setLibrary(false);
-      if (event.key !== "Tab" || !modal) return;
-      const nodes = [...modal.querySelectorAll<HTMLElement>(selector)];
-      const first = nodes[0],
-        last = nodes[nodes.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last?.focus();
-      }
-      if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first?.focus();
-      }
+    if (!onProjects) return;
+    const key = (e: KeyboardEvent) => {
+      if (e.key === "Escape") navigate(workspacePath(work.kind));
     };
     window.addEventListener("keydown", key);
-    return () => {
-      window.removeEventListener("keydown", key);
-      previous?.focus();
-    };
-  }, [library]);
+    return () => window.removeEventListener("keydown", key);
+  }, [onProjects, navigate, work.kind]);
   const replaceWorkspace = (next: Workspace) => {
     setWork(next);
     setPast([]);
@@ -399,10 +380,10 @@ export default function Studio() {
             <Plus size={16} />
             <span>New {work.kind === "card" ? "card" : "canvas"}</span>
           </button>
-          <button onClick={() => setLibrary(true)}>
+          <NavLink to="/projects" className="header-link">
             <FolderOpen size={16} />
             <span>My projects</span>
-          </button>
+          </NavLink>
           <button
             className="icon-button"
             title="Undo (⌘/Ctrl Z)"
@@ -464,7 +445,107 @@ export default function Studio() {
           </div>
         </div>
       </header>
-      {work.kind === "card" ? (
+      {onProjects ? (
+        <main className="projects-page">
+          <section className="library-modal" aria-label="My projects">
+            <div className="section-title">
+              <h2>My projects</h2>
+              <NavLink to={workspacePath(work.kind)} className="header-link">
+                <X size={16} />
+                <span>Close</span>
+              </NavLink>
+            </div>
+            <p className="muted">
+              Stored only in this browser. Download a project file for a
+              portable backup.
+            </p>
+            <div className="library-actions">
+              {(["card", "canvas"] as const).map((kind) => (
+                <button
+                  key={kind}
+                  onClick={() => {
+                    change(
+                      kind === "card"
+                        ? { ...work, kind, card: defaultCard() }
+                        : { ...work, kind, board: emptyBoard() },
+                    );
+                    setProjectId(null);
+                    navigate(workspacePath(kind));
+                  }}
+                >
+                  <Plus size={16} />
+                  New {kind}
+                </button>
+              ))}
+              <button onClick={() => importRef.current?.click()}>
+                <Upload size={16} />
+                Import JSON
+              </button>
+            </div>
+            {!projects.length && (
+              <div className="library-empty">
+                <FolderOpen size={38} />
+                <h3>No saved projects yet</h3>
+                <p>Press ⌘/Ctrl S to save the current card or canvas here.</p>
+              </div>
+            )}
+            <div className="project-grid">
+              {projects.map((p) => (
+                <article key={p.id}>
+                  <div className={`project-cover cover-${p.kind}`}>
+                    {p.kind === "card" ? (
+                      <Code2 size={32} />
+                    ) : (
+                      <PenTool size={32} />
+                    )}
+                    <span>{p.kind === "card" ? "CODE CARD" : "CANVAS"}</span>
+                  </div>
+                  <h3>{p.name || "Untitled"}</h3>
+                  <small>{new Date(p.updated).toLocaleString()}</small>
+                  <div className="section-title">
+                    <button
+                      onClick={() => {
+                        try {
+                          replaceWorkspace({
+                            ...work,
+                            kind: p.kind,
+                            ...(p.kind === "card"
+                              ? { card: validateCard(p.data) }
+                              : { board: validateBoard(p.data) }),
+                          });
+                          navigate(workspacePath(p.kind));
+                          setProjectId(p.id);
+                        } catch {
+                          notify("This project could not be opened.");
+                        }
+                      }}
+                    >
+                      Open project
+                    </button>
+                    <button
+                      aria-label={`Delete ${p.name}`}
+                      onClick={() => {
+                        try {
+                          removeProject(p.id);
+                          setProjects(readProjects());
+                          if (projectId === p.id) setProjectId(null);
+                          notify(
+                            "Project removed from library. The current draft is kept.",
+                          );
+                        } catch {
+                          notify("Could not update local storage.");
+                        }
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        </main>
+      ) : work.kind === "card" ? (
         <div className="card-workspace">
           <nav className="tool-rail" aria-label="Card settings">
             {cardTabs.map((t) => {
@@ -577,7 +658,6 @@ export default function Studio() {
             });
             navigate(workspacePath(p.kind));
             setProjectId(null);
-            setLibrary(false);
             notify("Project imported. Save it to add it to your library.");
           } catch (err) {
             notify(
@@ -597,113 +677,6 @@ export default function Studio() {
           >
             <X size={14} />
           </button>
-        </div>
-      )}
-      {library && (
-        <div className="modal-backdrop">
-          <section
-            role="dialog"
-            aria-modal="true"
-            aria-label="My projects"
-            className="library-modal"
-          >
-            <div className="section-title">
-              <h2>My projects</h2>
-              <button
-                aria-label="Close library"
-                onClick={() => setLibrary(false)}
-              >
-                <X size={20} />
-              </button>
-            </div>
-            <p className="muted">
-              Stored only in this browser. Download a project file for a
-              portable backup.
-            </p>
-            <div className="library-actions">
-              <button
-                onClick={() => {
-                  replaceWorkspace({
-                    ...work,
-                    ...(work.kind === "card"
-                      ? { card: defaultCard() }
-                      : { board: emptyBoard() }),
-                  });
-                  setProjectId(null);
-                  setLibrary(false);
-                }}
-              >
-                <Plus size={16} />
-                New {work.kind === "card" ? "card" : "canvas"}
-              </button>
-              <button onClick={() => importRef.current?.click()}>
-                <Upload size={16} />
-                Import JSON
-              </button>
-            </div>
-            {!projects.length && (
-              <div className="library-empty">
-                <FolderOpen size={38} />
-                <h3>No saved projects yet</h3>
-                <p>Press ⌘/Ctrl S to save the current card or canvas here.</p>
-              </div>
-            )}
-            <div className="project-grid">
-              {projects.map((p) => (
-                <article key={p.id}>
-                  <div className={`project-cover cover-${p.kind}`}>
-                    {p.kind === "card" ? (
-                      <Code2 size={32} />
-                    ) : (
-                      <PenTool size={32} />
-                    )}
-                    <span>{p.kind === "card" ? "CODE CARD" : "CANVAS"}</span>
-                  </div>
-                  <h3>{p.name || "Untitled"}</h3>
-                  <small>{new Date(p.updated).toLocaleString()}</small>
-                  <div className="section-title">
-                    <button
-                      onClick={() => {
-                        try {
-                          replaceWorkspace({
-                            ...work,
-                            kind: p.kind,
-                            ...(p.kind === "card"
-                              ? { card: validateCard(p.data) }
-                              : { board: validateBoard(p.data) }),
-                          });
-                          navigate(workspacePath(p.kind));
-                          setProjectId(p.id);
-                          setLibrary(false);
-                        } catch {
-                          notify("This project could not be opened.");
-                        }
-                      }}
-                    >
-                      Open project
-                    </button>
-                    <button
-                      aria-label={`Delete ${p.name}`}
-                      onClick={() => {
-                        try {
-                          removeProject(p.id);
-                          setProjects(readProjects());
-                          if (projectId === p.id) setProjectId(null);
-                          notify(
-                            "Project removed from library. The current draft is kept.",
-                          );
-                        } catch {
-                          notify("Could not update local storage.");
-                        }
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
         </div>
       )}
     </div>

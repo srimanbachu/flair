@@ -48,10 +48,10 @@ test("local library survives reload and opens saved project", async ({
   await page.getByLabel("Card title", { exact: true }).fill("Saved locally");
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await page.reload();
-  await page.getByRole("button", { name: "My projects" }).click();
+  await page.getByRole("link", { name: "My projects" }).click();
   await expect(
     page
-      .getByRole("dialog")
+      .locator(".project-grid")
       .getByRole("heading", { name: "Saved locally", exact: true }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Open project" }).click();
@@ -719,12 +719,12 @@ test("export quality goes up to 10x", async ({ page }) => {
   expect(bytes.readUInt32BE(16)).toBe(w * 5);
 });
 test("no focus ring is drawn on buttons or the card", async ({ page }) => {
-  const projects = page.getByRole("button", { name: "My projects" });
-  await projects.focus();
-  await page.keyboard.press("Enter");
-  await page.keyboard.press("Escape");
-  await expect(projects).toBeFocused();
-  await expect(projects).toHaveCSS("outline-style", "none");
+  const newCard = page.getByRole("button", { name: "New card", exact: true });
+  await newCard.focus();
+  await page.keyboard.press("Shift+Tab");
+  await page.keyboard.press("Tab");
+  await expect(newCard).toBeFocused();
+  await expect(newCard).toHaveCSS("outline-style", "none");
   await page.getByLabel("Code block 1", { exact: true }).focus();
   await expect(page.locator(".code-window").first()).toHaveCSS(
     "outline-style",
@@ -757,4 +757,16 @@ test("card inspector tabs have their own URLs", async ({ page }) => {
   ).toHaveAttribute("aria-pressed", "true");
   await page.goto("/cards/nope");
   await expect(page).toHaveURL(/\/cards\/background$/);
+});
+test("My projects is its own page", async ({ page }) => {
+  await page.getByRole("link", { name: "My projects" }).click();
+  await expect(page).toHaveURL(/\/projects$/);
+  await expect(
+    page.getByRole("heading", { name: "My projects" }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page).toHaveURL(/\/cards/);
+  await page.goto("/projects");
+  await page.getByRole("button", { name: "New canvas", exact: true }).click();
+  await expect(page).toHaveURL(/\/canvas$/);
 });

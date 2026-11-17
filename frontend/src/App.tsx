@@ -11,6 +11,7 @@ function App() {
       <Route element={<Studio />}>
         <Route path="/cards/*" element={null} />
         <Route path="/canvas" element={null} />
+        <Route path="/projects" element={null} />
       </Route>
       <Route path="*" element={<Navigate to="/cards" replace />} />
     </Routes>

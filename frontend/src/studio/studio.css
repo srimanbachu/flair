@@ -1156,21 +1156,46 @@
 .toast button {
   padding: 0;
 }
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: #08090cc9;
-  backdrop-filter: blur(9px);
-  z-index: 90;
+.projects-page {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   display: flex;
   justify-content: center;
+  padding: 32px 20px;
+}
+.projects-page .library-modal {
+  width: min(960px, 100%);
+  background: none;
+  border: 0;
+  box-shadow: none;
+  padding: 8px 0;
+}
+.projects-page .library-modal h2 {
+  font-size: 22px;
+}
+.projects-page .project-grid {
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+.header-link {
+  display: inline-flex;
   align-items: center;
-  padding: 28px;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  color: inherit;
+  text-decoration: none;
+}
+.header-link:hover {
+  background: #ffffff09;
+}
+.header-link[aria-current="page"] {
+  background: #ffffff0d;
+  color: var(--text);
 }
 .library-modal {
   width: 760px;
-  max-height: 85vh;
-  overflow: auto;
+  align-self: flex-start;
   background: var(--panel);
   border: 1px solid var(--line-strong);
   border-radius: 16px;
@@ -1880,9 +1905,6 @@ a {
   }
   .project-grid {
     grid-template-columns: 1fr;
-  }
-  .modal-backdrop {
-    padding: 14px;
   }
   .library-modal {
     padding: 20px;
