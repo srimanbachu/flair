@@ -574,3 +574,12 @@ test("fixed sizes scale the window to fill the frame", async ({ page }) => {
       .toBeGreaterThan(0.85);
   }
 });
+test("changing the language updates the card label and file name", async ({
+  page,
+}) => {
+  await page.getByLabel("File name").fill("hello.ts");
+  await page.getByLabel("Language").selectOption("typescript");
+  await page.getByLabel("Language").selectOption("python");
+  await expect(page.locator(".language-badge").first()).toHaveText("Python");
+  await expect(page.locator(".code-filename").first()).toHaveText("hello.py");
+});

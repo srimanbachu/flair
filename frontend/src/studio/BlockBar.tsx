@@ -3,21 +3,22 @@ import { Field } from "./Controls";
 import type { Card, CodeBlock } from "./model";
 import { makeBlock } from "./model";
 
-const languages = [
-  "typescript",
-  "javascript",
-  "tsx",
-  "jsx",
-  "python",
-  "json",
-  "sql",
-  "bash",
-  "css",
-  "markup",
-  "c",
-  "cpp",
-  "plain",
-];
+/** Language id → [label shown on the card, file extension]. */
+const languages: Record<string, [string, string]> = {
+  typescript: ["TypeScript", "ts"],
+  javascript: ["JavaScript", "js"],
+  tsx: ["TSX", "tsx"],
+  jsx: ["JSX", "jsx"],
+  python: ["Python", "py"],
+  json: ["JSON", "json"],
+  sql: ["SQL", "sql"],
+  bash: ["Bash", "sh"],
+  css: ["CSS", "css"],
+  markup: ["HTML", "html"],
+  c: ["C", "c"],
+  cpp: ["C++", "cpp"],
+  plain: ["Text", "txt"],
+};
 
 /** Settings for the code block last clicked on the card. */
 export function BlockBar({
@@ -70,10 +71,25 @@ export function BlockBar({
       <select
         aria-label="Language"
         value={b.language}
-        onChange={(e) => update({ language: e.target.value })}
+        onChange={(e) => {
+          const next = e.target.value;
+          const [oldLabel, oldExt] = languages[b.language] || ["", ""];
+          const [label, ext] = languages[next];
+          // Follow the language unless the user wrote their own label/name.
+          update({
+            language: next,
+            label: !b.label || b.label === oldLabel ? label : b.label,
+            name:
+              oldExt && b.name.endsWith(`.${oldExt}`)
+                ? `${b.name.slice(0, -oldExt.length)}${ext}`
+                : b.name,
+          });
+        }}
       >
-        {languages.map((l) => (
-          <option key={l}>{l}</option>
+        {Object.entries(languages).map(([id, [label]]) => (
+          <option key={id} value={id}>
+            {id === "plain" ? "Plain text" : label}
+          </option>
         ))}
       </select>
       <details className="effects-pop">
