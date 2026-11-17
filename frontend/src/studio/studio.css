@@ -895,6 +895,11 @@
   min-width: 480px;
   max-width: 2400px;
 }
+.card-fixed .code-stack {
+  width: max-content;
+  min-width: 360px;
+  flex-shrink: 0;
+}
 .card-auto .code-stack {
   width: auto;
   min-width: 360px;
@@ -1100,25 +1105,6 @@
   font-size: 0.6em;
   color: #f9d887;
   margin-left: 16px;
-}
-.preview-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 20px 16px;
-  padding: 8px 10px 8px 12px;
-  border: 1px solid #f4a25933;
-  background: #f4a2590f;
-  border-radius: 10px;
-  font-size: 12px;
-  color: #f0c08a;
-}
-.studio .preview-status button {
-  margin-left: auto;
-  font-size: 12px;
-  padding: 4px 8px;
-  color: #f0c08a;
-  border: 1px solid #f4a25944;
 }
 .toast {
   position: fixed;

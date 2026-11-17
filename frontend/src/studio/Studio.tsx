@@ -16,7 +16,6 @@ import {
   Palette,
   AppWindow,
   LayoutTemplate,
-  TriangleAlert,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { toPng, toJpeg, toBlob } from "html-to-image";
@@ -327,27 +326,6 @@ export default function Studio() {
       setBusy(false);
     }
   };
-  const cardHeight = work.card.blocks.reduce(
-    (sum, b) =>
-      sum +
-      b.code.split("\n").length * work.card.fontSize * work.card.lineHeight +
-      51 +
-      (work.card.fileName || work.card.controls ? 52 : 0) +
-      20,
-    -20,
-  );
-  const contentClipped =
-    !work.card.autoSize &&
-    (cardHeight > work.card.height - work.card.padding * 2 ||
-      work.card.blocks.some(
-        (b) =>
-          Math.max(...b.code.split("\n").map((line) => line.length)) *
-            work.card.fontSize *
-            0.62 +
-            52 +
-            (work.card.lineNumbers ? 38 : 0) >
-          work.card.width - work.card.padding * 2,
-      ));
   return (
     <div className="studio">
       <header className="studio-header">
@@ -530,14 +508,6 @@ export default function Studio() {
               change={(card) => change({ ...work, card })}
               notify={notify}
             />
-            {contentClipped && (
-              <div className="preview-status" role="status">
-                <TriangleAlert size={14} />
-                Content may be cropped. Increase the size or reduce the type
-                size.
-                <button onClick={() => setTab("Export")}>Adjust size</button>
-              </div>
-            )}
           </main>
         </div>
       ) : (

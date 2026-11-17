@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CSSProperties, RefObject } from "react";
 import type { Card } from "./model";
 import { backgroundCSS, palettes } from "./model";
@@ -21,6 +21,31 @@ export function CardPreview({
   onCodeChange: (id: string, code: string) => void;
 }) {
   const p = palettes[c.theme] || palettes.Midnight;
+  const stack = useRef<HTMLDivElement>(null);
+  const [fit, setFit] = useState(1);
+  useEffect(() => {
+    const el = stack.current;
+    if (!el || c.autoSize) return;
+    // Fixed sizes: scale the windows so they fill the frame inside the
+    // padding, rather than floating small (or cropping) in a big background.
+    const measure = () => {
+      const w = el.offsetWidth,
+        h = el.offsetHeight;
+      if (!w || !h) return;
+      setFit(
+        Math.min(
+          2.5,
+          (c.width - c.padding * 2) / w,
+          (c.height - c.padding * 2) / h,
+        ),
+      );
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [c.autoSize, c.width, c.height, c.padding]);
+  const scaleBy = c.autoSize ? 1 : fit;
   useEffect(() => {
     const el = exportRef.current;
     if (!el) return;
@@ -42,7 +67,7 @@ export function CardPreview({
       style={{ width: size.w * scale, height: size.h * scale }}
     >
       <div
-        className={`card-art ${c.autoSize ? "card-auto" : ""}`}
+        className={`card-art ${c.autoSize ? "card-auto" : "card-fixed"}`}
         ref={exportRef}
         style={{
           width: c.autoSize ? undefined : c.width,
@@ -84,14 +109,19 @@ export function CardPreview({
         )}
         <div
           className="code-stack"
+          ref={stack}
           style={
             {
               // Identity transforms/filters still force a raster layer, which
               // blurs text once the preview is scaled down, so skip them.
               transform:
-                c.perspective || c.rotation
-                  ? `perspective(1200px) rotateY(${c.perspective}deg) rotate(${c.rotation}deg)`
-                  : undefined,
+                [
+                  Math.abs(scaleBy - 1) > 0.001 && `scale(${scaleBy})`,
+                  (c.perspective || c.rotation) &&
+                    `perspective(1200px) rotateY(${c.perspective}deg) rotate(${c.rotation}deg)`,
+                ]
+                  .filter(Boolean)
+                  .join(" ") || undefined,
               filter: c.blur ? `blur(${c.blur}px)` : undefined,
               WebkitBoxReflect: c.reflection
                 ? `below 14px linear-gradient(transparent,rgba(255,255,255,${c.reflection / 100}))`

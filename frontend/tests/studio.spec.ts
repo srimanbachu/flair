@@ -554,3 +554,23 @@ test("drafts saved before auto sizing open fitted to the code", async ({
   await page.reload();
   await expect(page.locator(".size-chip")).toContainText("Auto");
 });
+test("fixed sizes scale the window to fill the frame", async ({ page }) => {
+  await page
+    .getByRole("button", { name: "Export", exact: true })
+    .last()
+    .click();
+  for (const size of ["1:1", "Instagram Story", "YouTube"]) {
+    await page
+      .getByRole("group", { name: "Export dimensions" })
+      .getByRole("button", { name: size, exact: true })
+      .click();
+    await expect
+      .poll(async () => {
+        const a = (await page.locator(".card-art").boundingBox())!;
+        const w = (await page.locator(".code-stack").boundingBox())!;
+        // The window reaches the padding on its tightest side.
+        return Math.max(w.width / a.width, w.height / a.height);
+      })
+      .toBeGreaterThan(0.85);
+  }
+});
