@@ -47,11 +47,18 @@ function uniqueIds(items: { id: string }[]) {
     throw new Error("Project contains missing or duplicate object IDs.");
 }
 export function validateCard(value: unknown): Card {
-  // Cards saved before auto sizing existed move to "Fit to code" so the
-  // background wraps the window instead of a fixed 1200x900 frame.
-  if (value && typeof value === "object" && !("autoSize" in value))
-    value = { ...value, autoSize: true };
-  const c = shape(value, defaultCard()) as unknown as Card;
+  // Settings added after a card was saved take their default value, so
+  // older drafts and project files keep opening as the editor grows.
+  // (Cards from before auto sizing therefore open as "Fit to code".)
+  const defaults = defaultCard();
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    const saved = value as Record<string, unknown>;
+    const missing = Object.fromEntries(
+      Object.entries(defaults).filter(([key]) => !(key in saved)),
+    );
+    value = { ...missing, ...saved };
+  }
+  const c = shape(value, defaults) as unknown as Card;
   if (c.blocks.length < 1 || c.blocks.length > 30 || c.annotations.length > 100)
     throw new Error("Too many blocks or annotations.");
   c.blocks = c.blocks.map((b) => shape(b, makeBlock()) as unknown as typeof b);
