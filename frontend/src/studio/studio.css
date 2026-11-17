@@ -1215,7 +1215,6 @@
 .studio .canvas-toolbar button.active kbd {
   opacity: 0.7;
 }
-.canvas-surface.tool-hand [data-item],
 .canvas-surface.tool-select [data-item] {
   cursor: move;
 }

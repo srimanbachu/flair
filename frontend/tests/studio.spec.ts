@@ -365,26 +365,26 @@ test("two-finger scroll pans and pinch zooms the canvas, not the page", async ({
   await page.keyboard.press("ControlOrMeta+=");
   await expect(zoom).toHaveText("125%");
 });
-test("single-key canvas shortcuts switch tools and Escape returns to grab", async ({
+test("single-key canvas shortcuts switch tools and Escape returns to select", async ({
   page,
 }) => {
   await page.getByRole("button", { name: "Canvas", exact: true }).click();
   const tool = (name: string) =>
     page.getByRole("button", { name, exact: true });
-  await expect(tool("Hand")).toHaveAttribute("aria-pressed", "true");
+  await expect(tool("Select")).toHaveAttribute("aria-pressed", "true");
   for (const [key, name] of [
     ["r", "Rectangle"],
     ["o", "Ellipse"],
     ["Shift+T", "Triangle"],
     ["a", "Arrow"],
     ["t", "Text"],
-    ["v", "Select"],
+    ["e", "Eraser"],
   ]) {
     await page.keyboard.press(key);
     await expect(tool(name)).toHaveAttribute("aria-pressed", "true");
   }
   await page.keyboard.press("Escape");
-  await expect(tool("Hand")).toHaveAttribute("aria-pressed", "true");
+  await expect(tool("Select")).toHaveAttribute("aria-pressed", "true");
   const b = (await page.locator(".canvas-surface").boundingBox())!;
   await page.keyboard.press("s");
   await page.mouse.move(b.x + 300, b.y + 300);
@@ -395,7 +395,7 @@ test("single-key canvas shortcuts switch tools and Escape returns to grab", asyn
   expect(await square.getAttribute("width")).toBe(
     await square.getAttribute("height"),
   );
-  await expect(tool("Hand")).toHaveAttribute("aria-pressed", "true");
+  await expect(tool("Select")).toHaveAttribute("aria-pressed", "true");
   await page.keyboard.press("?");
   await expect(
     page.getByRole("dialog", { name: "Keyboard shortcuts" }),
@@ -414,7 +414,7 @@ test("text is typed and edited directly on the canvas", async ({ page }) => {
   const item = page.locator("[data-item]").filter({ hasText: "Hello canvas" });
   await expect(item).toHaveCount(1);
   await expect(
-    page.getByRole("button", { name: "Hand", exact: true }),
+    page.getByRole("button", { name: "Select", exact: true }),
   ).toHaveAttribute("aria-pressed", "true");
   await item.dblclick();
   await editor.fill("Edited in place");
@@ -447,4 +447,21 @@ test("clicking the preview jumps to that code block", async ({ page }) => {
   await page.getByRole("button", { name: "Typography", exact: true }).click();
   await page.locator(".code-window").first().click();
   await expect(page.getByLabel("Code block 1", { exact: true })).toBeFocused();
+});
+test("dragging empty canvas box-selects instead of panning", async ({
+  page,
+}) => {
+  await page.getByRole("button", { name: "Canvas", exact: true }).click();
+  await page.getByRole("button", { name: "Flowchart" }).click();
+  const surface = page.locator(".canvas-surface");
+  const b = (await surface.boundingBox())!;
+  const before = await surface.evaluate((el) => el.style.backgroundPosition);
+  await page.mouse.move(b.x + 5, b.y + b.height - 80);
+  await page.mouse.down();
+  await page.mouse.move(b.x + b.width - 5, b.y + 70, { steps: 10 });
+  await page.mouse.up();
+  expect(await surface.evaluate((el) => el.style.backgroundPosition)).toBe(
+    before,
+  );
+  await expect(page.locator(".props-head strong")).toContainText("objects");
 });

@@ -18,7 +18,6 @@ import {
   Eraser,
   Frame,
   Group,
-  Hand,
   Keyboard,
   ImagePlus,
   Layers,
@@ -52,10 +51,7 @@ import { readImage } from "./storage";
 import { validateBoard } from "./projectFiles";
 type Tool = { id: string; label: string; Icon: LucideIcon; key: string };
 const toolGroups: Tool[][] = [
-  [
-    { id: "hand", label: "Hand", Icon: Hand, key: "H" },
-    { id: "select", label: "Select", Icon: MousePointer2, key: "V" },
-  ],
+  [{ id: "select", label: "Select", Icon: MousePointer2, key: "V" }],
   [
     {
       id: "rectangle",
@@ -92,9 +88,12 @@ const toolKeys: Record<string, string> = Object.fromEntries(
 );
 const shortcutList: [string, string][] = [
   ...tools.map((t): [string, string] => [t.key, t.label]),
-  ["Esc", "Back to grab, clear selection"],
-  ["Space + drag", "Pan from any tool"],
-  ["Shift + drag", "Box-select with grab · keep shapes square"],
+  ["Esc", "Back to select, clear selection"],
+  ["Two-finger scroll", "Pan the board"],
+  ["Pinch", "Zoom in / out"],
+  ["Drag empty space", "Select an area (three-finger drag too)"],
+  ["Shift + click", "Add to selection · keep shapes square"],
+  ["Space + drag", "Pan with the mouse"],
   ["Double-click", "Edit text"],
   ["⌘/Ctrl + / −", "Zoom in / out"],
   ["⌘/Ctrl 0", "Zoom to 100%"],
@@ -208,7 +207,7 @@ export function Canvas({
   svgRef: RefObject<SVGSVGElement | null>;
   notify: (s: string) => void;
 }) {
-  const [tool, setTool] = useState("hand");
+  const [tool, setTool] = useState("select");
   const [spaceHeld, setSpaceHeld] = useState(false);
   const [panning, setPanning] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
@@ -438,7 +437,7 @@ export function Canvas({
         setSelected([]);
         setPresent(-1);
         setPanel(null);
-        setTool("hand");
+        setTool("select");
         return;
       }
       if (present >= 0) {
@@ -552,13 +551,10 @@ export function Canvas({
     if (panel === "board") setPanel(null);
     const p = point(e);
     e.currentTarget.setPointerCapture(e.pointerId);
-    // Grab pans on empty space but still picks up objects; Shift+drag on
-    // empty space box-selects. Space or the middle button always pans.
-    if (
-      spaceHeld ||
-      e.button === 1 ||
-      (tool === "hand" && !id && !e.shiftKey)
-    ) {
+    // One pointer tool: drag empty space to box-select (a three-finger
+    // drag is a plain drag), drag objects to move them. Panning comes from
+    // two-finger scroll, Space+drag or the middle mouse button.
+    if (spaceHeld || e.button === 1) {
       setPanning(true);
       gesture.current = {
         start: p,
@@ -579,7 +575,7 @@ export function Canvas({
         );
       return;
     }
-    if (tool === "select" || tool === "hand") {
+    if (tool === "select") {
       if (!id) {
         if (!e.shiftKey) setSelected([]);
         gesture.current = {
@@ -625,7 +621,7 @@ export function Canvas({
       commit([...board.items, t]);
       setSelected([t.id]);
       setEditing({ id: t.id, text: "" });
-      setTool("hand");
+      setTool("select");
       return;
     }
     const n = makeItem(tool === "square" ? "rectangle" : tool, p.x, p.y);
@@ -744,7 +740,7 @@ export function Canvas({
         }),
       );
       setDraft(null);
-      if (!freehand.includes(tool)) setTool("hand");
+      if (!freehand.includes(tool)) setTool("select");
     }
     gesture.current = null;
     setPanning(false);
@@ -872,7 +868,7 @@ export function Canvas({
           style={{
             cursor: panning
               ? "grabbing"
-              : spaceHeld || tool === "hand"
+              : spaceHeld
                 ? "grab"
                 : tool === "select"
                   ? "default"
@@ -921,8 +917,8 @@ export function Canvas({
                       e.stopPropagation();
                       e.preventDefault();
                       startEditing(i.id);
-                      setTool("hand");
-                    } else if (["select", "hand", "eraser"].includes(tool)) {
+                      setTool("select");
+                    } else if (["select", "eraser"].includes(tool)) {
                       e.stopPropagation();
                       down(e, i.id);
                     }
