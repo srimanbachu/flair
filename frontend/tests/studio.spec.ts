@@ -243,10 +243,13 @@ test("custom export dimensions and transparent background are preserved", async 
     .getByRole("button", { name: "Export", exact: true })
     .last()
     .click();
-  await page.getByLabel("Export dimensions").selectOption("1:1");
-  await expect(page.getByLabel("Export dimensions")).toHaveValue("1:1");
-  await page.getByLabel("Export dimensions").selectOption("Custom");
-  await expect(page.getByLabel("Export dimensions")).toHaveValue("Custom");
+  const sizes = page.getByRole("group", { name: "Export dimensions" });
+  await sizes.getByRole("button", { name: "1:1" }).click();
+  await expect(sizes.getByRole("button", { name: "1:1" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await expect(page.getByLabel("Width (px)")).toHaveValue("1080");
   await page.getByLabel("Width (px)").fill("640");
   await page.getByLabel("Height (px)").fill("640");
   await page.getByLabel("Height (px)").blur();
@@ -422,4 +425,13 @@ test("Tab indents inside the code editor", async ({ page }) => {
   await editor.press("Home");
   await editor.press("Tab");
   await expect(editor).toHaveValue("  return 1;");
+});
+test("export tab downloads directly", async ({ page }) => {
+  await page
+    .getByRole("button", { name: "Export", exact: true })
+    .last()
+    .click();
+  const promise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download JPEG" }).click();
+  expect((await promise).suggestedFilename()).toBe("flair-card.jpg");
 });

@@ -20,7 +20,7 @@ import {
   TriangleAlert,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { toPng, toJpeg } from "html-to-image";
+import { toPng, toJpeg, toBlob } from "html-to-image";
 import type { Card } from "./model";
 import { defaultCard, uid, cardTabs } from "./model";
 import type { Board } from "./canvasModel";
@@ -266,6 +266,34 @@ export default function Studio() {
       URL.revokeObjectURL(url);
     }
   };
+  const cardImageOptions = (format: string) => ({
+    pixelRatio: work.card.quality,
+    width: work.card.width,
+    height: work.card.height,
+    style: { transform: "none" },
+    backgroundColor: format === "jpeg" ? "#0b0b0d" : undefined,
+  });
+  const copyCardImage = async () => {
+    if (!preview.current) return;
+    setBusy(true);
+    try {
+      await document.fonts.ready;
+      const node = preview.current;
+      // Hand the clipboard a promise so Safari keeps the user gesture.
+      const blob = toBlob(node, cardImageOptions("png")).then((b) => {
+        if (!b) throw new Error("Image could not be rendered.");
+        return b;
+      });
+      await navigator.clipboard.write([
+        new ClipboardItem({ "image/png": blob }),
+      ]);
+      notify("Image copied to clipboard.");
+    } catch {
+      notify("Copying images isn't available here. Download a PNG instead.");
+    } finally {
+      setBusy(false);
+    }
+  };
   const exportImage = async (format: string) => {
     setMenu(false);
     setBusy(true);
@@ -275,16 +303,9 @@ export default function Studio() {
       } else {
         if (!preview.current) return;
         await document.fonts.ready;
-        const options = {
-          pixelRatio: work.card.quality,
-          width: work.card.width,
-          height: work.card.height,
-          style: { transform: "none" },
-          backgroundColor: format === "jpeg" ? "#0b0b0d" : undefined,
-        };
         const url = await (format === "jpeg" ? toJpeg : toPng)(
           preview.current,
-          options,
+          cardImageOptions(format),
         );
         const a = document.createElement("a");
         a.download = `flair-card.${format === "jpeg" ? "jpg" : "png"}`;
@@ -445,6 +466,8 @@ export default function Studio() {
               tab={tab}
               change={(card) => change({ ...work, card })}
               notify={notify}
+              onExport={exportImage}
+              onCopyImage={copyCardImage}
             />
           </aside>
           <main className="card-main">

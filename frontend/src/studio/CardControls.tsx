@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Copy, Trash2 } from "lucide-react";
+import { Copy, Download, Trash2 } from "lucide-react";
 import { Field, Slider, Toggle } from "./Controls";
 import type { Card, CodeBlock } from "./model";
 import {
@@ -33,11 +33,15 @@ export function CardControls({
   change,
   tab,
   notify,
+  onExport,
+  onCopyImage,
 }: {
   card: Card;
   change: (c: Card) => void;
   tab: string;
   notify: (s: string) => void;
+  onExport: (format: "png" | "jpeg") => void;
+  onCopyImage: () => void;
 }) {
   const [sizeChoice, setSizeChoice] = useState("Custom");
   const set = <K extends keyof Card>(key: K, value: Card[K]) =>
@@ -558,26 +562,43 @@ export function CardControls({
       )}
       {tab === "Export" && (
         <>
-          <Field label="Export dimensions">
-            <select
-              value={
-                sizes[sizeChoice]?.[0] === c.width &&
-                sizes[sizeChoice]?.[1] === c.height
-                  ? sizeChoice
-                  : "Custom"
-              }
-              onChange={(e) => {
-                setSizeChoice(e.target.value);
-                const s = sizes[e.target.value];
-                if (s) change({ ...c, width: s[0], height: s[1] });
-              }}
-            >
-              <option>Custom</option>
-              {Object.keys(sizes).map((s) => (
-                <option key={s}>{s}</option>
-              ))}
-            </select>
-          </Field>
+          <span className="menu-label">Size</span>
+          <div
+            className="size-grid"
+            role="group"
+            aria-label="Export dimensions"
+          >
+            {Object.entries(sizes).map(([name, [w, h]]) => {
+              // Several presets share dimensions (X post / 16:9); prefer the
+              // one the user clicked, otherwise the first that matches.
+              const fits = (n: string) =>
+                sizes[n]?.[0] === c.width && sizes[n]?.[1] === c.height;
+              const current = fits(sizeChoice)
+                ? sizeChoice
+                : Object.keys(sizes).find(fits);
+              const on = current === name;
+              return (
+                <button
+                  key={name}
+                  aria-pressed={on}
+                  className={on ? "active" : ""}
+                  onClick={() => {
+                    setSizeChoice(name);
+                    change({ ...c, width: w, height: h });
+                  }}
+                >
+                  <span
+                    className="ratio"
+                    style={{
+                      width: 18 * Math.min(1, w / h),
+                      height: 18 * Math.min(1, h / w),
+                    }}
+                  />
+                  {name}
+                </button>
+              );
+            })}
+          </div>
           <div className="two-col">
             <Field label="Width (px)">
               <input
@@ -604,24 +625,34 @@ export function CardControls({
               />
             </Field>
           </div>
-          <Field label="Export quality">
-            <select
-              value={c.quality}
-              onChange={(e) => set("quality", +e.target.value)}
-            >
-              <option value={1}>1× · Standard</option>
-              <option value={2}>2× · High resolution</option>
-              <option value={3}>3× · Ultra</option>
-            </select>
-          </Field>
-          <p className="muted">
-            Output: {c.width * c.quality} × {c.height * c.quality} pixels. PNG
-            keeps transparency; JPEG adds a dark base.
+          <span className="menu-label">Quality</span>
+          <div className="segmented" role="group" aria-label="Export quality">
+            {[1, 2, 3].map((q) => (
+              <button
+                key={q}
+                aria-pressed={c.quality === q}
+                className={c.quality === q ? "active" : ""}
+                onClick={() => set("quality", q)}
+              >
+                {q}×
+              </button>
+            ))}
+          </div>
+          <p className="muted export-note">
+            {c.width * c.quality} × {c.height * c.quality} px · PNG keeps
+            transparency, JPEG adds a dark base.
           </p>
-          <p className="muted">
-            Use the Export button above to download. Project JSON preserves
-            editable code and styling.
-          </p>
+          <div className="export-actions">
+            <button className="primary" onClick={() => onExport("png")}>
+              <Download size={15} />
+              Download PNG
+            </button>
+            <button onClick={() => onExport("jpeg")}>Download JPEG</button>
+            <button onClick={onCopyImage}>
+              <Copy size={14} />
+              Copy image
+            </button>
+          </div>
         </>
       )}
     </>
