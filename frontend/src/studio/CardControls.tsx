@@ -75,13 +75,17 @@ export function CardControls({
   onCopyImage: () => void;
 }) {
   const [sizeChoice, setSizeChoice] = useState("Custom");
+  const modeOf = (bg: string) =>
+    bg === "Solid" ? "Solid" : bg === "Image" ? "Image" : "Gradient";
   const [bgMode, setBgMode] = useState<"Solid" | "Gradient" | "Image">(
-    c.background === "Solid"
-      ? "Solid"
-      : c.background === "Image"
-        ? "Image"
-        : "Gradient",
+    modeOf(c.background),
   );
+  // Follow the card when a template, undo or import changes its background.
+  const [seenBackground, setSeenBackground] = useState(c.background);
+  if (seenBackground !== c.background) {
+    setSeenBackground(c.background);
+    setBgMode(modeOf(c.background));
+  }
   const imageInput = useRef<HTMLInputElement>(null);
   const set = <K extends keyof Card>(key: K, value: Card[K]) =>
     change({ ...c, [key]: value });
@@ -240,7 +244,7 @@ export function CardControls({
                   />
                   <button
                     onClick={() =>
-                      change({ ...c, image: "", background: "Aurora" })
+                      change({ ...c, image: "", background: "Solid" })
                     }
                   >
                     Remove uploaded image

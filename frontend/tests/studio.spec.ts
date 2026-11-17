@@ -32,6 +32,10 @@ test("card templates, typography and backgrounds", async ({ page }) => {
     '"Courier New", monospace',
   );
   await page.getByRole("button", { name: "Background", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Solid", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "Gradient", exact: true }).click();
   await page.getByRole("button", { name: "Sunset", exact: true }).click();
   await expect(page.locator(".card-background")).toHaveCSS(
     "background-image",
