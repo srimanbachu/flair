@@ -207,35 +207,16 @@
   scrollbar-width: thin;
   scrollbar-color: #3b3948 transparent;
 }
-.panel-heading {
-  margin-bottom: 27px;
-}
 .inspector-title {
   font-size: 15px !important;
   font-weight: 500 !important;
   margin: 0 0 6px !important;
-}
-.eyebrow {
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 2px;
-  color: #7e7c91;
 }
 .studio h1,
 .studio h2,
 .studio h3,
 .studio p {
   margin: 0;
-}
-.panel-heading h2 {
-  font-size: 24px;
-  font-weight: 500;
-  margin: 9px 0;
-}
-.panel-heading p {
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.7;
 }
 .field {
   display: flex;
@@ -427,11 +408,6 @@
 .two-col .field {
   margin: 9px 0;
 }
-.control-section {
-  padding: 18px 0;
-  border-top: 1px solid #ffffff0a;
-  margin-top: 18px;
-}
 .studio h3 {
   font-size: 12px;
   font-weight: 500;
@@ -546,17 +522,6 @@
 .toggle input:checked::after {
   transform: translateX(12px);
   background: var(--accent-ink);
-}
-.button-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  margin: 12px 0;
-}
-.button-grid button {
-  border: 1px solid #ffffff10;
-  font-size: 10px;
-  text-transform: capitalize;
 }
 .template-grid {
   display: grid;
@@ -981,18 +946,21 @@
   padding: 28px;
 }
 .library-modal {
-  width: 800px;
+  width: 760px;
   max-height: 85vh;
   overflow: auto;
   background: var(--panel);
-  border: 1px solid #ffffff10;
-  border-radius: 15px;
-  padding: 30px;
+  border: 1px solid var(--line-strong);
+  border-radius: 16px;
+  padding: 22px 24px 24px;
+  box-shadow: 0 30px 80px #000c;
 }
 .library-modal h2 {
-  font-size: 26px;
+  font-size: 18px;
   font-weight: 500;
-  margin: 8px 0 14px;
+}
+.library-modal > .muted {
+  margin-top: 4px;
 }
 .library-actions {
   display: flex;
@@ -1000,6 +968,7 @@
   margin: 20px 0;
 }
 .library-actions button {
+  font-size: 13px;
   background: #ffffff08;
   border: 1px solid #ffffff0c;
 }
@@ -1016,9 +985,9 @@
   background: #ffffff02;
 }
 .project-cover {
-  height: 100px;
-  border-radius: 5px;
-  background: linear-gradient(130deg, #5f6c9f, #b292d3);
+  height: 92px;
+  border-radius: 7px;
+  background: linear-gradient(130deg, #1d3b3a, #2f2650);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1027,7 +996,9 @@
   color: #ffffffc9;
 }
 .cover-canvas {
-  background: linear-gradient(130deg, #365f68, #7e9b98);
+  background:
+    radial-gradient(#ffffff22 1px, transparent 1px) 0 0 / 12px 12px,
+    #16171b;
 }
 .project-cover span {
   font-size: 9px;

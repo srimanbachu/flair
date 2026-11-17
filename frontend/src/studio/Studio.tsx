@@ -579,10 +579,7 @@ export default function Studio() {
             className="library-modal"
           >
             <div className="section-title">
-              <div>
-                <span className="eyebrow">YOUR CREATIVE CORNER</span>
-                <h2>My projects</h2>
-              </div>
+              <h2>My projects</h2>
               <button
                 aria-label="Close library"
                 onClick={() => setLibrary(false)}
@@ -618,8 +615,8 @@ export default function Studio() {
             {!projects.length && (
               <div className="library-empty">
                 <FolderOpen size={38} />
-                <h3>A home for your best ideas.</h3>
-                <p>Save your first card or canvas to find it here.</p>
+                <h3>No saved projects yet</h3>
+                <p>Press ⌘/Ctrl S to save the current card or canvas here.</p>
               </div>
             )}
             <div className="project-grid">
@@ -653,7 +650,7 @@ export default function Studio() {
                         }
                       }}
                     >
-                      Open project ↗
+                      Open project
                     </button>
                     <button
                       aria-label={`Delete ${p.name}`}
