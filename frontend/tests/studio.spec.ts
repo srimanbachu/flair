@@ -665,3 +665,14 @@ test("window controls take the theme's colours", async ({ page }) => {
   await page.getByLabel("Classic macOS colors").check();
   await expect(dots.nth(0)).toHaveCSS("background-color", "rgb(255, 95, 87)");
 });
+test("plain text picks up theme colours", async ({ page }) => {
+  await page
+    .getByLabel("Code block 1", { exact: true })
+    .fill('Hi there, see "docs" at #flair 42?');
+  const line = page.locator(".code-window .line-text").first();
+  await expect(line.locator(".token.string")).toHaveText('"docs"');
+  await expect(line.locator(".token.keyword")).toHaveText("#flair");
+  await expect(line.locator(".token.number")).toHaveText("42");
+  await expect(line.locator(".token.function")).toHaveText("Hi");
+  await expect(line.locator(".token.operator").first()).toHaveText(",");
+});

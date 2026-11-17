@@ -11,6 +11,16 @@ import "prismjs/components/prism-markup";
 import "prismjs/components/prism-c";
 import "prismjs/components/prism-cpp";
 import type { Card, CodeBlock } from "./model";
+// Plain text has no grammar, so themes had nothing to colour. A light
+// prose grammar gives quotes, links, numbers, tags, capitalised words and
+// punctuation the theme's colours.
+Prism.languages.plain = {
+  string: /"[^"\n]*"|'[^'\n]*'|`[^`\n]*`|https?:\/\/\S+/,
+  keyword: /[#@][\w-]+/,
+  number: /\b\d+(?:[.,]\d+)*%?/,
+  function: /\b[A-Z][\w']*/,
+  operator: /[?!.,:;()[\]{}]/,
+};
 import { cardColors, inRanges } from "./model";
 import type { CSSProperties } from "react";
 function tokenNodes(
