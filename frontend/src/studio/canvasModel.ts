@@ -59,11 +59,11 @@ export function makeItem(kind: string, x = 100, y = 100): CanvasItem {
       kind === "sticky"
         ? "#f4d985"
         : kind === "code"
-          ? "#151827"
+          ? "#111216"
           : kind === "frame"
-            ? "#222638"
-            : "#343047",
-    stroke: "#b9a5f5",
+            ? "#141417"
+            : "#1d1f24",
+    stroke: "#d8dbe0",
     strokeWidth: 2,
     opacity: 100,
     font: "sans-serif",

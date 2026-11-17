@@ -1,13 +1,19 @@
 .studio {
-  --bg: #131419;
-  --panel: #1b1c23;
-  --line: #ffffff0d;
-  --muted: #858795;
-  --accent: #c3b0fa;
+  --bg: #0b0b0d;
+  --panel: #111114;
+  --elev: #18181c;
+  --field: #0e0e11;
+  --line: #ffffff0f;
+  --line-strong: #ffffff1c;
+  --text: #ececf0;
+  --muted: #85858f;
+  --accent: #8fdcd8;
+  --accent-ink: #062120;
+  --accent-soft: #8fdcd81c;
   height: 100dvh;
   min-height: 620px;
   background: var(--bg);
-  color: #eeedf3;
+  color: var(--text);
   font:
     14px "Outfit",
     system-ui,
@@ -68,26 +74,18 @@
 .brand {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
   text-decoration: none;
-  color: #f3f2fa;
-  font-size: 32px;
-  font-weight: 650;
-  letter-spacing: -1.5px;
+  color: #f8f8f8;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
 }
-.brand-icon {
-  font-size: 39px;
-  color: #c4adfa;
-  line-height: 1;
-}
-.beta {
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: #96929f;
-  border: 1px solid #ffffff18;
-  border-radius: 4px;
-  padding: 4px 5px;
-  margin: 5px 0 0 7px;
+.brand-logo {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  border-radius: 8px;
 }
 .mode-switch {
   display: flex;
@@ -103,8 +101,8 @@
   font-size: 13px;
 }
 .mode-switch .active {
-  background: #34303f;
-  color: #dfd0ff;
+  background: #23232a;
+  color: var(--accent);
   box-shadow: 0 2px 5px #0002;
 }
 .header-actions {
@@ -118,14 +116,14 @@
   color: #b1b0bc;
 }
 .studio button.primary {
-  background: #c4adf7;
-  color: #211a33;
+  background: var(--accent);
+  color: var(--accent-ink);
   font-weight: 600;
   padding: 10px 16px;
   box-shadow: inset 0 1px #fff4;
 }
 .studio button.primary:hover {
-  background: #d5c1ff;
+  background: #a9e6e3;
 }
 .export-wrap {
   position: relative;
@@ -136,7 +134,7 @@
   right: 0;
   top: 47px;
   width: 250px;
-  background: #25232e;
+  background: var(--elev);
   border: 1px solid #ffffff18;
   border-radius: 10px;
   padding: 6px;
@@ -151,7 +149,7 @@
   padding: 12px;
 }
 .export-menu small {
-  color: #aaa4ba;
+  color: var(--muted);
   font-size: 11px;
 }
 .studio button.menu-dismiss {
@@ -175,7 +173,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: #17181e;
+  background: var(--panel);
 }
 .tool-rail button {
   flex-direction: column;
@@ -192,8 +190,8 @@
   font-size: 9px;
 }
 .tool-rail button.active {
-  color: #cdb9ff;
-  background: #b897fb13;
+  color: var(--accent);
+  background: var(--accent-soft);
 }
 .inspector {
   padding: 26px 22px;
@@ -244,15 +242,15 @@
 }
 .field output {
   font-size: 10px;
-  color: #c4b3e3;
-  background: #b493f914;
+  color: var(--accent);
+  background: var(--accent-soft);
   border-radius: 4px;
   padding: 3px 6px;
 }
 .studio input:not([type="range"]):not([type="checkbox"]),
 .studio select,
 .studio textarea {
-  background: #14151b;
+  background: var(--field);
   border: 1px solid #ffffff0c;
   color: #d3d0e0;
   border-radius: 6px;
@@ -276,7 +274,7 @@
 .studio input[type="range"] {
   width: 100%;
   height: 3px;
-  accent-color: #bba0f5;
+  accent-color: var(--accent);
   cursor: pointer;
   margin: 6px 0 3px;
 }
@@ -322,11 +320,11 @@
 }
 .section-title button {
   font-size: 10px;
-  color: #9992ac;
+  color: var(--muted);
   padding: 5px;
 }
 .section-title button:hover {
-  color: #e4d1fa;
+  color: var(--accent);
 }
 .studio .wide {
   width: 100%;
@@ -336,7 +334,7 @@
 }
 .studio .dashed {
   border-style: dashed;
-  color: #bfa8ee;
+  color: var(--accent);
   margin-top: 16px;
 }
 .swatch-grid {
@@ -363,7 +361,7 @@
   margin-top: 10px;
 }
 .studio .chosen {
-  outline: 2px solid #b69bf2;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 .studio .bg-swatch {
@@ -391,7 +389,7 @@
   gap: 10px;
 }
 .toggle input {
-  accent-color: #b8a0f5;
+  accent-color: var(--accent);
   width: 16px;
   height: 16px;
 }
@@ -599,8 +597,8 @@
   min-height: 1em;
 }
 .line-highlight {
-  background: #b59aff13;
-  border-left-color: #b99aee;
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
 }
 .line-glow .line-text {
   text-shadow:
@@ -709,8 +707,8 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 14px 17px;
-  background: #34303f;
-  border: 1px solid #c5a5fa44;
+  background: #23232a;
+  border: 1px solid var(--line-strong);
   box-shadow: 0 8px 40px #0006;
   z-index: 100;
   border-radius: 9px;
@@ -738,7 +736,7 @@
   width: 800px;
   max-height: 85vh;
   overflow: auto;
-  background: #20212a;
+  background: var(--panel);
   border: 1px solid #ffffff10;
   border-radius: 15px;
   padding: 30px;
@@ -840,9 +838,6 @@
     linear-gradient(#77708318 1px, transparent 1px),
     linear-gradient(90deg, #77708318 1px, transparent 1px);
 }
-.canvas-bg-light {
-  background-color: #f4f1eb;
-}
 .canvas-toolbar {
   display: flex;
   gap: 2px;
@@ -852,7 +847,7 @@
   transform: translateX(-50%);
   top: 18px;
   padding: 5px;
-  background: #272630;
+  background: var(--elev);
   border: 1px solid #ffffff12;
   border-radius: 10px;
   box-shadow: 0 4px 15px #0003;
@@ -866,15 +861,15 @@
   font: 18px system-ui;
 }
 .canvas-toolbar .active {
-  background: #b696f42b;
-  color: #cdb7ff;
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 .canvas-bottom {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 11px 18px;
-  background: #191a21;
+  background: var(--panel);
   border-top: 1px solid #ffffff08;
   gap: 10px;
   font-size: 10px;
@@ -904,7 +899,7 @@
 }
 .canvas-empty > span {
   font: 60px serif;
-  color: #a38ab880;
+  color: #8fdcd855;
 }
 .canvas-empty h2 {
   font-size: 23px;
@@ -923,7 +918,7 @@
   color: #8c879b;
 }
 .canvas-help h3 {
-  color: #b3a6ca;
+  color: var(--accent);
 }
 .canvas-help p {
   font-size: 11px;
@@ -971,7 +966,7 @@
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: #24232fed;
+  background: #18181ced;
   border: 1px solid #ffffff1a;
   border-radius: 10px;
   display: flex;
@@ -986,6 +981,7 @@
 }
 body {
   margin: 0;
+  background: #0b0b0d;
 }
 a {
   color: inherit;
@@ -1004,12 +1000,9 @@ a {
     gap: 12px;
   }
   .brand {
-    font-size: 27px;
+    font-size: 22px;
   }
-  .beta {
-    display: none;
-  }
-  .header-actions > button:first-child {
+    .header-actions > button:first-child {
     margin-right: 0;
   }
   .mode-switch button {
@@ -1060,10 +1053,11 @@ a {
     gap: 10px;
   }
   .brand {
-    font-size: 26px;
+    font-size: 21px;
   }
-  .brand-icon {
-    font-size: 31px;
+  .brand-logo {
+    width: 22px;
+    height: 22px;
   }
   .mode-switch {
     order: 3;

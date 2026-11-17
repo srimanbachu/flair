@@ -124,6 +124,8 @@ export function validateBoard(value: unknown): Board {
     return n;
   });
   uniqueIds(b.items);
+  // The light canvas background was retired; keep old projects readable.
+  if (!["Dots", "Grid", "Plain"].includes(b.background)) b.background = "Dots";
   return b;
 }
 export function parseProject(

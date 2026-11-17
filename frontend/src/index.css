@@ -1,5 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Bpmf+Huninn&family=Limelight&family=Outfit:wght@100..900&family=Vend+Sans:ital,wght@0,300..700;1,300..700&display=swap'); 
+@import url('https://fonts.googleapis.com/css2?family=Bpmf+Huninn&family=Limelight&family=Outfit:wght@100..900&family=Vend+Sans:ital,wght@0,300..700;1,300..700&display=swap');
 
-:root{
+:root {
   font-family: "Outfit", sans-serif;
-}  
+  color-scheme: dark;
+  background: #0b0b0d;
+  color: #ececf0;
+}

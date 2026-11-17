@@ -212,12 +212,12 @@ export function CanvasShape({
       )}
       {i.comments.length > 0 && (
         <g>
-          <circle cx={i.x + i.w} cy={i.y} r={12} fill="#a78bfa" />
+          <circle cx={i.x + i.w} cy={i.y} r={12} fill="#8fdcd8" />
           <text
             x={i.x + i.w}
             y={i.y + 4}
             textAnchor="middle"
-            fill="#15121c"
+            fill="#062120"
             fontSize={12}
           >
             {i.comments.length}
@@ -231,7 +231,7 @@ export function CanvasShape({
           width={isLine ? Math.abs(e.b.x - e.a.x) + 12 : i.w + 12}
           height={isLine ? Math.abs(e.b.y - e.a.y) + 12 : i.h + 12}
           fill="none"
-          stroke="#b49aff"
+          stroke="#8fdcd8"
           strokeWidth={1.5}
           strokeDasharray="5 4"
           pointerEvents="none"

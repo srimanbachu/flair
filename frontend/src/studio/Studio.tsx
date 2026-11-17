@@ -24,6 +24,7 @@ import { Canvas } from "./Canvas";
 import type { SavedProject } from "./storage";
 import { download, readProjects, removeProject, saveProject } from "./storage";
 import { parseProject, validateBoard, validateCard } from "./projectFiles";
+import flairLogo from "../assets/flair.png";
 import "./studio.css";
 type Workspace = { kind: "card" | "canvas"; card: Card; board: Board };
 function initial(): Workspace {
@@ -237,7 +238,7 @@ export default function Studio() {
       canvas.width = b.w * factor;
       canvas.height = b.h * factor;
       const ctx = canvas.getContext("2d")!;
-      ctx.fillStyle = work.board.background === "Light" ? "#f6f5f0" : "#191a23";
+      ctx.fillStyle = "#0e0e11";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       const a = document.createElement("a");
@@ -262,7 +263,7 @@ export default function Studio() {
           width: work.card.width,
           height: work.card.height,
           style: { transform: "none" },
-          backgroundColor: format === "jpeg" ? "#151622" : undefined,
+          backgroundColor: format === "jpeg" ? "#0b0b0d" : undefined,
         };
         const url = await (format === "jpeg" ? toJpeg : toPng)(
           preview.current,
@@ -306,8 +307,8 @@ export default function Studio() {
     <div className="studio">
       <header className="studio-header">
         <a className="brand" href="/" aria-label="Flair home">
-          <span className="brand-icon">✳</span>flair
-          <span className="beta">STUDIO</span>
+          Flair
+          <img className="brand-logo" src={flairLogo} alt="" />
         </a>
         <div className="mode-switch" aria-label="Workspace">
           <button

@@ -486,7 +486,7 @@ export function Canvas({
               changeBoard({ ...board, background: e.target.value })
             }
           >
-            {["Dots", "Grid", "Plain", "Light"].map((n) => (
+            {["Dots", "Grid", "Plain"].map((n) => (
               <option key={n}>{n}</option>
             ))}
           </select>
@@ -947,8 +947,8 @@ export function Canvas({
                     y={first.y + first.h - 5}
                     width={12}
                     height={12}
-                    fill="#b49aff"
-                    stroke="#242031"
+                    fill="#8fdcd8"
+                    stroke="#0b0b0d"
                     style={{ cursor: "nwse-resize" }}
                     onPointerDown={(e) => {
                       e.stopPropagation();
@@ -962,8 +962,8 @@ export function Canvas({
                   y={marquee.y}
                   width={marquee.w}
                   height={marquee.h}
-                  fill="#b49aff15"
-                  stroke="#b49aff"
+                  fill="#8fdcd814"
+                  stroke="#8fdcd8"
                   strokeDasharray="4 4"
                   pointerEvents="none"
                 />

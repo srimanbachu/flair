@@ -39,7 +39,7 @@ export function exportBounds(items: CanvasItem[]) {
 }
 export function canvasSVG(board: Board) {
   const b = exportBounds(board.items);
-  const base = board.background === "Light" ? "#f4f1eb" : "#191a23";
+  const base = "#0e0e11";
   return {
     bounds: b,
     text: renderToStaticMarkup(
