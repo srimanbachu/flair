@@ -383,6 +383,11 @@ export function CardControls({
             value={c.controls}
             onChange={(v) => set("controls", v)}
           />
+          <Toggle
+            label="Classic macOS colors"
+            value={c.classicControls}
+            onChange={(v) => set("classicControls", v)}
+          />
           {slider("padding", "Outer spacing", 16, 160, 1, "px")}
           {slider("radius", "Window corners", 0, 40, 1, "px")}
         </>

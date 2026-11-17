@@ -31,6 +31,8 @@ export type Card = {
   lineNumbers: boolean;
   fileName: boolean;
   controls: boolean;
+  /** Red/yellow/green window buttons instead of the theme's colours. */
+  classicControls: boolean;
   window: string;
   /** Solid window colour; empty uses the syntax theme's own. */
   windowColor: string;
@@ -97,6 +99,7 @@ export const defaultCard = (): Card => ({
   lineNumbers: true,
   fileName: true,
   controls: true,
+  classicControls: false,
   window: "macOS",
   windowColor: "",
   background: "Solid",

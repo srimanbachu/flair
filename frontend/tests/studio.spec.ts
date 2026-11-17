@@ -654,3 +654,14 @@ test("choosing a theme replaces a custom window colour", async ({ page }) => {
     "rgb(40, 42, 54)",
   );
 });
+test("window controls take the theme's colours", async ({ page }) => {
+  await page.getByRole("button", { name: "Typography", exact: true }).click();
+  await page.getByRole("button", { name: "Dracula" }).click();
+  const dots = page.locator(".window-buttons i");
+  await expect(dots.nth(0)).toHaveCSS("background-color", "rgb(255, 121, 198)");
+  await page.getByRole("button", { name: "Monokai" }).click();
+  await expect(dots.nth(0)).toHaveCSS("background-color", "rgb(249, 38, 114)");
+  await page.getByRole("button", { name: "Window", exact: true }).click();
+  await page.getByLabel("Classic macOS colors").check();
+  await expect(dots.nth(0)).toHaveCSS("background-color", "rgb(255, 95, 87)");
+});

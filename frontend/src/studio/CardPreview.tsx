@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties, RefObject } from "react";
 import type { Card } from "./model";
-import { backgroundCSS, cardColors } from "./model";
+import { backgroundCSS, cardColors, isLight } from "./model";
 import { CodeView } from "./CodeView";
 import { CodeEditor } from "./CodeEditor";
 export function CardPreview({
@@ -152,7 +152,10 @@ export function CardPreview({
                   : surface,
                 color: p.fg,
                 borderRadius: c.radius,
-                border: `${c.border}px solid ${c.gradientBorder ? "transparent" : "#ffffff26"}`,
+                border: `${c.border}px solid ${c.gradientBorder ? "transparent" : isLight(p.bg) ? "#0000001f" : "#ffffff26"}`,
+                ["--window-line" as string]: isLight(p.bg)
+                  ? "#00000012"
+                  : "#ffffff0d",
                 boxShadow: `0 ${c.shadow / 2}px ${c.shadow}px #0005,0 0 ${c.glow}px ${c.color}88,${c.depth}px ${c.depth}px 0 #0005`,
                 backdropFilter:
                   c.glass || c.window === "Glass" ? "blur(16px)" : undefined,
@@ -169,9 +172,17 @@ export function CardPreview({
                           "•••"
                         ) : (
                           <>
-                            <i />
-                            <i />
-                            <i />
+                            {/* Same three colours as the theme's chip. */}
+                            {[p.keyword, p.string, p.number].map((color) => (
+                              <i
+                                key={color}
+                                style={
+                                  c.classicControls
+                                    ? undefined
+                                    : { background: color }
+                                }
+                              />
+                            ))}
                           </>
                         )}
                       </span>

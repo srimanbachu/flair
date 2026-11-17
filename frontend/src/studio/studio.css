@@ -950,7 +950,7 @@
   min-height: 58px;
   padding: 0 24px;
   gap: 16px;
-  border-bottom: 1px solid #ffffff0a;
+  border-bottom: 1px solid var(--window-line, #ffffff0a);
   font:
     17px system-ui,
     sans-serif;
@@ -1080,7 +1080,8 @@
 .line-number {
   width: 38px;
   flex-shrink: 0;
-  opacity: 0.28;
+  color: var(--syntax-comment);
+  opacity: 0.75;
   font-size: 0.82em;
   text-align: right;
   padding-right: 18px;
