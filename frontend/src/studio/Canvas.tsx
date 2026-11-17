@@ -1,4 +1,45 @@
-import { useRef, useState, useEffect, useCallback } from "react";
+import { Fragment, useRef, useState, useEffect, useCallback } from "react";
+import {
+  AlignCenterHorizontal,
+  AlignCenterVertical,
+  AlignEndHorizontal,
+  AlignEndVertical,
+  AlignHorizontalSpaceAround,
+  AlignStartHorizontal,
+  AlignStartVertical,
+  ArrowUpRight,
+  Atom,
+  Bold,
+  BringToFront,
+  Circle,
+  Code2,
+  Copy,
+  Diamond,
+  Eraser,
+  Frame,
+  Group,
+  Hand,
+  ImagePlus,
+  Layers,
+  Maximize,
+  Minus,
+  MousePointer2,
+  PenLine,
+  Pencil,
+  Plus,
+  Presentation,
+  SendToBack,
+  Settings2,
+  Square,
+  StickyNote,
+  Trash2,
+  Triangle,
+  Type,
+  Ungroup,
+  X,
+  Image as ImageIcon,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { PointerEvent as ReactPointerEvent, RefObject } from "react";
 import type { Board, CanvasItem, Point } from "./canvasModel";
 import { bounds, makeItem, boardTemplate, boardTemplates } from "./canvasModel";
@@ -7,44 +48,118 @@ import { Field, Slider, Toggle } from "./Controls";
 import { uid } from "./model";
 import { readImage } from "./storage";
 import { validateBoard } from "./projectFiles";
-const tools = [
-  "select",
-  "hand",
-  "pen",
-  "pencil",
-  "brush",
-  "eraser",
-  "rectangle",
-  "ellipse",
-  "triangle",
-  "diamond",
-  "arrow",
-  "line",
-  "text",
-  "sticky",
-  "code",
-  "icon",
-  "frame",
+type Tool = { id: string; label: string; Icon: LucideIcon };
+const toolGroups: Tool[][] = [
+  [
+    { id: "hand", label: "Hand", Icon: Hand },
+    { id: "select", label: "Select", Icon: MousePointer2 },
+  ],
+  [
+    { id: "rectangle", label: "Rectangle", Icon: Square },
+    { id: "ellipse", label: "Ellipse", Icon: Circle },
+    { id: "triangle", label: "Triangle", Icon: Triangle },
+    { id: "diamond", label: "Diamond", Icon: Diamond },
+    { id: "arrow", label: "Arrow", Icon: ArrowUpRight },
+    { id: "line", label: "Line", Icon: Minus },
+  ],
+  [
+    { id: "pen", label: "Draw", Icon: PenLine },
+    { id: "text", label: "Text", Icon: Type },
+    { id: "sticky", label: "Sticky note", Icon: StickyNote },
+    { id: "code", label: "Code", Icon: Code2 },
+    { id: "icon", label: "Icon", Icon: Atom },
+    { id: "frame", label: "Frame", Icon: Frame },
+    { id: "image", label: "Image", Icon: ImagePlus },
+  ],
+  [{ id: "eraser", label: "Eraser", Icon: Eraser }],
 ];
-const symbols: Record<string, string> = {
-  select: "↖",
-  hand: "✋",
-  pen: "✎",
-  pencil: "✐",
-  brush: "🖌",
-  eraser: "⌫",
-  rectangle: "▭",
-  ellipse: "○",
-  triangle: "△",
-  diamond: "◇",
-  arrow: "↗",
-  line: "╱",
-  text: "T",
-  sticky: "▣",
-  code: "‹/›",
-  icon: "⚛",
-  frame: "▧",
+const tools = toolGroups.flat();
+const kindIcon: Record<string, LucideIcon> = {
+  ...Object.fromEntries(tools.map((t) => [t.id, t.Icon])),
+  pencil: Pencil,
+  brush: PenLine,
+  image: ImageIcon,
 };
+const kindLabel = (kind: string) =>
+  tools.find((t) => t.id === kind)?.label ||
+  kind.charAt(0).toUpperCase() + kind.slice(1);
+const strokeColors = [
+  "#d8dbe0",
+  "#8fdcd8",
+  "#f4a259",
+  "#f25f5c",
+  "#a78bfa",
+  "#6cc28a",
+];
+const fillColors = [
+  "transparent",
+  "#1d1f24",
+  "#12403f",
+  "#4a2c17",
+  "#4a1f24",
+  "#2f2650",
+  "#f4d985",
+];
+const freehand = ["pen", "pencil", "brush"];
+function Swatches({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: string[];
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="swatch-row" role="group" aria-label={label}>
+      <span>{label}</span>
+      <div>
+        {options.map((c) => (
+          <button
+            key={c}
+            className={`dot ${value === c ? "on" : ""} ${c === "transparent" ? "none" : ""}`}
+            style={c === "transparent" ? undefined : { background: c }}
+            aria-label={`${label} ${c === "transparent" ? "none" : c}`}
+            aria-pressed={value === c}
+            onClick={() => onChange(c)}
+          />
+        ))}
+        <input
+          type="color"
+          aria-label={`Custom ${label.toLowerCase()} color`}
+          value={/^#[0-9a-f]{6}$/i.test(value) ? value : "#000000"}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      </div>
+    </div>
+  );
+}
+
+function ActionButton({
+  label,
+  Icon,
+  onClick,
+  disabled = false,
+}: {
+  label: string;
+  Icon: LucideIcon;
+  onClick: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <button
+      className="icon-btn"
+      title={label}
+      aria-label={label}
+      disabled={disabled}
+      onClick={onClick}
+    >
+      <Icon size={15} strokeWidth={1.75} />
+    </button>
+  );
+}
 export function Canvas({
   board,
   change,
@@ -61,6 +176,8 @@ export function Canvas({
   const [view, setView] = useState({ x: 0, y: 0, z: 1 });
   const [draft, setDraft] = useState<CanvasItem[] | null>(null);
   const [comment, setComment] = useState("");
+  const [panel, setPanel] = useState<"board" | "layers" | null>(null);
+  const imageInput = useRef<HTMLInputElement>(null);
   const [marquee, setMarquee] = useState<{
     x: number;
     y: number;
@@ -181,7 +298,7 @@ export function Canvas({
           : {
               ...i,
               ...p,
-              ...(["pen", "pencil", "brush"].includes(i.kind) &&
+              ...(freehand.includes(i.kind) &&
               (p.w !== undefined || p.h !== undefined)
                 ? {
                     points: i.points.map((point) => ({
@@ -284,6 +401,7 @@ export function Canvas({
   const down = (e: ReactPointerEvent, id?: string, resize = false) => {
     if (present >= 0) return;
     e.preventDefault();
+    if (panel === "board") setPanel(null);
     const p = point(e);
     e.currentTarget.setPointerCapture(e.pointerId);
     if (tool === "hand" || e.button === 1) {
@@ -343,7 +461,7 @@ export function Canvas({
       return;
     }
     const n = makeItem(tool, p.x, p.y);
-    if (["pen", "pencil", "brush"].includes(tool)) n.points = [{ x: 0, y: 0 }];
+    if (freehand.includes(tool)) n.points = [{ x: 0, y: 0 }];
     if (tool === "frame") n.text = `Frame ${frames.length + 1}`;
     setDraft([...board.items, n]);
     setSelected([n.id]);
@@ -409,7 +527,7 @@ export function Canvas({
             w: Math.max(30, snap(i.w + dx)),
             h: Math.max(30, snap(i.h + dy)),
           };
-        if (["pen", "pencil", "brush"].includes(i.kind)) {
+        if (freehand.includes(i.kind)) {
           const live = (draft || g.items).find((n) => n.id === i.id)!;
           return {
             ...i,
@@ -434,8 +552,7 @@ export function Canvas({
     if (draft) {
       commit(
         draft.map((i) => {
-          if (!["pen", "pencil", "brush"].includes(i.kind) || !i.points.length)
-            return i;
+          if (!freehand.includes(i.kind) || !i.points.length) return i;
           const minX = Math.min(...i.points.map((p) => p.x)),
             minY = Math.min(...i.points.map((p) => p.y));
           return {
@@ -449,7 +566,7 @@ export function Canvas({
         }),
       );
       setDraft(null);
-      if (!["pen", "pencil", "brush"].includes(tool)) setTool("select");
+      if (!freehand.includes(tool)) setTool("select");
     }
     gesture.current = null;
   };
@@ -497,8 +614,8 @@ export function Canvas({
       ),
     );
   };
-  const fit = () => {
-    const b = bounds(board.items);
+  const fit = (target: CanvasItem[] = board.items) => {
+    const b = bounds(target);
     const r = host.current!.getBoundingClientRect();
     const z = Math.max(
       0.1,
@@ -510,428 +627,45 @@ export function Canvas({
       z,
     });
   };
+  const insertImage = async (file: File) => {
+    try {
+      const r = host.current!.getBoundingClientRect();
+      const n = {
+        ...makeItem(
+          "image",
+          (r.width / 2 - view.x) / view.z - 150,
+          (r.height / 2 - view.y) / view.z - 110,
+        ),
+        image: await readImage(file),
+        w: 300,
+        h: 220,
+      };
+      commit([...board.items, n]);
+      setSelected([n.id]);
+      setTool("select");
+    } catch (err) {
+      notify(String(err));
+    }
+  };
+  const applyTemplate = (name: string) => {
+    const next = boardTemplate(name);
+    changeBoard(next);
+    setSelected([]);
+    setPanel(null);
+    fit(next.items);
+  };
   const presentationFrame = present >= 0 ? frames[present] : undefined;
   const renderItems = presentationFrame
     ? board.items.filter((i) => i.id !== presentationFrame.id)
     : items;
+  const isLine = first && ["arrow", "line"].includes(first.kind);
+  const hasText =
+    first &&
+    !freehand.includes(first.kind) &&
+    !["image", "arrow", "line"].includes(first.kind);
   return (
     <div className={`canvas-layout ${present >= 0 ? "presenting" : ""}`}>
-      <aside className="inspector">
-        <div className="panel-heading">
-          <span className="eyebrow">ROOM TO THINK</span>
-          <h2>Canvas</h2>
-          <p>Connect the dots. Make ideas visible.</p>
-        </div>
-        <section className="local-sharing">
-          <Toggle
-            label="Live sharing between browser tabs"
-            value={live}
-            onChange={setLive}
-          />
-          {live && (
-            <>
-              <Field label="Local room">
-                <input value={room} onChange={(e) => setRoom(e.target.value)} />
-              </Field>
-              <p className="muted">
-                Open Flair in another tab in this browser and join the same
-                room. Latest edit wins. This does not connect across devices.
-              </p>
-            </>
-          )}
-        </section>
-        <Field label="Board title">
-          <input
-            value={board.title}
-            onChange={(e) => changeBoard({ ...board, title: e.target.value })}
-          />
-        </Field>
-        <Field label="Background">
-          <select
-            value={board.background}
-            onChange={(e) =>
-              changeBoard({ ...board, background: e.target.value })
-            }
-          >
-            {["Dots", "Grid", "Plain"].map((n) => (
-              <option key={n}>{n}</option>
-            ))}
-          </select>
-        </Field>
-        <Toggle
-          label="Snap to 10px grid"
-          value={board.snap}
-          onChange={(snap) => changeBoard({ ...board, snap })}
-        />
-        <Field label="Insert image">
-          <input
-            type="file"
-            accept="image/png,image/jpeg,image/webp,image/gif"
-            onChange={async (e) => {
-              const f = e.target.files?.[0];
-              if (f)
-                try {
-                  const n = {
-                    ...makeItem(
-                      "image",
-                      (-view.x + 80) / view.z,
-                      (-view.y + 80) / view.z,
-                    ),
-                    image: await readImage(f),
-                    w: 300,
-                    h: 220,
-                  };
-                  commit([...board.items, n]);
-                  setSelected([n.id]);
-                } catch (err) {
-                  notify(String(err));
-                }
-            }}
-          />
-        </Field>
-        {first ? (
-          <section className="control-section">
-            <div className="section-title">
-              <h3>
-                {active.length > 1 ? `${active.length} objects` : first.kind}
-              </h3>
-              <button onClick={() => setSelected([])}>Deselect</button>
-            </div>
-            <Field label="Text / code">
-              <textarea
-                rows={4}
-                value={first.text}
-                onChange={(e) => patch({ text: e.target.value })}
-              />
-            </Field>
-            {first.kind === "icon" && (
-              <Field label="Developer icon">
-                <select
-                  value={first.text}
-                  onChange={(e) => patch({ text: e.target.value })}
-                >
-                  {[
-                    "⚛",
-                    "GitHub",
-                    "⬡ Node.js",
-                    "▤ Database",
-                    "▣ Server",
-                    "↔ API",
-                    "☁ Cloud",
-                    "🐳 Docker",
-                    "🔒 Auth",
-                    "🚀",
-                    "✨",
-                  ].map((n) => (
-                    <option key={n}>{n}</option>
-                  ))}
-                </select>
-              </Field>
-            )}
-            <div className="two-col">
-              <Field label="Fill">
-                <input
-                  type="color"
-                  value={first.fill}
-                  onChange={(e) => patch({ fill: e.target.value })}
-                />
-              </Field>
-              <Field label="Stroke / text">
-                <input
-                  type="color"
-                  value={first.stroke}
-                  onChange={(e) => patch({ stroke: e.target.value })}
-                />
-              </Field>
-            </div>
-            <Toggle
-              label="Gradient fill"
-              value={first.gradient}
-              onChange={(gradient) => patch({ gradient })}
-            />
-            <Slider
-              label="Opacity"
-              value={first.opacity}
-              onChange={(opacity) => patch({ opacity })}
-            />
-            <Slider
-              label="Stroke width"
-              min={1}
-              max={12}
-              value={first.strokeWidth}
-              onChange={(strokeWidth) => patch({ strokeWidth })}
-            />
-            <Slider
-              label="Text size"
-              min={10}
-              max={72}
-              value={first.fontSize}
-              onChange={(fontSize) => patch({ fontSize })}
-            />
-            <Field label="Font">
-              <select
-                value={first.font}
-                onChange={(e) => patch({ font: e.target.value })}
-              >
-                {["sans-serif", "serif", "monospace", "cursive"].map((n) => (
-                  <option key={n}>{n}</option>
-                ))}
-              </select>
-            </Field>
-            <Toggle
-              label="Bold text"
-              value={first.bold}
-              onChange={(bold) => patch({ bold })}
-            />
-            <div className="two-col">
-              {(["w", "h"] as const).map((k) => (
-                <Field key={k} label={k === "w" ? "Width" : "Height"}>
-                  <input
-                    type="number"
-                    min={20}
-                    max={5000}
-                    value={Math.round(first[k])}
-                    onChange={(e) =>
-                      patch({
-                        [k]: Math.max(20, Math.min(5000, +e.target.value)),
-                      })
-                    }
-                  />
-                </Field>
-              ))}
-            </div>
-            <Slider
-              label="Rotation"
-              min={-180}
-              max={180}
-              value={first.rotation}
-              onChange={(rotation) => patch({ rotation })}
-            />
-            {["arrow", "line"].includes(first.kind) && (
-              <>
-                {(["from", "to"] as const).map((k) => (
-                  <Field
-                    key={k}
-                    label={k === "from" ? "Connect from" : "Connect to"}
-                  >
-                    <select
-                      value={first[k]}
-                      onChange={(e) => patch({ [k]: e.target.value })}
-                    >
-                      <option value="">Free endpoint</option>
-                      {board.items
-                        .filter(
-                          (i) =>
-                            ![
-                              "arrow",
-                              "line",
-                              "pen",
-                              "pencil",
-                              "brush",
-                            ].includes(i.kind) && i.id !== first.id,
-                        )
-                        .map((i) => (
-                          <option key={i.id} value={i.id}>
-                            {i.text.slice(0, 24) || i.kind}
-                          </option>
-                        ))}
-                    </select>
-                  </Field>
-                ))}
-              </>
-            )}
-            {first.kind === "frame" && (
-              <button
-                className="wide"
-                onClick={() => {
-                  const group = uid();
-                  const children = board.items
-                    .filter(
-                      (i) =>
-                        i.id === first.id ||
-                        (i.x >= first.x &&
-                          i.y >= first.y &&
-                          i.x + i.w <= first.x + first.w &&
-                          i.y + i.h <= first.y + first.h),
-                    )
-                    .map((i) => i.id);
-                  commit(
-                    board.items.map((i) =>
-                      children.includes(i.id) ? { ...i, group } : i,
-                    ),
-                  );
-                  setSelected(children);
-                }}
-              >
-                Group frame contents
-              </button>
-            )}
-            <div className="button-grid">
-              <button
-                onClick={() => {
-                  clipboard.current = [];
-                  duplicate();
-                }}
-              >
-                Duplicate
-              </button>
-              <button onClick={remove}>Delete</button>
-              <button
-                onClick={() => {
-                  commit([
-                    ...board.items.filter((i) => !selected.includes(i.id)),
-                    ...active,
-                  ]);
-                }}
-              >
-                Bring to front
-              </button>
-              <button
-                onClick={() =>
-                  commit([
-                    ...active,
-                    ...board.items.filter((i) => !selected.includes(i.id)),
-                  ])
-                }
-              >
-                Send to back
-              </button>
-              <button
-                disabled={active.length < 2}
-                onClick={() => patch({ group: uid() })}
-              >
-                Group
-              </button>
-              <button
-                disabled={!first.group}
-                onClick={() => patch({ group: "" })}
-              >
-                Ungroup
-              </button>
-            </div>
-            {active.length > 1 && (
-              <>
-                <h3>Align selection</h3>
-                <div className="button-grid">
-                  {[
-                    "left",
-                    "center",
-                    "right",
-                    "top",
-                    "middle",
-                    "bottom",
-                    "distribute",
-                  ].map((n) => (
-                    <button key={n} onClick={() => align(n)}>
-                      {n}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
-            <h3>Local comments</h3>
-            {first.comments.map((c, i) => (
-              <div className="local-comment" key={i}>
-                {c}
-                <button
-                  aria-label="Delete comment"
-                  onClick={() =>
-                    patch({
-                      comments: first.comments.filter((_, j) => j !== i),
-                    })
-                  }
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-            <Field label="Leave feedback">
-              <input
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="What could be better?"
-              />
-            </Field>
-            <button
-              disabled={!comment.trim()}
-              onClick={() => {
-                patch({ comments: [...first.comments, comment.trim()] });
-                setComment("");
-              }}
-            >
-              Add comment
-            </button>
-          </section>
-        ) : (
-          <div className="canvas-help">
-            <h3>A few quick moves</h3>
-            <p>Pick a tool, then drag to draw. Select an object to style it.</p>
-            <p>
-              Shift-click to select several. Drag the corner to resize. Use the
-              hand to pan and the mouse wheel to zoom.
-            </p>
-            <p>⌘/Ctrl C · V · D to copy, paste, duplicate. Delete to remove.</p>
-          </div>
-        )}
-        <section className="control-section">
-          <h3>Starting points</h3>
-          {boardTemplates.map((n) => (
-            <button
-              className="wide template-button"
-              key={n}
-              onClick={() => {
-                changeBoard(boardTemplate(n));
-                setSelected([]);
-                setView({ x: 0, y: 0, z: 0.7 });
-              }}
-            >
-              {n} ↗
-            </button>
-          ))}
-          <small className="muted">
-            Templates replace this board. Save first.
-          </small>
-        </section>
-        <section className="control-section">
-          <h3>Layers · {board.items.length}</h3>
-          {[...board.items].reverse().map((i) => (
-            <button
-              className={`layer-row ${selected.includes(i.id) ? "chosen" : ""}`}
-              key={i.id}
-              onClick={() => {
-                setSelected([i.id]);
-                setTool("select");
-              }}
-            >
-              {symbols[i.kind]} {i.text.slice(0, 25) || i.kind}
-            </button>
-          ))}
-        </section>
-        <p className="muted">
-          Comments stay in this browser and in downloaded project files. Share
-          files for asynchronous collaboration; live multi-user editing is
-          unavailable in local mode.
-        </p>
-      </aside>
       <main className="canvas-main">
-        <div
-          className="canvas-toolbar"
-          role="toolbar"
-          aria-label="Drawing tools"
-        >
-          {tools.map((t) => (
-            <button
-              key={t}
-              title={t}
-              aria-label={t}
-              aria-pressed={tool === t}
-              className={tool === t ? "active" : ""}
-              onClick={() => setTool(t)}
-            >
-              {symbols[t]}
-            </button>
-          ))}
-        </div>
         <div
           ref={host}
           className={`canvas-surface canvas-bg-${board.background.toLowerCase()}`}
@@ -991,14 +725,13 @@ export function Canvas({
               ))}
               {present < 0 &&
                 active.length === 1 &&
-                !["arrow", "line", "pen", "pencil", "brush"].includes(
-                  first.kind,
-                ) && (
+                !["arrow", "line", ...freehand].includes(first.kind) && (
                   <rect
                     x={first.x + first.w - 5}
                     y={first.y + first.h - 5}
-                    width={12}
-                    height={12}
+                    width={10}
+                    height={10}
+                    rx={2}
                     fill="#8fdcd8"
                     stroke="#0b0b0d"
                     style={{ cursor: "nwse-resize" }}
@@ -1024,39 +757,531 @@ export function Canvas({
           </svg>
           {board.items.length === 0 && (
             <div className="canvas-empty">
-              <span>✧</span>
-              <h2>Big ideas need a little space.</h2>
-              <p>
-                Draw your first shape, add some code,
-                <br />
-                or start with a template.
-              </p>
+              <h2>Start sketching</h2>
+              <p>Pick a tool above, or begin from a template.</p>
+              <div className="template-chips">
+                {boardTemplates
+                  .filter((n) => n !== "Blank canvas")
+                  .map((n) => (
+                    <button key={n} onClick={() => applyTemplate(n)}>
+                      {n}
+                    </button>
+                  ))}
+              </div>
             </div>
           )}
         </div>
-        <div className="canvas-bottom">
-          <div className="zoom-controls">
-            <button aria-label="Zoom out" onClick={() => zoomAt(1 / 1.25)}>
-              −
-            </button>
-            <span>{Math.round(view.z * 100)}%</span>
-            <button aria-label="Zoom in" onClick={() => zoomAt(1.25)}>
-              +
-            </button>
-            <button onClick={fit}>Fit</button>
-          </div>
-          <span className="muted">
-            {selected.length
-              ? `${selected.length} selected · Shift-click for more`
-              : tool + " tool"}
-          </span>
+
+        <div className="canvas-panel board-bar">
+          <input
+            className="board-title"
+            aria-label="Board title"
+            value={board.title}
+            onChange={(e) => changeBoard({ ...board, title: e.target.value })}
+          />
           <button
-            disabled={!frames.length}
-            onClick={() => setPresent(present >= 0 ? -1 : 0)}
+            className={`icon-btn ${panel === "layers" ? "active" : ""}`}
+            title="Layers"
+            aria-label="Layers"
+            aria-expanded={panel === "layers"}
+            onClick={() => setPanel(panel === "layers" ? null : "layers")}
           >
-            {present >= 0 ? "Exit presentation" : "Present frames"}
+            <Layers size={15} strokeWidth={1.75} />
+          </button>
+          <button
+            className={`icon-btn ${panel === "board" ? "active" : ""}`}
+            title="Board settings"
+            aria-label="Board settings"
+            aria-expanded={panel === "board"}
+            onClick={() => setPanel(panel === "board" ? null : "board")}
+          >
+            <Settings2 size={15} strokeWidth={1.75} />
           </button>
         </div>
+
+        {panel === "board" && (
+          <div className="canvas-panel board-menu">
+            <span className="menu-label">Background</span>
+            <div className="segmented">
+              {["Dots", "Grid", "Plain"].map((n) => (
+                <button
+                  key={n}
+                  aria-pressed={board.background === n}
+                  className={board.background === n ? "active" : ""}
+                  onClick={() => changeBoard({ ...board, background: n })}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+            <Toggle
+              label="Snap to grid"
+              value={board.snap}
+              onChange={(snap) => changeBoard({ ...board, snap })}
+            />
+            <Toggle
+              label="Live sharing between browser tabs"
+              value={live}
+              onChange={setLive}
+            />
+            {live && (
+              <>
+                <Field label="Local room">
+                  <input
+                    value={room}
+                    onChange={(e) => setRoom(e.target.value)}
+                  />
+                </Field>
+                <p className="muted">
+                  Open Flair in another tab and join the same room. Latest edit
+                  wins; this does not connect across devices.
+                </p>
+              </>
+            )}
+            <span className="menu-label">Templates · replace this board</span>
+            {boardTemplates.map((n) => (
+              <button
+                className="menu-item"
+                key={n}
+                onClick={() => applyTemplate(n)}
+              >
+                {n}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {panel === "layers" && (
+          <div className="canvas-panel layers-panel">
+            <span className="menu-label">Layers · {board.items.length}</span>
+            {!board.items.length && <p className="muted">Nothing here yet.</p>}
+            {[...board.items].reverse().map((i) => {
+              const Icon = kindIcon[i.kind] || Square;
+              return (
+                <button
+                  className={`layer-row ${selected.includes(i.id) ? "chosen" : ""}`}
+                  key={i.id}
+                  onClick={() => {
+                    setSelected([i.id]);
+                    setTool("select");
+                  }}
+                >
+                  <Icon size={13} strokeWidth={1.75} />
+                  <span>
+                    {i.text.split("\n")[0].slice(0, 28) || kindLabel(i.kind)}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        <div
+          className="canvas-toolbar"
+          role="toolbar"
+          aria-label="Drawing tools"
+        >
+          {toolGroups.map((group, gi) => (
+            <Fragment key={gi}>
+              {gi > 0 && <span className="tool-sep" aria-hidden="true" />}
+              {group.map((t) => (
+                <button
+                  key={t.id}
+                  title={t.label}
+                  aria-label={t.label}
+                  aria-pressed={tool === t.id}
+                  className={tool === t.id ? "active" : ""}
+                  onClick={() =>
+                    t.id === "image"
+                      ? imageInput.current?.click()
+                      : setTool(t.id)
+                  }
+                >
+                  <t.Icon size={17} strokeWidth={1.75} />
+                </button>
+              ))}
+            </Fragment>
+          ))}
+        </div>
+        <input
+          ref={imageInput}
+          hidden
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/gif"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            e.target.value = "";
+            if (f) insertImage(f);
+          }}
+        />
+
+        {first && present < 0 && (
+          <aside className="canvas-panel props-panel" aria-label="Selection">
+            <div className="props-head">
+              <strong>
+                {active.length > 1
+                  ? `${active.length} objects`
+                  : kindLabel(first.kind)}
+              </strong>
+              <button
+                className="icon-btn"
+                aria-label="Deselect"
+                title="Deselect (Esc)"
+                onClick={() => setSelected([])}
+              >
+                <X size={14} />
+              </button>
+            </div>
+            {hasText && (
+              <Field label="Text / code">
+                <textarea
+                  rows={3}
+                  value={first.text}
+                  onChange={(e) => patch({ text: e.target.value })}
+                />
+              </Field>
+            )}
+            {first.kind === "icon" && (
+              <Field label="Developer icon">
+                <select
+                  value={first.text}
+                  onChange={(e) => patch({ text: e.target.value })}
+                >
+                  {[
+                    "⚛",
+                    "GitHub",
+                    "⬡ Node.js",
+                    "▤ Database",
+                    "▣ Server",
+                    "↔ API",
+                    "☁ Cloud",
+                    "🐳 Docker",
+                    "🔒 Auth",
+                    "🚀",
+                    "✨",
+                  ].map((n) => (
+                    <option key={n}>{n}</option>
+                  ))}
+                </select>
+              </Field>
+            )}
+            <Swatches
+              label="Stroke"
+              value={first.stroke}
+              options={strokeColors}
+              onChange={(stroke) => patch({ stroke })}
+            />
+            {!isLine &&
+              !freehand.includes(first.kind) &&
+              first.kind !== "text" && (
+                <Swatches
+                  label="Fill"
+                  value={first.fill}
+                  options={fillColors}
+                  onChange={(fill) => patch({ fill })}
+                />
+              )}
+            <Slider
+              label="Stroke width"
+              min={1}
+              max={12}
+              value={first.strokeWidth}
+              onChange={(strokeWidth) => patch({ strokeWidth })}
+            />
+            <Slider
+              label="Opacity"
+              value={first.opacity}
+              unit="%"
+              onChange={(opacity) => patch({ opacity })}
+            />
+            {hasText && (
+              <>
+                <Slider
+                  label="Text size"
+                  min={10}
+                  max={72}
+                  value={first.fontSize}
+                  onChange={(fontSize) => patch({ fontSize })}
+                />
+                <div className="font-row">
+                  <select
+                    aria-label="Font"
+                    value={first.font}
+                    onChange={(e) => patch({ font: e.target.value })}
+                  >
+                    {["sans-serif", "serif", "monospace", "cursive"].map(
+                      (n) => (
+                        <option key={n}>{n}</option>
+                      ),
+                    )}
+                  </select>
+                  <button
+                    className={`icon-btn ${first.bold ? "active" : ""}`}
+                    aria-label="Bold text"
+                    aria-pressed={first.bold}
+                    onClick={() => patch({ bold: !first.bold })}
+                  >
+                    <Bold size={15} />
+                  </button>
+                </div>
+              </>
+            )}
+            <div className="icon-row" role="group" aria-label="Arrange">
+              <ActionButton
+                label={"Duplicate"}
+                Icon={Copy}
+                onClick={() => {
+                  clipboard.current = [];
+                  duplicate();
+                }}
+              />
+              <ActionButton
+                label={"Bring to front"}
+                Icon={BringToFront}
+                onClick={() =>
+                  commit([
+                    ...board.items.filter((i) => !selected.includes(i.id)),
+                    ...active,
+                  ])
+                }
+              />
+              <ActionButton
+                label={"Send to back"}
+                Icon={SendToBack}
+                onClick={() =>
+                  commit([
+                    ...active,
+                    ...board.items.filter((i) => !selected.includes(i.id)),
+                  ])
+                }
+              />
+              <ActionButton
+                label={"Group"}
+                Icon={Group}
+                onClick={() => patch({ group: uid() })}
+                disabled={active.length < 2}
+              />
+              <ActionButton
+                label={"Ungroup"}
+                Icon={Ungroup}
+                onClick={() => patch({ group: "" })}
+                disabled={!first.group}
+              />
+              <ActionButton label={"Delete"} Icon={Trash2} onClick={remove} />
+            </div>
+            {active.length > 1 && (
+              <div className="icon-row" role="group" aria-label="Align">
+                <ActionButton
+                  label={"Align left"}
+                  Icon={AlignStartVertical}
+                  onClick={() => align("left")}
+                />
+                <ActionButton
+                  label={"Align center"}
+                  Icon={AlignCenterVertical}
+                  onClick={() => align("center")}
+                />
+                <ActionButton
+                  label={"Align right"}
+                  Icon={AlignEndVertical}
+                  onClick={() => align("right")}
+                />
+                <ActionButton
+                  label={"Align top"}
+                  Icon={AlignStartHorizontal}
+                  onClick={() => align("top")}
+                />
+                <ActionButton
+                  label={"Align middle"}
+                  Icon={AlignCenterHorizontal}
+                  onClick={() => align("middle")}
+                />
+                <ActionButton
+                  label={"Align bottom"}
+                  Icon={AlignEndHorizontal}
+                  onClick={() => align("bottom")}
+                />
+                <ActionButton
+                  label={"Distribute"}
+                  Icon={AlignHorizontalSpaceAround}
+                  onClick={() => align("distribute")}
+                />
+              </div>
+            )}
+            <details className="panel-more">
+              <summary>More options</summary>
+              <div className="two-col">
+                {(["w", "h"] as const).map((k) => (
+                  <Field key={k} label={k === "w" ? "Width" : "Height"}>
+                    <input
+                      type="number"
+                      min={20}
+                      max={5000}
+                      value={Math.round(first[k])}
+                      onChange={(e) =>
+                        patch({
+                          [k]: Math.max(20, Math.min(5000, +e.target.value)),
+                        })
+                      }
+                    />
+                  </Field>
+                ))}
+              </div>
+              <Slider
+                label="Rotation"
+                min={-180}
+                max={180}
+                unit="°"
+                value={first.rotation}
+                onChange={(rotation) => patch({ rotation })}
+              />
+              {!isLine && (
+                <Toggle
+                  label="Gradient fill"
+                  value={first.gradient}
+                  onChange={(gradient) => patch({ gradient })}
+                />
+              )}
+              {isLine &&
+                (["from", "to"] as const).map((k) => (
+                  <Field
+                    key={k}
+                    label={k === "from" ? "Connect from" : "Connect to"}
+                  >
+                    <select
+                      value={first[k]}
+                      onChange={(e) => patch({ [k]: e.target.value })}
+                    >
+                      <option value="">Free endpoint</option>
+                      {board.items
+                        .filter(
+                          (i) =>
+                            !["arrow", "line", ...freehand].includes(i.kind) &&
+                            i.id !== first.id,
+                        )
+                        .map((i) => (
+                          <option key={i.id} value={i.id}>
+                            {i.text.slice(0, 24) || kindLabel(i.kind)}
+                          </option>
+                        ))}
+                    </select>
+                  </Field>
+                ))}
+              {first.kind === "frame" && (
+                <button
+                  className="wide"
+                  onClick={() => {
+                    const group = uid();
+                    const children = board.items
+                      .filter(
+                        (i) =>
+                          i.id === first.id ||
+                          (i.x >= first.x &&
+                            i.y >= first.y &&
+                            i.x + i.w <= first.x + first.w &&
+                            i.y + i.h <= first.y + first.h),
+                      )
+                      .map((i) => i.id);
+                    commit(
+                      board.items.map((i) =>
+                        children.includes(i.id) ? { ...i, group } : i,
+                      ),
+                    );
+                    setSelected(children);
+                  }}
+                >
+                  Group frame contents
+                </button>
+              )}
+            </details>
+            <details className="panel-more">
+              <summary>
+                Comments
+                {first.comments.length ? ` · ${first.comments.length}` : ""}
+              </summary>
+              {first.comments.map((c, i) => (
+                <div className="local-comment" key={i}>
+                  {c}
+                  <button
+                    aria-label="Delete comment"
+                    onClick={() =>
+                      patch({
+                        comments: first.comments.filter((_, j) => j !== i),
+                      })
+                    }
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              ))}
+              <form
+                className="comment-form"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (!comment.trim()) return;
+                  patch({ comments: [...first.comments, comment.trim()] });
+                  setComment("");
+                }}
+              >
+                <input
+                  aria-label="Leave feedback"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Leave a note…"
+                />
+                <button type="submit" disabled={!comment.trim()}>
+                  Add comment
+                </button>
+              </form>
+              <small className="muted">
+                Comments stay in this browser and in project files.
+              </small>
+            </details>
+          </aside>
+        )}
+
+        <div className="canvas-panel zoom-controls">
+          <button
+            aria-label="Zoom out"
+            title="Zoom out (⌘ −)"
+            onClick={() => zoomAt(1 / 1.25)}
+          >
+            <Minus size={14} />
+          </button>
+          <button
+            className="zoom-value"
+            title="Reset to 100% (⌘ 0)"
+            onClick={() => setView({ ...view, z: 1 })}
+          >
+            <span>{Math.round(view.z * 100)}%</span>
+          </button>
+          <button
+            aria-label="Zoom in"
+            title="Zoom in (⌘ +)"
+            onClick={() => zoomAt(1.25)}
+          >
+            <Plus size={14} />
+          </button>
+          <button
+            aria-label="Fit to content"
+            title="Fit to content"
+            onClick={() => fit()}
+          >
+            <Maximize size={14} />
+          </button>
+        </div>
+
+        <div className="canvas-panel canvas-corner">
+          <button
+            disabled={!frames.length}
+            title={frames.length ? "Present frames" : "Add a frame to present"}
+            onClick={() => setPresent(present >= 0 ? -1 : 0)}
+          >
+            <Presentation size={15} strokeWidth={1.75} />
+            Present frames
+          </button>
+        </div>
+
         {present >= 0 && (
           <div className="presentation-nav">
             <button

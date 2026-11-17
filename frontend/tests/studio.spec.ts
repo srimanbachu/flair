@@ -68,13 +68,14 @@ test("canvas shapes, history, comments and grouping", async ({ page }) => {
   await page.getByRole("button", { name: "Canvas", exact: true }).click();
   const surface = page.locator(".canvas-surface");
   const b = (await surface.boundingBox())!;
-  await page.getByRole("button", { name: "rectangle", exact: true }).click();
+  await page.getByRole("button", { name: "Rectangle", exact: true }).click();
   await page.mouse.move(b.x + 180, b.y + 160);
   await page.mouse.down();
   await page.mouse.move(b.x + 400, b.y + 300, { steps: 8 });
   await page.mouse.up();
   await expect(page.locator("[data-item]")).toHaveCount(1);
   await page.getByLabel("Text / code").fill("Frontend");
+  await page.getByText("Comments", { exact: true }).click();
   await page.getByLabel("Leave feedback").fill("Ship it");
   await page.getByRole("button", { name: "Add comment" }).click();
   await expect(page.locator(".local-comment")).toContainText("Ship it");
@@ -91,6 +92,7 @@ test("canvas attached connectors follow nodes and SVG exports", async ({
   await page.getByRole("button", { name: "Canvas", exact: true }).click();
   await page.getByRole("button", { name: "System architecture" }).click();
   await expect(page.locator("[data-item]")).toHaveCount(9);
+  await page.getByRole("button", { name: "Layers" }).click();
   await page.locator(".layer-row").filter({ hasText: "Client" }).click();
   await page.getByLabel("Text / code").fill("Browser");
   await page.getByRole("button", { name: "Export", exact: true }).click();
@@ -129,7 +131,7 @@ test("mobile layout keeps preview and controls accessible", async ({
 test("freehand strokes retain geometry and can be erased", async ({ page }) => {
   await page.getByRole("button", { name: "Canvas", exact: true }).click();
   const b = (await page.locator(".canvas-surface").boundingBox())!;
-  await page.getByRole("button", { name: "pen", exact: true }).click();
+  await page.getByRole("button", { name: "Draw", exact: true }).click();
   await page.mouse.move(b.x + 250, b.y + 250);
   await page.mouse.down();
   await page.mouse.move(b.x + 170, b.y + 180, { steps: 12 });
@@ -140,14 +142,14 @@ test("freehand strokes retain geometry and can be erased", async ({ page }) => {
   expect(
     (await stroke.getAttribute("points"))!.split(" ").length,
   ).toBeGreaterThan(15);
-  await page.getByRole("button", { name: "eraser", exact: true }).click();
+  await page.getByRole("button", { name: "Eraser", exact: true }).click();
   await page.mouse.click(b.x + 170, b.y + 180);
   await expect(page.locator("[data-item]")).toHaveCount(0);
 });
 test("frames present and project files round-trip", async ({ page }) => {
   await page.getByRole("button", { name: "Canvas", exact: true }).click();
   const b = (await page.locator(".canvas-surface").boundingBox())!;
-  await page.getByRole("button", { name: "frame", exact: true }).click();
+  await page.getByRole("button", { name: "Frame", exact: true }).click();
   await page.mouse.move(b.x + 90, b.y + 120);
   await page.mouse.down();
   await page.mouse.move(b.x + 500, b.y + 400, { steps: 8 });
@@ -178,13 +180,19 @@ test("same-browser local room syncs between two tabs", async ({
   context,
 }) => {
   await page.getByRole("button", { name: "Canvas", exact: true }).click();
+  await page.getByRole("button", { name: "Board settings" }).click();
   await page.getByLabel("Live sharing between browser tabs").check();
   const other = await context.newPage();
   await other.goto("/");
   await other.getByRole("button", { name: "Canvas", exact: true }).click();
+  await other.getByRole("button", { name: "Board settings" }).click();
   await other.getByLabel("Live sharing between browser tabs").check();
-  await page.getByRole("button", { name: /Mind map/ }).click();
+  await page
+    .locator(".board-menu")
+    .getByRole("button", { name: "Mind map" })
+    .click();
   await expect(other.locator("[data-item]")).toHaveCount(7);
+  await other.getByRole("button", { name: "Layers" }).click();
   await other.locator(".layer-row").filter({ hasText: "Design" }).click();
   await other.getByLabel("Text / code").fill("Shared design");
   await expect(
