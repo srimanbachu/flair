@@ -718,3 +718,16 @@ test("export quality goes up to 10x", async ({ page }) => {
   const bytes = await readFile((await (await download).path())!);
   expect(bytes.readUInt32BE(16)).toBe(w * 5);
 });
+test("no focus ring is drawn on buttons or the card", async ({ page }) => {
+  const projects = page.getByRole("button", { name: "My projects" });
+  await projects.focus();
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("Escape");
+  await expect(projects).toBeFocused();
+  await expect(projects).toHaveCSS("outline-style", "none");
+  await page.getByLabel("Code block 1", { exact: true }).focus();
+  await expect(page.locator(".code-window").first()).toHaveCSS(
+    "outline-style",
+    "none",
+  );
+});

@@ -54,12 +54,10 @@
   opacity: 0.3;
   cursor: not-allowed;
 }
-.studio button:focus-visible,
-.studio input:focus-visible,
-.studio textarea:focus-visible,
-.studio select:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
+/* No focus rings anywhere in the studio (design decision). */
+.studio :focus,
+.studio :focus-visible {
+  outline: none;
 }
 .studio-header {
   height: 56px;
@@ -1065,10 +1063,6 @@
 }
 .card-scaled .code-window:hover:not(:focus-within) {
   outline: 1px dashed #ffffff55;
-  outline-offset: 4px;
-}
-.card-scaled .code-window:focus-within {
-  outline: 2px solid #8fdcd866;
   outline-offset: 4px;
 }
 .code-line {
