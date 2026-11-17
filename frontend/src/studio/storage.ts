@@ -1,6 +1,6 @@
 export type SavedProject = { id: string; name: string; kind: 'card' | 'canvas'; updated: string; data: unknown }
 const KEY = 'flair.projects.v1'
-export function readProjects(): SavedProject[] { try { return JSON.parse(localStorage.getItem(KEY) || '[]') } catch { return [] } }
+export function readProjects(): SavedProject[] { try { const value = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(value) ? value.filter(p => p && typeof p.id === 'string' && typeof p.name === 'string' && ['card','canvas'].includes(p.kind)) : [] } catch { return [] } }
 export function saveProject(project: SavedProject) { const list = readProjects(); localStorage.setItem(KEY, JSON.stringify([project, ...list.filter(p => p.id !== project.id)])) }
 export function removeProject(id: string) { localStorage.setItem(KEY, JSON.stringify(readProjects().filter(p => p.id !== id))) }
 export function download(name: string, content: string, type = 'application/json') { const url = URL.createObjectURL(new Blob([content], { type })); const a = document.createElement('a'); a.href = url; a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000) }

@@ -2,15 +2,16 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { Code2, PenTool, FolderOpen, Undo2, Redo2, Download, Save, ChevronDown, X, Plus, Upload, Sparkles } from 'lucide-react'
 import { toPng, toJpeg } from 'html-to-image'
 import type { Card } from './model'
-import { defaultCard, uid } from './model'
+import { defaultCard, uid, cardTabs } from './model'
 import type { Board } from './canvasModel'
-import { emptyBoard, bounds, endpoints } from './canvasModel'
-import { CardControls, cardTabs } from './CardControls'
+import { emptyBoard } from './canvasModel'
+import { CardControls } from './CardControls'
 import { CardPreview } from './CardPreview'
 import { Canvas } from './Canvas'
 import type { SavedProject } from './storage'
 import { download, readProjects, removeProject, saveProject } from './storage'
 import { parseProject, validateBoard, validateCard } from './projectFiles'
+import { canvasSVG } from './CanvasExport'
 import './studio.css'
 type Workspace={kind:'card'|'canvas';card:Card;board:Board}
 function initial():Workspace{try{const s=JSON.parse(localStorage.getItem('flair.draft.v1')||'null');if(s)return{kind:s.kind==='canvas'?'canvas':'card',card:validateCard(s.card),board:validateBoard(s.board)}}catch{/* Recover a fresh draft if storage is unavailable or corrupt. */}return{kind:'card',card:defaultCard(),board:emptyBoard()}}
@@ -18,7 +19,7 @@ export default function Studio(){
  const [work,setWork]=useState(initial);const [past,setPast]=useState<Workspace[]>([]);const [future,setFuture]=useState<Workspace[]>([]);const [tab,setTab]=useState('Code');const [toast,setToast]=useState('');const [saved,setSaved]=useState(false);const [library,setLibrary]=useState(false);const [projects,setProjects]=useState<SavedProject[]>(readProjects);const [menu,setMenu]=useState(false);const [busy,setBusy]=useState(false);const [scale,setScale]=useState(.55);const [projectId,setProjectId]=useState<string|null>(null)
  const preview=useRef<HTMLDivElement>(null);const stage=useRef<HTMLDivElement>(null);const svg=useRef<SVGSVGElement>(null);const importRef=useRef<HTMLInputElement>(null);const timer=useRef<ReturnType<typeof setTimeout>|null>(null)
  const notify=useCallback((s:string)=>{setToast(s);if(timer.current)clearTimeout(timer.current);timer.current=setTimeout(()=>setToast(''),5000)},[])
- const change=useCallback((next:Workspace)=>{setPast(p=>[...p.slice(-59),work]);setFuture([]);setWork(next);setSaved(false)},[work])
+ const change=useCallback((next:Workspace)=>{setPast(p=>[...p,work]);setFuture([]);setWork(next);setSaved(false)},[work])
  const undo=useCallback(()=>{if(!past.length)return;setFuture(f=>[work,...f]);setWork(past[past.length-1]);setPast(p=>p.slice(0,-1));setSaved(false)},[past,work]);const redo=useCallback(()=>{if(!future.length)return;setPast(p=>[...p,work]);setWork(future[0]);setFuture(f=>f.slice(1));setSaved(false)},[future,work])
  useEffect(()=>{const t=setTimeout(()=>{try{localStorage.setItem('flair.draft.v1',JSON.stringify(work))}catch{notify('Browser storage is full or unavailable. Download a project file to keep your work.')}},600);return()=>clearTimeout(t)},[work,notify])
  useEffect(()=>{const el=stage.current;if(!el)return;const observer=new ResizeObserver(([entry])=>setScale(Math.min(1,(entry.contentRect.width-64)/work.card.width,(entry.contentRect.height-80)/work.card.height)));observer.observe(el);return()=>observer.disconnect()},[work.card.width,work.card.height,work.kind])
@@ -26,12 +27,7 @@ export default function Studio(){
  useEffect(()=>{const key=(e:KeyboardEvent)=>{if(!(e.metaKey||e.ctrlKey))return;if(e.key==='s'){e.preventDefault();save()}if((e.target as HTMLElement).closest('input,textarea,select'))return;if(e.key==='z'){e.preventDefault();if(e.shiftKey)redo();else undo()}if(e.key==='y'){e.preventDefault();redo()}};window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key)},[undo,redo,save])
  const projectFile=()=>{download('flair-project.json',JSON.stringify({format:'flair',version:1,kind:work.kind,data:work.kind==='card'?work.card:work.board},null,2));setMenu(false)}
  const exportCanvas=async(format:string)=>{
-  const source=svg.current;if(!source)throw new Error('Canvas is not ready.')
-  const clone=source.cloneNode(true) as SVGSVGElement
-  // Export all objects, independent of the current viewport, selection and presentation frame.
-  const all=work.board.items.map(i=>{if(['arrow','line'].includes(i.kind)){const e=endpoints(i,work.board.items);return{...i,x:Math.min(e.a.x,e.b.x),y:Math.min(e.a.y,e.b.y),w:Math.abs(e.b.x-e.a.x),h:Math.abs(e.b.y-e.a.y)}}return i})
-  const b=bounds(all);clone.setAttribute('viewBox',`${b.x} ${b.y} ${b.w} ${b.h}`);clone.setAttribute('width',String(b.w));clone.setAttribute('height',String(b.h));clone.setAttribute('xmlns','http://www.w3.org/2000/svg');clone.firstElementChild?.removeAttribute('transform');clone.querySelectorAll('[stroke-dasharray="5 4"]').forEach(n=>n.remove());clone.querySelectorAll('rect[style*="nwse-resize"]').forEach(n=>n.remove())
-  const text=new XMLSerializer().serializeToString(clone)
+  const {text,bounds:b}=canvasSVG(work.board)
   if(format==='svg'){download('flair-canvas.svg',text,'image/svg+xml');return}
   const url=URL.createObjectURL(new Blob([text],{type:'image/svg+xml'}));try{const img=new Image();await new Promise<void>((resolve,reject)=>{img.onload=()=>resolve();img.onerror=()=>reject(new Error('Canvas image could not be rendered.'));img.src=url});const factor=Math.min(2,8192/Math.max(b.w,b.h));const canvas=document.createElement('canvas');canvas.width=b.w*factor;canvas.height=b.h*factor;const ctx=canvas.getContext('2d')!;ctx.fillStyle=work.board.background==='Light'?'#f6f5f0':'#191a23';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);const a=document.createElement('a');a.download='flair-canvas.png';a.href=canvas.toDataURL('image/png');a.click()}finally{URL.revokeObjectURL(url)}
  }

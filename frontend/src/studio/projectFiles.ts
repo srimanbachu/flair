@@ -8,7 +8,7 @@ function shape(value:unknown, sample:Record<string,unknown>):Record<string,unkno
  for(const [key,example] of Object.entries(sample)){
   const v=obj[key]
   if(Array.isArray(example)){if(!Array.isArray(v))throw new Error(`Invalid ${key}.`);result[key]=v}
-  else if(typeof v!==typeof example||typeof v==='number'&&(!Number.isFinite(v)||Math.abs(v)>100000)||typeof v==='string'&&v.length>300000)throw new Error(`Invalid ${key}.`)
+  else if(typeof v!==typeof example||typeof v==='number'&&(!Number.isFinite(v)||Math.abs(v)>100000)||typeof v==='string'&&v.length>(key==='image'?8000000:300000))throw new Error(`Invalid ${key}.`)
   else result[key]=v
  }
  return result

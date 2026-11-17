@@ -3,7 +3,7 @@ import type { Card, CodeBlock } from './model'
 import { backgroundNames, backgroundCSS, makeBlock, palettes, sizes, uid } from './model'
 import { cardTemplate, templateNames } from './templates'
 import { readImage } from './storage'
-export const cardTabs = ['Code', 'Typography', 'Background', 'Window', 'Effects', 'Annotations', 'Templates', 'Export']
+
 export function CardControls({ card: c, change, tab, notify }: { card: Card; change: (c: Card) => void; tab: string; notify: (s: string) => void }) {
   const set = <K extends keyof Card>(key: K, value: Card[K]) => change({ ...c, [key]: value })
   const block = (id: string, patch: Partial<CodeBlock>) => set('blocks', c.blocks.map(b => b.id === id ? { ...b, ...patch } : b))

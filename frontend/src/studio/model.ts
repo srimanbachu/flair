@@ -28,3 +28,5 @@ export function backgroundCSS(c: Pick<Card, 'background' | 'color' | 'color2' | 
 }
 export const sizes: Record<string, [number, number]> = { 'X post': [1600, 900], LinkedIn: [1200, 627], Instagram: [1080, 1080], 'Instagram Story': [1080, 1920], YouTube: [1280, 720], '16:9': [1600, 900], '4:3': [1200, 900], '1:1': [1080, 1080], '9:16': [900, 1600] }
 export function inRanges(spec: string, line: number) { return spec.split(',').some(part => { const match = part.trim().match(/^(\d+)(?:\s*[-–]\s*(\d+))?$/); return match ? line >= +match[1] && line <= +(match[2] || match[1]) : false }) }
+
+export const cardTabs = ['Code', 'Typography', 'Background', 'Window', 'Effects', 'Annotations', 'Templates', 'Export']

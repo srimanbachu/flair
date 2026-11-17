@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, type CSSProperties } from 'react'
 import './Dcode.css'
 import flair from '../assets/flair.png'
 import video from '../assets/background.mp4'
@@ -451,10 +451,10 @@ const Dcode = () => {
                       className="codepreview"
                       style={{
                         padding: `${padding}px`,
-                        ['--code-brightness' as any]: codeBrightness,
-                        ['--code-contrast' as any]: codeContrast,
+                        '--code-brightness': codeBrightness,
+                        '--code-contrast': codeContrast,
 
-                      }}
+                      } as CSSProperties}
                     >
                       <code
                         className={
