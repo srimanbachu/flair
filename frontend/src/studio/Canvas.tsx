@@ -61,6 +61,12 @@ export function Canvas({
   const [view, setView] = useState({ x: 0, y: 0, z: 1 });
   const [draft, setDraft] = useState<CanvasItem[] | null>(null);
   const [comment, setComment] = useState("");
+  const [marquee, setMarquee] = useState<{
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+  } | null>(null);
   const [present, setPresent] = useState(-1);
   const [live, setLive] = useState(false);
   const [room, setRoom] = useState("studio");
@@ -159,6 +165,10 @@ export function Canvas({
         setPresent(-1);
         setTool("select");
       }
+      if ((e.metaKey || e.ctrlKey) && e.key === "a") {
+        e.preventDefault();
+        setSelected(board.items.map((i) => i.id));
+      }
       if (e.key === "Delete" || e.key === "Backspace") {
         e.preventDefault();
         remove();
@@ -218,7 +228,16 @@ export function Canvas({
     }
     if (tool === "select") {
       if (!id) {
-        setSelected([]);
+        if (!e.shiftKey) setSelected([]);
+        gesture.current = {
+          start: p,
+          screen: { x: e.clientX, y: e.clientY },
+          items: board.items,
+          ids: e.shiftKey ? selected : [],
+          kind: "marquee",
+          view,
+        };
+        setMarquee({ x: p.x, y: p.y, w: 0, h: 0 });
         return;
       }
       const target = board.items.find((i) => i.id === id)!;
@@ -272,6 +291,32 @@ export function Canvas({
       });
       return;
     }
+    if (g.kind === "marquee") {
+      const r = {
+        x: Math.min(g.start.x, p.x),
+        y: Math.min(g.start.y, p.y),
+        w: Math.abs(dx),
+        h: Math.abs(dy),
+      };
+      setMarquee(r);
+      const hits = board.items.filter(
+        (i) =>
+          i.x + i.w >= r.x &&
+          i.x <= r.x + r.w &&
+          i.y + i.h >= r.y &&
+          i.y <= r.y + r.h,
+      );
+      const groups = new Set(hits.map((i) => i.group).filter(Boolean));
+      setSelected([
+        ...new Set([
+          ...g.ids,
+          ...board.items
+            .filter((i) => hits.includes(i) || groups.has(i.group))
+            .map((i) => i.id),
+        ]),
+      ]);
+      return;
+    }
     const snap = (v: number) => (board.snap ? Math.round(v / 10) * 10 : v);
     setDraft(
       g.items.map((i) => {
@@ -305,6 +350,7 @@ export function Canvas({
     );
   };
   const up = () => {
+    setMarquee(null);
     if (draft) {
       commit(
         draft.map((i) => {
@@ -611,6 +657,32 @@ export function Canvas({
                 ))}
               </>
             )}
+            {first.kind === "frame" && (
+              <button
+                className="wide"
+                onClick={() => {
+                  const group = uid();
+                  const children = board.items
+                    .filter(
+                      (i) =>
+                        i.id === first.id ||
+                        (i.x >= first.x &&
+                          i.y >= first.y &&
+                          i.x + i.w <= first.x + first.w &&
+                          i.y + i.h <= first.y + first.h),
+                    )
+                    .map((i) => i.id);
+                  commit(
+                    board.items.map((i) =>
+                      children.includes(i.id) ? { ...i, group } : i,
+                    ),
+                  );
+                  setSelected(children);
+                }}
+              >
+                Group frame contents
+              </button>
+            )}
             <div className="button-grid">
               <button
                 onClick={() => {
@@ -868,6 +940,18 @@ export function Canvas({
                     }}
                   />
                 )}
+              {marquee && (
+                <rect
+                  x={marquee.x}
+                  y={marquee.y}
+                  width={marquee.w}
+                  height={marquee.h}
+                  fill="#b49aff15"
+                  stroke="#b49aff"
+                  strokeDasharray="4 4"
+                  pointerEvents="none"
+                />
+              )}
             </g>
           </svg>
           {board.items.length === 0 && (

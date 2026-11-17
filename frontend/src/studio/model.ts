@@ -76,7 +76,7 @@ export const defaultCard = (): Card => ({
   blocks: [makeBlock()],
   theme: "Midnight",
   font: "monospace",
-  fontSize: 17,
+  fontSize: 24,
   lineHeight: 1.7,
   letterSpacing: 0,
   lineNumbers: true,

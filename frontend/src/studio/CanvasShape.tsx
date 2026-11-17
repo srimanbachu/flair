@@ -1,3 +1,48 @@
+import {
+  Github,
+  Atom,
+  Database,
+  Server,
+  Cloud,
+  Container,
+  LockKeyhole,
+  Network,
+  Hexagon,
+} from "lucide-react";
+import Prism from "prismjs";
+import "prismjs/components/prism-typescript";
+import type { ReactNode } from "react";
+const icons = {
+  GitHub: Github,
+  "⚛": Atom,
+  "▤ Database": Database,
+  "▣ Server": Server,
+  "☁ Cloud": Cloud,
+  "🐳 Docker": Container,
+  "🔒 Auth": LockKeyhole,
+  "↔ API": Network,
+  "⬡ Node.js": Hexagon,
+};
+function codeTokens(tokens: (string | Prism.Token)[]): ReactNode {
+  const colors: Record<string, string> = {
+    keyword: "#b69aff",
+    string: "#a5dfb0",
+    number: "#ffba89",
+    comment: "#737f99",
+    function: "#ffba89",
+  };
+  return tokens.map((token, index) =>
+    typeof token === "string" ? (
+      token
+    ) : (
+      <tspan key={index} fill={colors[token.type]}>
+        {codeTokens(
+          Array.isArray(token.content) ? token.content : [token.content],
+        )}
+      </tspan>
+    ),
+  );
+}
 import type { CanvasItem } from "./canvasModel";
 import { endpoints } from "./canvasModel";
 export function CanvasShape({
@@ -9,6 +54,8 @@ export function CanvasShape({
   items: CanvasItem[];
   selected?: boolean;
 }) {
+  const Icon =
+    i.kind === "icon" ? icons[i.text as keyof typeof icons] : undefined;
   const fill = i.gradient ? `url(#gradient-${i.id})` : i.fill;
   const shapeProps = { fill, stroke: i.stroke, strokeWidth: i.strokeWidth };
   const isLine = ["arrow", "line"].includes(i.kind);
@@ -114,7 +161,17 @@ export function CanvasShape({
               strokeDasharray={i.kind === "frame" ? "8 6" : undefined}
             />
           ) : null}
-          {i.text && (
+          {Icon && (
+            <Icon
+              x={i.x + (i.w - i.fontSize) / 2}
+              y={i.y + (i.h - i.fontSize) / 2}
+              width={i.fontSize}
+              height={i.fontSize}
+              stroke={i.stroke}
+              strokeWidth={1.5}
+            />
+          )}
+          {i.text && !Icon && (
             <text
               x={i.kind === "code" ? i.x + 18 : i.x + i.w / 2}
               y={
@@ -142,7 +199,11 @@ export function CanvasShape({
                   x={i.kind === "code" ? i.x + 18 : i.x + i.w / 2}
                   dy={index ? i.fontSize * 1.3 : 0}
                 >
-                  {line || " "}
+                  {i.kind === "code"
+                    ? codeTokens(
+                        Prism.tokenize(line || " ", Prism.languages.typescript),
+                      )
+                    : line || " "}
                 </tspan>
               ))}
             </text>

@@ -465,6 +465,7 @@ export default function Studio() {
               ...(p.kind === "card" ? { card: p.data } : { board: p.data }),
             });
             setProjectId(null);
+            setLibrary(false);
             notify("Project imported. Save it to add it to your library.");
           } catch (err) {
             notify(

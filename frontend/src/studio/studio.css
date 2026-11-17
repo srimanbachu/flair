@@ -496,7 +496,7 @@
   justify-content: center;
   overflow: hidden;
   border-radius: 4px;
-  background: #171923;
+  background: transparent;
   isolation: isolate;
 }
 .card-background {
@@ -528,7 +528,7 @@
   padding: 0 22px;
   gap: 18px;
   border-bottom: 1px solid #ffffff07;
-  font: 12px system-ui;
+  font: 16px system-ui;
 }
 .window-buttons {
   display: flex;
@@ -582,7 +582,7 @@
 }
 .code-line {
   display: flex;
-  min-height: 1.7em;
+  min-height: 1em;
   position: relative;
   border-left: 2px solid transparent;
 }
