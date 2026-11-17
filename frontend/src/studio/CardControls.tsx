@@ -137,7 +137,10 @@ export function CardControls({
                       key={name}
                       aria-pressed={c.theme === name}
                       className={c.theme === name ? "on" : ""}
-                      onClick={() => set("theme", name)}
+                      onClick={() =>
+                        // A theme is a full look: drop any custom window colour.
+                        change({ ...c, theme: name, windowColor: "" })
+                      }
                     >
                       <span className="theme-chip" style={{ background: p.bg }}>
                         {[p.keyword, p.string, p.number].map((color) => (

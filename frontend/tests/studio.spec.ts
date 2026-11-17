@@ -644,3 +644,13 @@ test("a new card opens with the default look", async ({ page }) => {
   );
   await expect(page.getByRole("slider", { name: /Grain/ })).toHaveValue("50");
 });
+test("choosing a theme replaces a custom window colour", async ({ page }) => {
+  await page.getByRole("button", { name: "Window", exact: true }).click();
+  await page.getByRole("button", { name: "Window #0b0b0d" }).click();
+  await page.getByRole("button", { name: "Typography", exact: true }).click();
+  await page.getByRole("button", { name: "Dracula" }).click();
+  await expect(page.locator(".code-window").first()).toHaveCSS(
+    "background-color",
+    "rgb(40, 42, 54)",
+  );
+});
