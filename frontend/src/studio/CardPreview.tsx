@@ -117,27 +117,31 @@ export function CardPreview({
             >
               {(c.fileName || c.controls) && (
                 <div className="code-window-bar">
-                  {c.controls && (
-                    <span className="window-buttons">
-                      {c.window === "Windows" ? (
-                        "−  □  ×"
-                      ) : c.window === "Terminal" ? (
-                        "❯_"
-                      ) : c.window === "Minimal" ? (
-                        "•••"
-                      ) : (
-                        <>
-                          <i />
-                          <i />
-                          <i />
-                        </>
-                      )}
-                    </span>
-                  )}
-                  {c.fileName && (
-                    <span className="code-filename">{b.name}</span>
-                  )}
-                  <span className="language-badge">{b.label}</span>
+                  <span className="bar-side">
+                    {c.controls && (
+                      <span className="window-buttons">
+                        {c.window === "Windows" ? (
+                          "−  □  ×"
+                        ) : c.window === "Terminal" ? (
+                          "❯_"
+                        ) : c.window === "Minimal" ? (
+                          "•••"
+                        ) : (
+                          <>
+                            <i />
+                            <i />
+                            <i />
+                          </>
+                        )}
+                      </span>
+                    )}
+                  </span>
+                  <span className="code-filename">
+                    {c.fileName ? b.name : ""}
+                  </span>
+                  <span className="bar-side end">
+                    <span className="language-badge">{b.label}</span>
+                  </span>
                 </div>
               )}
               <CodeView card={c} block={b} />
