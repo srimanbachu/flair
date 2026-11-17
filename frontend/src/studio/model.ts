@@ -79,8 +79,17 @@ export const makeBlock = (
 });
 export const defaultCard = (): Card => ({
   title: "Something worth sharing",
-  blocks: [makeBlock()],
-  theme: "Midnight",
+  blocks: [
+    {
+      ...makeBlock(
+        "Hi there how is it going? its all good here,\nhope its good there too\n\n\n",
+        "hello.txt",
+      ),
+      language: "plain",
+      label: "Text",
+    },
+  ],
+  theme: "Paper",
   font: "monospace",
   fontSize: 24,
   lineHeight: 1.7,
@@ -91,12 +100,12 @@ export const defaultCard = (): Card => ({
   window: "macOS",
   windowColor: "",
   background: "Solid",
-  color: "#9fe0d8",
+  color: "#ffffff",
   color2: "#7c5cff",
   image: "",
   bgBlur: 0,
   bgOpacity: 100,
-  grain: 0,
+  grain: 50,
   padding: 64,
   radius: 16,
   bgRadius: 4,

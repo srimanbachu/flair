@@ -241,6 +241,9 @@ test("line words and window visibility respond to controls", async ({
   page,
 }) => {
   await page.getByText("Line effects").click();
+  await page
+    .getByLabel("Code block 1", { exact: true })
+    .fill("const limit = Infinity;");
   await page.getByLabel("Highlight words", { exact: true }).fill("Infinity");
   await expect(page.locator(".syntax mark")).toHaveText("Infinity");
   await page.getByRole("button", { name: "Window", exact: true }).click();
@@ -593,15 +596,16 @@ test("window color overrides the theme and keeps text legible", async ({
   page,
 }) => {
   await page.getByRole("button", { name: "Window", exact: true }).click();
-  await page.getByRole("button", { name: "Window #ffffff" }).click();
+  await page.getByRole("button", { name: "Window #0b0b0d" }).click();
   const win = page.locator(".code-window").first();
-  await expect(win).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  await expect(win).toHaveCSS("background-color", "rgb(11, 11, 13)");
+  // Light Paper theme on a dark window: plain text flips to light ink.
   await expect(page.locator(".syntax").first()).toHaveCSS(
     "color",
-    "rgb(31, 35, 40)",
+    "rgb(230, 237, 243)",
   );
   await page.getByRole("button", { name: "Use theme color" }).click();
-  await expect(win).not.toHaveCSS("background-color", "rgb(255, 255, 255)");
+  await expect(win).toHaveCSS("background-color", "rgb(255, 253, 247)");
 });
 test("editing on the card shows a thick caret at the cursor", async ({
   page,
@@ -624,4 +628,19 @@ test("editing on the card shows a thick caret at the cursor", async ({
   expect(box.width).toBeGreaterThan(1.5);
   await editor.blur();
   await expect(caret).toHaveCount(0);
+});
+test("a new card opens with the default look", async ({ page }) => {
+  await expect(page.locator(".card-background")).toHaveCSS(
+    "background-color",
+    "rgb(255, 255, 255)",
+  );
+  await expect(page.locator(".code-window").first()).toHaveCSS(
+    "background-color",
+    "rgb(255, 253, 247)",
+  );
+  await expect(page.locator(".code-filename").first()).toHaveText("hello.txt");
+  await expect(page.locator(".code-window .line-text").first()).toHaveText(
+    "Hi there how is it going? its all good here,",
+  );
+  await expect(page.getByRole("slider", { name: /Grain/ })).toHaveValue("50");
 });

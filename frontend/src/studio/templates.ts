@@ -42,6 +42,8 @@ const looks: Record<string, [string, string]> = {
 export function cardTemplate(name: string): Card {
   const c = defaultCard();
   c.title = name;
+  // Templates start from the TypeScript sample, not the blank-card note.
+  c.blocks = [makeBlock()];
   const [bg, theme] = looks[name] || ["#1c1c21", "Midnight"];
   c.background = "Solid";
   c.color = bg;
