@@ -31,7 +31,7 @@ const OpeningPage = () => {
       <div className="fake">
           <div className="child">
             <h1 className='flairText'>
-              Flair  <img src={flair} alt="fuckyou" className="flairImg" />
+              Flair  <img src={flair} alt="nothimg" className="flairImg" />
             </h1>
             <p>Create. Style. Download. Repeat
             </p>

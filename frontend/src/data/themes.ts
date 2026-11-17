@@ -108,4 +108,5 @@ export const themes = [
     { key: 'glow-blue', className: 'theme98', label: 'Glow Blue' },
     { key: 'glow-pink', className: 'theme99', label: 'Glow Pink' },
     { key: 'glow-green', className: 'theme100', label: 'Glow Green' },
+    { key: 'Pitch-black', classname: 'theme101', label: 'Pitch-black'},
   ]

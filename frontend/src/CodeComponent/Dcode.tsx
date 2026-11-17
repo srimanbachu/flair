@@ -138,7 +138,7 @@ const Dcode = () => {
       <div className="nav">
         <div className="logo">
           <h1 onClick={() =>(navigate('/intro'))}>Flair</h1>
-          <img src={flair} alt="flair_img" className='flairimg' />
+          <img src={flair} alt="you cant copy this image sirr 🙂" className='flairimg' />
         </div>
 
         <div className="empty"></div>
@@ -350,7 +350,7 @@ const Dcode = () => {
                       <input
                         type="range"
                         min="1"
-                        max="5"
+                        max="10"
                         step="0.5"
                         value={pixelRatio}
                         onChange={(e) => setPixelRatio(Number(e.target.value))}

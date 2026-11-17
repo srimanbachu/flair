@@ -43,4 +43,5 @@ export const backgrounds = [
     { key: 'bg42', className: 'bg42' },
     { key: 'bg43', className: 'bg43' },
     { key: 'bg44', className: 'bg44' },
+    { key: 'bg45', className: 'bg45' }
   ]
