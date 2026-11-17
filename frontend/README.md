@@ -1,73 +1,73 @@
-# React + TypeScript + Vite
+# Flair Studio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Flair turns code into customizable graphics and provides a visual canvas for developer diagrams, tutorials, and presentations. The studio is a React + TypeScript frontend. It makes no backend or account requests.
 
-Currently, two official plugins are available:
+## Run
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```sh
+npm ci
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The card editor is at `/`; the original introduction remains at `/intro`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```sh
+npm run build      # TypeScript + production bundle
+npm run lint       # ESLint
+npm test           # Playwright browser regression tests
+npm run format     # Format studio and tests
 ```
+
+Browser tests use an installed Google Chrome (`channel: chrome`). Change the Playwright configuration if using Playwright-managed Chromium instead.
+
+## Code cards
+
+- Multiple independently editable code blocks, language selection, custom labels, file names, and code copying.
+- Eight syntax palettes; system and installed font choices; size, line height, letter spacing, and line numbers.
+- Per-block line ranges (`2-5, 8`), highlighted words separated by commas, blurred lines, glowing lines, and comment indicators.
+- macOS, Windows, Minimal, Terminal, and Glass window treatments with optional controls and file names.
+- Solid, linear, radial, mesh, grid, dots, blobs, and image backgrounds, plus Midnight, Aurora, Sunset, Ocean, Carbon, Paper, Glass, and Terminal presets. Uploaded raster backgrounds are embedded in the project. Background blur, opacity, and grain controls are independent.
+- Shadow, glow, border, gradient border, reflection, blur, glass transparency, depth, perspective, and rotation controls.
+- Draggable arrows, circles, rectangles, underlines, labels, numbered markers, callouts, emoji, and stickers. Position sliders provide an alternative to dragging.
+- Seventeen starting templates covering social posts, tutorials, comparisons, terminal output, SQL, JSON, API responses, and announcements.
+- Social and aspect-ratio dimensions, custom sizes from 320 to 2400 px, and 1×–3× quality. Download PNG, JPEG, or editable project JSON. Set background opacity to zero for transparent PNGs.
+
+Templates replace the current composition and can be undone. The preview reports when content may exceed the export dimensions. Font choices use local fonts and fall back when a family is unavailable. Blur is a visual treatment: original code remains in editable project files, so remove secrets before sharing those files.
+
+## Visual canvas
+
+Use the floating toolbar to select, pan, draw with pen/pencil/brush, erase whole objects, or insert rectangles, ellipses, triangles, diamonds, arrows, lines, text, notes, code, developer icons, and frames. Raster images can be uploaded and placed on the board. Code objects render TypeScript syntax colors.
+
+- Drag an object to move it; use its corner handle or inspector dimensions to resize. Rotation, fills, gradient fills, strokes, opacity, fonts, sizes, and weight are in the inspector.
+- Shift-click or drag a selection rectangle for multiple selection. Group, ungroup, align, distribute horizontally, and change stacking order. The Layers list selects obscured objects.
+- Select an arrow and choose **Connect from** and **Connect to**. Endpoints follow shape boundaries as shapes move and rotate.
+- Add a frame and use **Group frame contents** to move contained objects together. **Present frames** displays frames in layer order, with arrow-key navigation and Escape to exit.
+- Add comments to selected objects. Comments are local project data.
+- Wheel to zoom, use the hand to pan, and **Fit** to show the board. Optional snapping uses a 10px grid. Background choices are dots, grid, plain dark, and plain light.
+- Architecture, flowchart, mind-map, and wireframe templates supply editable objects and attached connectors.
+- Canvas exports include all objects independently of the current pan, zoom, or selection. Download PNG, SVG, or editable project JSON. Large PNGs are scaled to fit an 8192px maximum edge; SVG preserves vector geometry.
+
+## Local projects and sharing
+
+The current card and canvas draft autosave to `localStorage`. **Save** adds or updates a named entry in **My projects**. Open, delete, import, or create projects from the library. Undo/redo history lasts for the current editing session; opening or importing another project starts a new history.
+
+Download **Editable project** for a portable backup or to share a copy. Import the JSON file to resume editing. Projects use a versioned `flair` format with validated fields, geometry, and embedded images. PNG, JPEG, WebP, and GIF uploads are limited to 5 MB each; imported project files are limited to 20 MB. Browser storage quotas vary; storage errors are shown and project downloads remain available. Clearing site storage removes local drafts and library entries.
+
+Optional **Live sharing between browser tabs** uses `BroadcastChannel`: open Flair in another tab in the same browser and origin, enable sharing, and use the same local room name. Updates replace the shared canvas state; the latest edit wins. This includes object comments. It does not synchronize across devices or provide multi-user accounts, conflict-free concurrent editing, or a hosted collaboration service.
+
+## Shortcuts
+
+| Action                             | Shortcut                      |
+| ---------------------------------- | ----------------------------- |
+| Save local project                 | Ctrl / Cmd S                  |
+| Undo                               | Ctrl / Cmd Z                  |
+| Redo                               | Ctrl / Cmd Shift Z, or Ctrl Y |
+| Copy canvas selection              | Ctrl / Cmd C                  |
+| Paste copied objects               | Ctrl / Cmd V                  |
+| Duplicate selection                | Ctrl / Cmd D                  |
+| Select all canvas objects          | Ctrl / Cmd A                  |
+| Remove selection                   | Delete / Backspace            |
+| Deselect / exit presentation       | Escape                        |
+| Previous / next presentation frame | Left / Right arrow            |
+
+Text fields retain their normal editing shortcuts.
