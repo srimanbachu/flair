@@ -345,6 +345,16 @@ export function cardColors(c: Pick<Card, "theme" | "windowColor">) {
         : "#e6edf3";
   return { ...p, bg: c.windowColor, fg };
 }
+/** Largest export scale the browser can draw: canvases fail beyond
+ *  16,384px per side or about 268 million pixels. */
+export function exportScale(w: number, h: number, quality: number) {
+  const fit = Math.min(
+    quality,
+    16384 / Math.max(w, h, 1),
+    Math.sqrt(268_000_000 / Math.max(w * h, 1)),
+  );
+  return Math.floor(fit * 100) / 100;
+}
 export const backgroundNames = [
   "Midnight",
   "Aurora",

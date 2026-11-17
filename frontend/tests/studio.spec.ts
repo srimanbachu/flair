@@ -694,3 +694,27 @@ test("New starts a fresh card or canvas and can be undone", async ({
   await page.getByRole("button", { name: "New canvas", exact: true }).click();
   await expect(page.locator("[data-item]")).toHaveCount(0);
 });
+test("export quality goes up to 10x", async ({ page }) => {
+  await page
+    .getByRole("button", { name: "Export", exact: true })
+    .last()
+    .click();
+  const quality = page.getByRole("slider", { name: /Export quality/ });
+  await quality.focus();
+  await page.keyboard.press("End");
+  await expect(quality).toHaveValue("10");
+  const label = await page.locator(".size-chip").textContent();
+  const [, w] = label!.match(/(\d+) × (\d+)/)!.map(Number);
+  await expect(page.locator(".export-note")).toContainText(`${w * 10} ×`);
+  await page.keyboard.press("ArrowLeft");
+  await page.keyboard.press("ArrowLeft");
+  await page.keyboard.press("ArrowLeft");
+  await page.keyboard.press("ArrowLeft");
+  await page.keyboard.press("ArrowLeft");
+  await expect(quality).toHaveValue("5");
+  const download = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download PNG" }).click();
+  const { readFile } = await import("node:fs/promises");
+  const bytes = await readFile((await (await download).path())!);
+  expect(bytes.readUInt32BE(16)).toBe(w * 5);
+});

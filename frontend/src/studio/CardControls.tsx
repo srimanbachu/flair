@@ -6,6 +6,7 @@ import {
   backgroundNames,
   backgroundCSS,
   defaultCard,
+  exportScale,
   isLight,
   palettes,
   sizes,
@@ -88,6 +89,7 @@ export function CardControls({
   onCopyImage: () => void;
 }) {
   const [sizeChoice, setSizeChoice] = useState("Custom");
+  const scaleOut = exportScale(size.w, size.h, c.quality);
   const modeOf = (bg: string) =>
     bg === "Solid" ? "Solid" : bg === "Image" ? "Image" : "Gradient";
   const [bgMode, setBgMode] = useState<"Solid" | "Gradient" | "Image">(
@@ -540,22 +542,12 @@ export function CardControls({
               />
             </Field>
           </div>
-          <span className="menu-label">Quality</span>
-          <div className="segmented" role="group" aria-label="Export quality">
-            {[1, 2, 3].map((q) => (
-              <button
-                key={q}
-                aria-pressed={c.quality === q}
-                className={c.quality === q ? "active" : ""}
-                onClick={() => set("quality", q)}
-              >
-                {q}×
-              </button>
-            ))}
-          </div>
+          {slider("quality", "Export quality", 1, 10, 1, "×")}
           <p className="muted export-note">
-            {Math.round(size.w) * c.quality} × {Math.round(size.h) * c.quality}{" "}
-            px · PNG keeps transparency, JPEG adds a dark base.
+            {Math.round(size.w * scaleOut)} × {Math.round(size.h * scaleOut)} px
+            {scaleOut < c.quality
+              ? ` · capped at ${scaleOut}×, the largest image a browser can draw at this size`
+              : " · PNG keeps transparency, JPEG adds a dark base."}
           </p>
           <div className="export-actions">
             <button className="primary" onClick={() => onExport("png")}>

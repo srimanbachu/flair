@@ -20,7 +20,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { toPng, toJpeg, toBlob } from "html-to-image";
 import type { Card } from "./model";
-import { defaultCard, uid, cardTabs } from "./model";
+import { defaultCard, exportScale, uid, cardTabs } from "./model";
 import type { Board } from "./canvasModel";
 import { emptyBoard } from "./canvasModel";
 import { CardControls } from "./CardControls";
@@ -271,7 +271,7 @@ export default function Studio() {
     }
   };
   const cardImageOptions = (format: string) => ({
-    pixelRatio: work.card.quality,
+    pixelRatio: exportScale(dims.w, dims.h, work.card.quality),
     width: Math.round(dims.w),
     height: Math.round(dims.h),
     style: { transform: "none" },

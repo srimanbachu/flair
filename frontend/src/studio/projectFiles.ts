@@ -80,7 +80,7 @@ export function validateCard(value: unknown): Card {
     c.height < 320 ||
     c.height > 2400 ||
     c.quality < 1 ||
-    c.quality > 3
+    c.quality > 10
   )
     throw new Error("Unsupported image dimensions.");
   ranges(c, {
