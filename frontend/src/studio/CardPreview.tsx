@@ -3,6 +3,7 @@ import type { CSSProperties, RefObject } from "react";
 import type { Card } from "./model";
 import { backgroundCSS, cardColors } from "./model";
 import { CodeView } from "./CodeView";
+import { CodeEditor } from "./CodeEditor";
 export function CardPreview({
   card: c,
   exportRef,
@@ -206,41 +207,12 @@ export function CardPreview({
               )}
               <div className="code-body">
                 <CodeView card={c} block={b} />
-                {/* A transparent textarea laid exactly over the highlighted
-                    code: you see the colours, the caret and selection come
-                    from the textarea. It is filtered out of exports. */}
-                <textarea
-                  className="code-editor"
-                  aria-label={`Code block ${index + 1}`}
-                  spellCheck={false}
-                  autoCapitalize="off"
-                  autoComplete="off"
-                  value={b.code}
-                  onChange={(e) => onCodeChange(b.id, e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Escape") e.currentTarget.blur();
-                    if (e.key !== "Tab" || e.shiftKey) return;
-                    e.preventDefault();
-                    const el = e.currentTarget;
-                    const start = el.selectionStart;
-                    onCodeChange(
-                      b.id,
-                      el.value.slice(0, start) +
-                        "  " +
-                        el.value.slice(el.selectionEnd),
-                    );
-                    requestAnimationFrame(() =>
-                      el.setSelectionRange(start + 2, start + 2),
-                    );
-                  }}
-                  style={{
-                    fontFamily: c.font,
-                    fontSize: c.fontSize,
-                    lineHeight: c.lineHeight,
-                    letterSpacing: c.letterSpacing,
-                    caretColor: p.fg,
-                    paddingLeft: 28 + (c.lineNumbers ? 38 : 0),
-                  }}
+                <CodeEditor
+                  card={c}
+                  block={b}
+                  index={index}
+                  ink={p.fg}
+                  onChange={(code) => onCodeChange(b.id, code)}
                 />
               </div>
             </div>

@@ -603,3 +603,25 @@ test("window color overrides the theme and keeps text legible", async ({
   await page.getByRole("button", { name: "Use theme color" }).click();
   await expect(win).not.toHaveCSS("background-color", "rgb(255, 255, 255)");
 });
+test("editing on the card shows a thick caret at the cursor", async ({
+  page,
+}) => {
+  const editor = page.getByLabel("Code block 1", { exact: true });
+  await editor.fill("abc\nxy");
+  await editor.press("ArrowUp");
+  const caret = page.locator(".code-caret");
+  await expect(caret).toBeVisible();
+  const box = (await caret.boundingBox())!;
+  const line = (await page
+    .locator(".code-window .line-text")
+    .first()
+    .boundingBox())!;
+  // Sits on the first line, past the first characters, and is wide.
+  expect(
+    Math.abs(box.y + box.height / 2 - (line.y + line.height / 2)),
+  ).toBeLessThan(6);
+  expect(box.x).toBeGreaterThan(line.x);
+  expect(box.width).toBeGreaterThan(1.5);
+  await editor.blur();
+  await expect(caret).toHaveCount(0);
+});

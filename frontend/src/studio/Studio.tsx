@@ -276,7 +276,10 @@ export default function Studio() {
     height: Math.round(dims.h),
     style: { transform: "none" },
     backgroundColor: format === "jpeg" ? "#0b0b0d" : undefined,
-    filter: (node: HTMLElement) => !node.classList?.contains("code-editor"),
+    // Editing overlays (textarea, drawn caret) never appear in images.
+    filter: (node: HTMLElement) =>
+      !node.classList?.contains("code-editor") &&
+      !node.classList?.contains("code-caret"),
   });
   const copyCardImage = async () => {
     if (!preview.current) return;

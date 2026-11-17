@@ -1042,6 +1042,20 @@
   outline: none;
   cursor: text;
 }
+.studio .code-editor {
+  caret-color: transparent;
+}
+.code-caret {
+  position: absolute;
+  border-radius: 2px;
+  pointer-events: none;
+  animation: caret-blink 1.1s steps(1) 0.5s infinite;
+}
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
 .studio .code-editor::selection {
   background: #8fdcd844;
   color: transparent;
