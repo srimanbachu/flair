@@ -330,7 +330,9 @@ test("uploaded background is embedded and saved in project file", async ({
     page.getByRole("button", { name: "Remove uploaded image" }),
   ).toBeVisible();
 });
-test("wheel and pinch zoom the canvas, not the page", async ({ page }) => {
+test("two-finger scroll pans and pinch zooms the canvas, not the page", async ({
+  page,
+}) => {
   await page.getByRole("button", { name: "Canvas", exact: true }).click();
   const zoom = page.locator(".zoom-controls span");
   await expect(zoom).toHaveText("100%");
@@ -351,7 +353,13 @@ test("wheel and pinch zoom the canvas, not the page", async ({ page }) => {
   await expect(zoom).not.toHaveText("100%");
   const b = (await surface.boundingBox())!;
   await page.mouse.move(b.x + 200, b.y + 200);
-  await page.mouse.wheel(0, 400);
+  const before = await surface.evaluate((el) => el.style.backgroundPosition);
+  const zoomed = await zoom.textContent();
+  await page.mouse.wheel(120, 300);
+  await expect
+    .poll(() => surface.evaluate((el) => el.style.backgroundPosition))
+    .not.toBe(before);
+  await expect(zoom).toHaveText(zoomed!);
   await page.keyboard.press("ControlOrMeta+0");
   await expect(zoom).toHaveText("100%");
   await page.keyboard.press("ControlOrMeta+=");

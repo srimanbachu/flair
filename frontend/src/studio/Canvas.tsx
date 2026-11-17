@@ -282,6 +282,14 @@ export function Canvas({
   useEffect(() => {
     viewRef.current = view;
   }, [view]);
+  const flushView = () => {
+    if (!frame.current)
+      frame.current = requestAnimationFrame(() => {
+        frame.current = 0;
+        if (pendingView.current) setView(pendingView.current);
+        pendingView.current = null;
+      });
+  };
   const zoomAt = useCallback((factor: number, sx?: number, sy?: number) => {
     const r = host.current?.getBoundingClientRect();
     if (!r) return;
@@ -294,12 +302,12 @@ export function Canvas({
       x: x - ((x - v.x) * z) / v.z,
       y: y - ((y - v.y) * z) / v.z,
     };
-    if (!frame.current)
-      frame.current = requestAnimationFrame(() => {
-        frame.current = 0;
-        if (pendingView.current) setView(pendingView.current);
-        pendingView.current = null;
-      });
+    flushView();
+  }, []);
+  const panBy = useCallback((dx: number, dy: number) => {
+    const v = pendingView.current || viewRef.current;
+    pendingView.current = { ...v, x: v.x - dx, y: v.y - dy };
+    flushView();
   }, []);
   useEffect(() => () => cancelAnimationFrame(frame.current), []);
   useEffect(() => {
@@ -312,10 +320,18 @@ export function Canvas({
       if (presenting) return;
       const r = el.getBoundingClientRect();
       const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? r.height : 1;
-      const delta = Math.max(-120, Math.min(120, e.deltaY * unit));
-      // Pinch gestures arrive as ctrl+wheel with small deltas; boost them.
-      const speed = e.ctrlKey || e.metaKey ? 0.012 : 0.004;
-      zoomAt(Math.exp(-delta * speed), e.clientX - r.left, e.clientY - r.top);
+      if (e.ctrlKey || e.metaKey) {
+        // Trackpad pinch arrives as ctrl+wheel with small deltas; boost it.
+        const delta = Math.max(-120, Math.min(120, e.deltaY * unit));
+        zoomAt(Math.exp(-delta * 0.012), e.clientX - r.left, e.clientY - r.top);
+        return;
+      }
+      // Two-finger scroll (or a mouse wheel) pans; Shift turns a vertical
+      // wheel into horizontal movement for mice without a side wheel.
+      const dx = e.deltaX * unit,
+        dy = e.deltaY * unit;
+      if (e.shiftKey && !dx) panBy(dy, 0);
+      else panBy(dx, dy);
     };
     const gesture = (e: Event) => e.preventDefault();
     el.addEventListener("wheel", wheel, { passive: false });
@@ -326,7 +342,7 @@ export function Canvas({
       el.removeEventListener("gesturestart", gesture);
       el.removeEventListener("gesturechange", gesture);
     };
-  }, [zoomAt, presenting]);
+  }, [zoomAt, panBy, presenting]);
   const items = draft || board.items;
   const active = board.items.filter((i) => selected.includes(i.id));
   const first = active[0];
