@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import type { CSSProperties, RefObject } from "react";
 import type { Card } from "./model";
 import { backgroundCSS, palettes } from "./model";
@@ -6,14 +7,28 @@ export function CardPreview({
   card: c,
   exportRef,
   scale,
+  size,
+  onMeasure,
   onPickBlock,
 }: {
   card: Card;
   exportRef: RefObject<HTMLDivElement | null>;
   scale: number;
+  size: { w: number; h: number };
+  onMeasure: (size: { w: number; h: number }) => void;
   onPickBlock?: (index: number) => void;
 }) {
   const p = palettes[c.theme] || palettes.Midnight;
+  useEffect(() => {
+    const el = exportRef.current;
+    if (!el) return;
+    // offsetWidth/Height ignore the preview's scale transform.
+    const measure = () => onMeasure({ w: el.offsetWidth, h: el.offsetHeight });
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [exportRef, onMeasure]);
   const surface = `${p.bg}${Math.round(
     (1 - (c.window === "Glass" ? Math.max(35, c.glass) : c.glass) / 100) * 255,
   )
@@ -22,14 +37,14 @@ export function CardPreview({
   return (
     <div
       className="card-scaled"
-      style={{ width: c.width * scale, height: c.height * scale }}
+      style={{ width: size.w * scale, height: size.h * scale }}
     >
       <div
-        className="card-art"
+        className={`card-art ${c.autoSize ? "card-auto" : ""}`}
         ref={exportRef}
         style={{
-          width: c.width,
-          height: c.height,
+          width: c.autoSize ? undefined : c.width,
+          height: c.autoSize ? undefined : c.height,
           transform: `scale(${scale})`,
           padding: c.padding,
         }}

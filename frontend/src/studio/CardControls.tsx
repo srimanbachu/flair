@@ -32,6 +32,7 @@ export function CardControls({
   change,
   tab,
   notify,
+  size,
   onExport,
   onCopyImage,
 }: {
@@ -39,6 +40,7 @@ export function CardControls({
   change: (c: Card) => void;
   tab: string;
   notify: (s: string) => void;
+  size: { w: number; h: number };
   onExport: (format: "png" | "jpeg") => void;
   onCopyImage: () => void;
 }) {
@@ -445,6 +447,14 @@ export function CardControls({
             role="group"
             aria-label="Export dimensions"
           >
+            <button
+              aria-pressed={c.autoSize}
+              className={`size-auto ${c.autoSize ? "active" : ""}`}
+              onClick={() => change({ ...c, autoSize: true })}
+            >
+              <span className="ratio ratio-auto" />
+              Fit to code
+            </button>
             {Object.entries(sizes).map(([name, [w, h]]) => {
               // Several presets share dimensions (X post / 16:9); prefer the
               // one the user clicked, otherwise the first that matches.
@@ -453,7 +463,7 @@ export function CardControls({
               const current = fits(sizeChoice)
                 ? sizeChoice
                 : Object.keys(sizes).find(fits);
-              const on = current === name;
+              const on = !c.autoSize && current === name;
               return (
                 <button
                   key={name}
@@ -461,7 +471,7 @@ export function CardControls({
                   className={on ? "active" : ""}
                   onClick={() => {
                     setSizeChoice(name);
-                    change({ ...c, width: w, height: h });
+                    change({ ...c, autoSize: false, width: w, height: h });
                   }}
                 >
                   <span
@@ -482,11 +492,13 @@ export function CardControls({
                 type="number"
                 min={320}
                 max={2400}
-                key={`width-${c.width}`}
-                defaultValue={c.width}
-                onBlur={(e) =>
-                  set("width", Math.max(320, Math.min(2400, +e.target.value)))
-                }
+                key={`width-${c.autoSize ? "auto" : c.width}`}
+                defaultValue={c.autoSize ? Math.round(size.w) : c.width}
+                onBlur={(e) => {
+                  const v = Math.max(320, Math.min(2400, +e.target.value));
+                  if (c.autoSize && v === Math.round(size.w)) return;
+                  change({ ...c, autoSize: false, width: v });
+                }}
               />
             </Field>
             <Field label="Height (px)">
@@ -494,11 +506,13 @@ export function CardControls({
                 type="number"
                 min={320}
                 max={2400}
-                key={`height-${c.height}`}
-                defaultValue={c.height}
-                onBlur={(e) =>
-                  set("height", Math.max(320, Math.min(2400, +e.target.value)))
-                }
+                key={`height-${c.autoSize ? "auto" : c.height}`}
+                defaultValue={c.autoSize ? Math.round(size.h) : c.height}
+                onBlur={(e) => {
+                  const v = Math.max(320, Math.min(2400, +e.target.value));
+                  if (c.autoSize && v === Math.round(size.h)) return;
+                  change({ ...c, autoSize: false, height: v });
+                }}
               />
             </Field>
           </div>
@@ -516,8 +530,8 @@ export function CardControls({
             ))}
           </div>
           <p className="muted export-note">
-            {c.width * c.quality} × {c.height * c.quality} px · PNG keeps
-            transparency, JPEG adds a dark base.
+            {Math.round(size.w) * c.quality} × {Math.round(size.h) * c.quality}{" "}
+            px · PNG keeps transparency, JPEG adds a dark base.
           </p>
           <div className="export-actions">
             <button className="primary" onClick={() => onExport("png")}>

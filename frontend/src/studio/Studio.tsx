@@ -69,6 +69,7 @@ export default function Studio() {
   const [menu, setMenu] = useState(false);
   const [busy, setBusy] = useState(false);
   const [scale, setScale] = useState(0.55);
+  const [natural, setNatural] = useState({ w: 0, h: 0 });
   const [projectId, setProjectId] = useState<string | null>(null);
   const preview = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
@@ -158,6 +159,11 @@ export default function Studio() {
       window.removeEventListener("pagehide", persist);
     };
   }, [work, notify]);
+  // The rendered card size: measured from content in auto mode.
+  const dims =
+    work.card.autoSize && natural.w
+      ? natural
+      : { w: work.card.width, h: work.card.height };
   useEffect(() => {
     const el = stage.current;
     if (!el) return;
@@ -165,14 +171,14 @@ export default function Studio() {
       setScale(
         Math.min(
           1,
-          (entry.contentRect.width - 64) / work.card.width,
-          (entry.contentRect.height - 80) / work.card.height,
+          (entry.contentRect.width - 64) / dims.w,
+          (entry.contentRect.height - 64) / dims.h,
         ),
       ),
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [work.card.width, work.card.height, work.kind]);
+  }, [dims.w, dims.h, work.kind]);
   const save = useCallback(() => {
     try {
       const id = projectId || uid();
@@ -266,8 +272,8 @@ export default function Studio() {
   };
   const cardImageOptions = (format: string) => ({
     pixelRatio: work.card.quality,
-    width: work.card.width,
-    height: work.card.height,
+    width: Math.round(dims.w),
+    height: Math.round(dims.h),
     style: { transform: "none" },
     backgroundColor: format === "jpeg" ? "#0b0b0d" : undefined,
   });
@@ -329,16 +335,17 @@ export default function Studio() {
     -20,
   );
   const contentClipped =
-    cardHeight > work.card.height - work.card.padding * 2 ||
-    work.card.blocks.some(
-      (b) =>
-        Math.max(...b.code.split("\n").map((line) => line.length)) *
-          work.card.fontSize *
-          0.62 +
-          52 +
-          (work.card.lineNumbers ? 38 : 0) >
-        work.card.width - work.card.padding * 2,
-    );
+    !work.card.autoSize &&
+    (cardHeight > work.card.height - work.card.padding * 2 ||
+      work.card.blocks.some(
+        (b) =>
+          Math.max(...b.code.split("\n").map((line) => line.length)) *
+            work.card.fontSize *
+            0.62 +
+            52 +
+            (work.card.lineNumbers ? 38 : 0) >
+          work.card.width - work.card.padding * 2,
+      ));
   return (
     <div className="studio">
       <header className="studio-header">
@@ -464,6 +471,7 @@ export default function Studio() {
               tab={tab}
               change={(card) => change({ ...work, card })}
               notify={notify}
+              size={dims}
               onExport={exportImage}
               onCopyImage={copyCardImage}
             />
@@ -487,7 +495,8 @@ export default function Studio() {
                 title="Change export size"
                 onClick={() => setTab("Export")}
               >
-                {work.card.width} × {work.card.height}
+                {work.card.autoSize && "Auto · "}
+                {Math.round(dims.w)} × {Math.round(dims.h)}
                 <ChevronDown size={12} />
               </button>
             </div>
@@ -496,6 +505,8 @@ export default function Studio() {
                 card={work.card}
                 exportRef={preview}
                 scale={Math.max(0.08, scale)}
+                size={dims}
+                onMeasure={setNatural}
                 onPickBlock={(index) => {
                   setTab("Code");
                   requestAnimationFrame(() =>

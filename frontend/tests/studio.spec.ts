@@ -54,6 +54,14 @@ test("local library survives reload and opens saved project", async ({
 test("card png download has exact requested size", async ({ page }) => {
   await page
     .getByRole("button", { name: "Export", exact: true })
+    .last()
+    .click();
+  await page
+    .getByRole("group", { name: "Export dimensions" })
+    .getByRole("button", { name: "4:3" })
+    .click();
+  await page
+    .getByRole("button", { name: "Export", exact: true })
     .first()
     .click();
   const download = page.waitForEvent("download");
@@ -460,4 +468,17 @@ test("dragging empty canvas box-selects instead of panning", async ({
     before,
   );
   await expect(page.locator(".props-head strong")).toContainText("objects");
+});
+test("auto-sized card wraps the code with padding", async ({ page }) => {
+  const art = page.locator(".card-art");
+  const win = page.locator(".code-window").first();
+  const a = (await art.boundingBox())!;
+  const w = (await win.boundingBox())!;
+  // Background hugs the window: equal margins on all sides.
+  const left = w.x - a.x,
+    top = w.y - a.y;
+  expect(Math.abs(left - (a.x + a.width - (w.x + w.width)))).toBeLessThan(2);
+  expect(Math.abs(top - (a.y + a.height - (w.y + w.height)))).toBeLessThan(2);
+  expect(Math.abs(left - top)).toBeLessThan(2);
+  await expect(page.locator(".size-chip")).toContainText("Auto");
 });

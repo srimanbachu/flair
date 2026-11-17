@@ -22,6 +22,12 @@ export const templateNames = [
 export function cardTemplate(name: string): Card {
   const c = defaultCard();
   c.title = name;
+  if (
+    ["Instagram", "YouTube", "Twitter", "LinkedIn"].some((n) =>
+      name.includes(n),
+    )
+  )
+    c.autoSize = false;
   if (name.includes("Instagram")) c.width = c.height = 1080;
   if (name.includes("YouTube") || name.includes("Twitter")) {
     c.width = 1280;

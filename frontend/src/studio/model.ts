@@ -51,6 +51,8 @@ export type Card = {
   depth: number;
   perspective: number;
   rotation: number;
+  /** Size the card to its code plus padding instead of width × height. */
+  autoSize: boolean;
   width: number;
   height: number;
   quality: number;
@@ -90,7 +92,7 @@ export const defaultCard = (): Card => ({
   bgBlur: 0,
   bgOpacity: 100,
   grain: 8,
-  padding: 56,
+  padding: 64,
   radius: 16,
   shadow: 40,
   glow: 0,
@@ -102,6 +104,7 @@ export const defaultCard = (): Card => ({
   depth: 0,
   perspective: 0,
   rotation: 0,
+  autoSize: true,
   width: 1200,
   height: 900,
   quality: 1,

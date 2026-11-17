@@ -701,6 +701,20 @@
   background: transparent;
   isolation: isolate;
 }
+.card-art.card-auto {
+  width: max-content;
+  min-width: 480px;
+  max-width: 2400px;
+}
+.card-auto .code-stack {
+  width: auto;
+  min-width: 360px;
+}
+.size-grid .ratio-auto {
+  width: 18px;
+  height: 12px;
+  border-style: dashed;
+}
 .card-background {
   position: absolute;
   inset: 0;
