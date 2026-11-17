@@ -82,7 +82,7 @@ test("card png download has exact requested size", async ({ page }) => {
   expect(bytes.readUInt32BE(20)).toBe(900);
 });
 test("canvas shapes, history, comments and grouping", async ({ page }) => {
-  await page.getByRole("button", { name: "Canvas", exact: true }).click();
+  await page.getByRole("link", { name: "Canvas", exact: true }).click();
   const surface = page.locator(".canvas-surface");
   const b = (await surface.boundingBox())!;
   await page.getByRole("button", { name: "Rectangle", exact: true }).click();
@@ -109,7 +109,7 @@ test("canvas shapes, history, comments and grouping", async ({ page }) => {
 test("canvas attached connectors follow nodes and SVG exports", async ({
   page,
 }) => {
-  await page.getByRole("button", { name: "Canvas", exact: true }).click();
+  await page.getByRole("link", { name: "Canvas", exact: true }).click();
   await page.getByRole("button", { name: "System architecture" }).click();
   await expect(page.locator("[data-item]")).toHaveCount(9);
   await page.locator("[data-item]").filter({ hasText: "Client" }).dblclick();
@@ -149,7 +149,7 @@ test("mobile layout keeps preview and controls accessible", async ({
 });
 
 test("freehand strokes retain geometry and can be erased", async ({ page }) => {
-  await page.getByRole("button", { name: "Canvas", exact: true }).click();
+  await page.getByRole("link", { name: "Canvas", exact: true }).click();
   const b = (await page.locator(".canvas-surface").boundingBox())!;
   await page.getByRole("button", { name: "Draw", exact: true }).click();
   await page.mouse.move(b.x + 250, b.y + 250);
@@ -167,7 +167,7 @@ test("freehand strokes retain geometry and can be erased", async ({ page }) => {
   await expect(page.locator("[data-item]")).toHaveCount(0);
 });
 test("frames present and project files round-trip", async ({ page }) => {
-  await page.getByRole("button", { name: "Canvas", exact: true }).click();
+  await page.getByRole("link", { name: "Canvas", exact: true }).click();
   const b = (await page.locator(".canvas-surface").boundingBox())!;
   await page.getByRole("button", { name: "Frame", exact: true }).click();
   await page.mouse.move(b.x + 90, b.y + 120);
@@ -199,12 +199,12 @@ test("same-browser local room syncs between two tabs", async ({
   page,
   context,
 }) => {
-  await page.getByRole("button", { name: "Canvas", exact: true }).click();
+  await page.getByRole("link", { name: "Canvas", exact: true }).click();
   await page.getByRole("button", { name: "Board settings" }).click();
   await page.getByLabel("Live sharing between browser tabs").check();
   const other = await context.newPage();
   await other.goto("/");
-  await other.getByRole("button", { name: "Canvas", exact: true }).click();
+  await other.getByRole("link", { name: "Canvas", exact: true }).click();
   await other.getByRole("button", { name: "Board settings" }).click();
   await other.getByLabel("Live sharing between browser tabs").check();
   await page
@@ -228,7 +228,7 @@ test("canvas PNG rasterization works and studio has no browser errors", async ({
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.screenshot({ path: test.info().outputPath("studio-desktop.png") });
-  await page.getByRole("button", { name: "Canvas", exact: true }).click();
+  await page.getByRole("link", { name: "Canvas", exact: true }).click();
   await page.getByRole("button", { name: "System architecture" }).click();
   await page.getByRole("button", { name: "Export", exact: true }).click();
   const promise = page.waitForEvent("download");
@@ -300,7 +300,7 @@ test("custom export dimensions and transparent background are preserved", async 
 test("marquee grouping, moving nodes and attached arrow geometry", async ({
   page,
 }) => {
-  await page.getByRole("button", { name: "Canvas", exact: true }).click();
+  await page.getByRole("link", { name: "Canvas", exact: true }).click();
   await page.getByRole("button", { name: "System architecture" }).click();
   const first = page.locator("[data-item]").first(),
     arrow = page.locator("[data-item] line[marker-end]").first();
@@ -348,7 +348,7 @@ test("uploaded background is embedded and saved in project file", async ({
 test("two-finger scroll pans and pinch zooms the canvas, not the page", async ({
   page,
 }) => {
-  await page.getByRole("button", { name: "Canvas", exact: true }).click();
+  await page.getByRole("link", { name: "Canvas", exact: true }).click();
   const zoom = page.locator(".zoom-controls span");
   await expect(zoom).toHaveText("100%");
   const surface = page.locator(".canvas-surface");
@@ -383,7 +383,7 @@ test("two-finger scroll pans and pinch zooms the canvas, not the page", async ({
 test("single-key canvas shortcuts switch tools and Escape returns to select", async ({
   page,
 }) => {
-  await page.getByRole("button", { name: "Canvas", exact: true }).click();
+  await page.getByRole("link", { name: "Canvas", exact: true }).click();
   const tool = (name: string) =>
     page.getByRole("button", { name, exact: true });
   await expect(tool("Select")).toHaveAttribute("aria-pressed", "true");
@@ -417,7 +417,7 @@ test("single-key canvas shortcuts switch tools and Escape returns to select", as
   ).toBeVisible();
 });
 test("text is typed and edited directly on the canvas", async ({ page }) => {
-  await page.getByRole("button", { name: "Canvas", exact: true }).click();
+  await page.getByRole("link", { name: "Canvas", exact: true }).click();
   const b = (await page.locator(".canvas-surface").boundingBox())!;
   await page.keyboard.press("t");
   await page.mouse.click(b.x + 400, b.y + 300);
@@ -479,7 +479,7 @@ test("code is edited directly on the card", async ({ page }) => {
 test("dragging empty canvas box-selects instead of panning", async ({
   page,
 }) => {
-  await page.getByRole("button", { name: "Canvas", exact: true }).click();
+  await page.getByRole("link", { name: "Canvas", exact: true }).click();
   await page.getByRole("button", { name: "Flowchart" }).click();
   const surface = page.locator(".canvas-surface");
   const b = (await surface.boundingBox())!;
@@ -688,7 +688,7 @@ test("New starts a fresh card or canvas and can be undone", async ({
   await expect(page.locator(".code-window .line-text").first()).toHaveText(
     "draft code",
   );
-  await page.getByRole("button", { name: "Canvas", exact: true }).click();
+  await page.getByRole("link", { name: "Canvas", exact: true }).click();
   await page.getByRole("button", { name: "Flowchart" }).click();
   await expect(page.locator("[data-item]")).not.toHaveCount(0);
   await page.getByRole("button", { name: "New canvas", exact: true }).click();
@@ -730,4 +730,17 @@ test("no focus ring is drawn on buttons or the card", async ({ page }) => {
     "outline-style",
     "none",
   );
+});
+test("workspaces live on their own routes", async ({ page }) => {
+  await expect(page).toHaveURL(/\/cards/);
+  await page.getByRole("link", { name: "Canvas", exact: true }).click();
+  await expect(page).toHaveURL(/\/canvas$/);
+  await expect(page.locator(".canvas-surface")).toBeVisible();
+  await page.goBack();
+  await expect(page).toHaveURL(/\/cards/);
+  await expect(page.locator(".card-art")).toBeVisible();
+  await page.goto("/canvas");
+  await expect(page.locator(".canvas-surface")).toBeVisible();
+  await page.goto("/nowhere");
+  await expect(page).toHaveURL(/\/cards/);
 });

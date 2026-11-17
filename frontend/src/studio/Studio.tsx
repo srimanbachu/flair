@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   Code2,
   PenTool,
@@ -57,6 +58,16 @@ function initial(): Workspace {
 }
 export default function Studio() {
   const [work, setWork] = useState(initial);
+  const location = useLocation();
+  const navigate = useNavigate();
+  // The URL decides the workspace: /cards or /canvas.
+  const routeKind = location.pathname.startsWith("/canvas")
+    ? "canvas"
+    : location.pathname.startsWith("/cards")
+      ? "card"
+      : null;
+  const workspacePath = (kind: Workspace["kind"]) =>
+    kind === "canvas" ? "/canvas" : "/cards";
   const [past, setPast] = useState<Workspace[]>([]);
   const [future, setFuture] = useState<Workspace[]>([]);
   const [tab, setTab] = useState("Background");
@@ -71,6 +82,11 @@ export default function Studio() {
   const [scale, setScale] = useState(0.55);
   const [natural, setNatural] = useState({ w: 0, h: 0 });
   const [projectId, setProjectId] = useState<string | null>(null);
+  if (routeKind && routeKind !== work.kind) {
+    // A saved project belongs to one workspace, so forget it on switch.
+    setWork({ ...work, kind: routeKind });
+    setProjectId(null);
+  }
   const preview = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const svg = useRef<SVGSVGElement>(null);
@@ -337,26 +353,14 @@ export default function Studio() {
           <img className="brand-logo" src={flairLogo} alt="" />
         </a>
         <div className="mode-switch" aria-label="Workspace">
-          <button
-            className={work.kind === "card" ? "active" : ""}
-            onClick={() => {
-              setWork({ ...work, kind: "card" });
-              setProjectId(null);
-            }}
-          >
+          <NavLink to="/cards">
             <Code2 size={16} />
             Code Cards
-          </button>
-          <button
-            className={work.kind === "canvas" ? "active" : ""}
-            onClick={() => {
-              setWork({ ...work, kind: "canvas" });
-              setProjectId(null);
-            }}
-          >
+          </NavLink>
+          <NavLink to="/canvas">
             <PenTool size={16} />
             Canvas
-          </button>
+          </NavLink>
         </div>
         <div className="header-actions">
           <span className="draft-status" role="note" title={draftStatus}>
@@ -558,6 +562,7 @@ export default function Studio() {
               kind: p.kind,
               ...(p.kind === "card" ? { card: p.data } : { board: p.data }),
             });
+            navigate(workspacePath(p.kind));
             setProjectId(null);
             setLibrary(false);
             notify("Project imported. Save it to add it to your library.");
@@ -654,6 +659,7 @@ export default function Studio() {
                               ? { card: validateCard(p.data) }
                               : { board: validateBoard(p.data) }),
                           });
+                          navigate(workspacePath(p.kind));
                           setProjectId(p.id);
                           setLibrary(false);
                         } catch {

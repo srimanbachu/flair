@@ -93,12 +93,24 @@
   background: #ffffff03;
   gap: 3px;
 }
+.mode-switch a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 7px;
+  text-decoration: none;
+}
+.mode-switch a:hover {
+  background: #ffffff09;
+}
+.mode-switch a,
 .mode-switch button {
   color: #9999a6;
   padding: 6px 14px;
   font-size: 13px;
 }
-.mode-switch .active {
+.mode-switch .active,
+.mode-switch a[aria-current="page"] {
   background: #23232a;
   color: var(--accent);
   box-shadow: 0 2px 5px #0002;
@@ -1776,7 +1788,7 @@ a {
   .draft-status > span {
     display: none;
   }
-  .mode-switch button {
+  .mode-switch a {
     padding: 8px 10px;
   }
   .header-actions {
@@ -1817,7 +1829,7 @@ a {
     width: 100%;
     justify-content: center;
   }
-  .mode-switch button {
+  .mode-switch a {
     flex: 1;
   }
   .header-actions button {
