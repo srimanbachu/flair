@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import Prism from "prismjs";
 import "prismjs/components/prism-typescript";
+import { memo } from "react";
 import type { ReactNode } from "react";
 const icons = {
   GitHub: GitFork,
@@ -45,7 +46,7 @@ function codeTokens(tokens: (string | Prism.Token)[]): ReactNode {
 }
 import type { CanvasItem } from "./canvasModel";
 import { endpoints } from "./canvasModel";
-export function CanvasShape({
+export const CanvasShape = memo(function CanvasShape({
   item: i,
   items,
   selected = false,
@@ -239,4 +240,4 @@ export function CanvasShape({
       )}
     </g>
   );
-}
+});

@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import type { PointerEvent as ReactPointerEvent, RefObject } from "react";
 import type { Board, CanvasItem, Point } from "./canvasModel";
 import { bounds, makeItem, boardTemplate, boardTemplates } from "./canvasModel";
@@ -114,6 +114,60 @@ export function Canvas({
   } | null>(null);
   const clipboard = useRef<CanvasItem[]>([]);
   const host = useRef<HTMLDivElement>(null);
+  const presenting = present >= 0;
+  /* Zoom around a screen point. Updates are coalesced to one per frame so
+     fast trackpad/wheel streams stay smooth instead of queueing renders. */
+  const pendingView = useRef<typeof view | null>(null);
+  const frame = useRef(0);
+  const viewRef = useRef(view);
+  useEffect(() => {
+    viewRef.current = view;
+  }, [view]);
+  const zoomAt = useCallback((factor: number, sx?: number, sy?: number) => {
+    const r = host.current?.getBoundingClientRect();
+    if (!r) return;
+    const v = pendingView.current || viewRef.current;
+    const x = sx ?? r.width / 2,
+      y = sy ?? r.height / 2;
+    const z = Math.max(0.1, Math.min(8, v.z * factor));
+    pendingView.current = {
+      z,
+      x: x - ((x - v.x) * z) / v.z,
+      y: y - ((y - v.y) * z) / v.z,
+    };
+    if (!frame.current)
+      frame.current = requestAnimationFrame(() => {
+        frame.current = 0;
+        if (pendingView.current) setView(pendingView.current);
+        pendingView.current = null;
+      });
+  }, []);
+  useEffect(() => () => cancelAnimationFrame(frame.current), []);
+  useEffect(() => {
+    const el = host.current;
+    if (!el) return;
+    // Native, non-passive listener: React's onWheel is passive, so it cannot
+    // stop the browser from zooming the whole page on pinch / Ctrl+wheel.
+    const wheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (presenting) return;
+      const r = el.getBoundingClientRect();
+      const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? r.height : 1;
+      const delta = Math.max(-120, Math.min(120, e.deltaY * unit));
+      // Pinch gestures arrive as ctrl+wheel with small deltas; boost them.
+      const speed = e.ctrlKey || e.metaKey ? 0.012 : 0.004;
+      zoomAt(Math.exp(-delta * speed), e.clientX - r.left, e.clientY - r.top);
+    };
+    const gesture = (e: Event) => e.preventDefault();
+    el.addEventListener("wheel", wheel, { passive: false });
+    el.addEventListener("gesturestart", gesture);
+    el.addEventListener("gesturechange", gesture);
+    return () => {
+      el.removeEventListener("wheel", wheel);
+      el.removeEventListener("gesturestart", gesture);
+      el.removeEventListener("gesturechange", gesture);
+    };
+  }, [zoomAt, presenting]);
   const items = draft || board.items;
   const active = board.items.filter((i) => selected.includes(i.id));
   const first = active[0];
@@ -176,6 +230,16 @@ export function Canvas({
         )
       )
         return;
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        ["=", "+", "-", "_", "0"].includes(e.key)
+      ) {
+        // Keep browser page zoom away from the canvas.
+        e.preventDefault();
+        if (e.key === "0") setView((v) => ({ ...v, z: 1 }));
+        else zoomAt(e.key === "-" || e.key === "_" ? 1 / 1.25 : 1.25);
+        return;
+      }
       if (e.key === "Escape") {
         setSelected([]);
         setPresent(-1);
@@ -436,7 +500,10 @@ export function Canvas({
   const fit = () => {
     const b = bounds(board.items);
     const r = host.current!.getBoundingClientRect();
-    const z = Math.min(2, (r.width - 100) / b.w, (r.height - 100) / b.h);
+    const z = Math.max(
+      0.1,
+      Math.min(2, (r.width - 100) / b.w, (r.height - 100) / b.h),
+    );
     setView({
       x: (r.width - b.w * z) / 2 - b.x * z,
       y: (r.height - b.h * z) / 2 - b.y * z,
@@ -878,21 +945,6 @@ export function Canvas({
             backgroundPosition: `${view.x}px ${view.y}px`,
             backgroundSize: `${20 * view.z}px ${20 * view.z}px`,
           }}
-          onWheel={(e) => {
-            if (present >= 0) return;
-            const r = e.currentTarget.getBoundingClientRect();
-            const x = e.clientX - r.left,
-              y = e.clientY - r.top;
-            const z = Math.max(
-              0.15,
-              Math.min(4, view.z * Math.exp(-e.deltaY * 0.001)),
-            );
-            setView({
-              z,
-              x: x - ((x - view.x) * z) / view.z,
-              y: y - ((y - view.y) * z) / view.z,
-            });
-          }}
         >
           <svg
             ref={svgRef}
@@ -984,19 +1036,11 @@ export function Canvas({
         </div>
         <div className="canvas-bottom">
           <div className="zoom-controls">
-            <button
-              aria-label="Zoom out"
-              onClick={() =>
-                setView({ ...view, z: Math.max(0.15, view.z / 1.2) })
-              }
-            >
+            <button aria-label="Zoom out" onClick={() => zoomAt(1 / 1.25)}>
               −
             </button>
             <span>{Math.round(view.z * 100)}%</span>
-            <button
-              aria-label="Zoom in"
-              onClick={() => setView({ ...view, z: Math.min(4, view.z * 1.2) })}
-            >
+            <button aria-label="Zoom in" onClick={() => zoomAt(1.25)}>
               +
             </button>
             <button onClick={fit}>Fit</button>

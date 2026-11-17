@@ -829,6 +829,7 @@
   min-height: 0;
   overflow: hidden;
   overscroll-behavior: contain;
+  touch-action: none;
 }
 .canvas-bg-dots {
   background-image: radial-gradient(#77708344 1px, transparent 1px);
@@ -1002,7 +1003,7 @@ a {
   .brand {
     font-size: 22px;
   }
-    .header-actions > button:first-child {
+  .header-actions > button:first-child {
     margin-right: 0;
   }
   .mode-switch button {
