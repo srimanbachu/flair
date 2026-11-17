@@ -121,7 +121,23 @@ export function Canvas({
   const commit = (next: CanvasItem[]) => changeBoard({ ...board, items: next });
   const patch = (p: Partial<CanvasItem>) =>
     commit(
-      board.items.map((i) => (selected.includes(i.id) ? { ...i, ...p } : i)),
+      board.items.map((i) =>
+        !selected.includes(i.id)
+          ? i
+          : {
+              ...i,
+              ...p,
+              ...(["pen", "pencil", "brush"].includes(i.kind) &&
+              (p.w !== undefined || p.h !== undefined)
+                ? {
+                    points: i.points.map((point) => ({
+                      x: (point.x * (p.w ?? i.w)) / Math.max(1, i.w),
+                      y: (point.y * (p.h ?? i.h)) / Math.max(1, i.h),
+                    })),
+                  }
+                : {}),
+            },
+      ),
     );
   const duplicate = () => {
     const source = clipboard.current.length ? clipboard.current : active;

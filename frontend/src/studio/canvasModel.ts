@@ -129,16 +129,59 @@ export function boardTemplate(name: string): Board {
   return b;
 }
 export function endpoints(item: CanvasItem, items: CanvasItem[]) {
-  const from = items.find((i) => i.id === item.from);
-  const to = items.find((i) => i.id === item.to);
-  return {
-    a: from
-      ? { x: from.x + from.w / 2, y: from.y + from.h / 2 }
-      : { x: item.x, y: item.y },
-    b: to
-      ? { x: to.x + to.w / 2, y: to.y + to.h / 2 }
-      : { x: item.x + item.w, y: item.y + item.h },
+  const from = items.find((i) => i.id === item.from),
+    to = items.find((i) => i.id === item.to);
+  let a = from
+    ? { x: from.x + from.w / 2, y: from.y + from.h / 2 }
+    : { x: item.x, y: item.y };
+  let b = to
+    ? { x: to.x + to.w / 2, y: to.y + to.h / 2 }
+    : { x: item.x + item.w, y: item.y + item.h };
+  const anchor = (node: CanvasItem, other: Point): Point => {
+    const cx = node.x + node.w / 2,
+      cy = node.y + node.h / 2,
+      rad = (node.rotation * Math.PI) / 180;
+    const dx = (other.x - cx) * Math.cos(rad) + (other.y - cy) * Math.sin(rad),
+      dy = -(other.x - cx) * Math.sin(rad) + (other.y - cy) * Math.cos(rad);
+    if (!dx && !dy) return { x: cx, y: cy };
+    const rx = Math.max(1, node.w / 2),
+      ry = Math.max(1, node.h / 2);
+    const t =
+      node.kind === "ellipse"
+        ? 1 / Math.sqrt((dx * dx) / (rx * rx) + (dy * dy) / (ry * ry))
+        : node.kind === "diamond"
+          ? 1 / (Math.abs(dx) / rx + Math.abs(dy) / ry)
+          : Math.min(rx / Math.abs(dx), ry / Math.abs(dy));
+    return {
+      x: cx + dx * t * Math.cos(rad) - dy * t * Math.sin(rad),
+      y: cy + dx * t * Math.sin(rad) + dy * t * Math.cos(rad),
+    };
   };
+  const oldA = a,
+    oldB = b;
+  if (from) a = anchor(from, oldB);
+  if (to) b = anchor(to, oldA);
+  if (item.rotation && (!from || !to)) {
+    const pivot = from
+      ? a
+      : to
+        ? b
+        : { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+    const rad = (item.rotation * Math.PI) / 180;
+    const rotate = (p: Point) => ({
+      x:
+        pivot.x +
+        (p.x - pivot.x) * Math.cos(rad) -
+        (p.y - pivot.y) * Math.sin(rad),
+      y:
+        pivot.y +
+        (p.x - pivot.x) * Math.sin(rad) +
+        (p.y - pivot.y) * Math.cos(rad),
+    });
+    if (!from) a = rotate(a);
+    if (!to) b = rotate(b);
+  }
+  return { a, b };
 }
 export function bounds(items: CanvasItem[]) {
   if (!items.length) return { x: 0, y: 0, w: 1200, h: 800 };

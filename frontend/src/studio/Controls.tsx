@@ -38,8 +38,9 @@ export function Slider({
   step?: number;
   unit?: string;
 }) {
+  const id = useId();
   return (
-    <label className="field">
+    <label className="field" htmlFor={id}>
       <span>
         {label}
         <output>
@@ -48,6 +49,7 @@ export function Slider({
         </output>
       </span>
       <input
+        id={id}
         type="range"
         min={min}
         max={max}
