@@ -558,34 +558,84 @@
   font-size: 10px;
   text-transform: capitalize;
 }
-.template-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 18px 0;
+.template-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 14px 0;
 }
-.template-list button {
-  padding: 8px;
-  border: 1px solid #ffffff0a;
+.studio .template-grid button {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 7px;
+  padding: 6px 6px 8px;
+  font-size: 11.5px;
+  line-height: 1.25;
   text-align: left;
-  justify-content: flex-start;
-  font-size: 11px;
+  color: #b6b7c0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.studio .template-grid button:hover {
+  border-color: var(--line-strong);
+  color: var(--text);
 }
 .template-art {
-  width: 44px;
-  height: 38px;
-  flex-shrink: 0;
-  border-radius: 4px;
+  height: 62px;
+  border-radius: 6px;
   display: grid;
   place-items: center;
-  font: 20px monospace;
-  color: white;
 }
-.template-list small {
-  display: block;
-  font-size: 9px;
-  color: #868191;
-  margin-top: 5px;
+.template-art i {
+  width: 62%;
+  height: 52%;
+  border-radius: 4px;
+  background:
+    linear-gradient(#ffffff55, #ffffff55) 8px 9px / 30% 2px no-repeat,
+    linear-gradient(#ffffff33, #ffffff33) 8px 16px / 50% 2px no-repeat,
+    linear-gradient(#ffffff33, #ffffff33) 8px 23px / 40% 2px no-repeat,
+    #11131bdd;
+  box-shadow: 0 4px 12px #0005;
+}
+.chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 14px;
+}
+.studio .chip-grid button {
+  padding: 6px 11px;
+  font-size: 12px;
+  color: #b6b7c0;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  text-transform: capitalize;
+}
+.studio .chip-grid button.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--text);
+}
+.annotation-card .block-head {
+  padding: 6px 6px 6px 12px;
+}
+.annotation-card .block-head strong {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+.studio .annotation-card input[type="color"] {
+  width: 26px;
+  height: 26px;
+  padding: 2px !important;
+  border-radius: 50%;
+}
+.annotation-body {
+  padding: 4px 12px 2px;
+}
+.annotation-body > input {
+  margin-top: 10px;
 }
 .size-grid {
   display: grid;
