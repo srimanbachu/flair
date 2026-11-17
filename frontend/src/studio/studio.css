@@ -442,7 +442,8 @@
 }
 .color-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(30px, 36px));
+  justify-content: space-between;
   gap: 10px;
   margin: 16px 0 6px;
 }
@@ -1033,6 +1034,10 @@
 }
 .studio .code-editor:focus-visible {
   outline: none;
+}
+.card-scaled .code-window:hover:not(:focus-within) {
+  outline: 1px dashed #ffffff55;
+  outline-offset: 4px;
 }
 .card-scaled .code-window:focus-within {
   outline: 2px solid #8fdcd866;
@@ -1869,6 +1874,22 @@ a {
   .toast {
     width: max-content;
     max-width: 92vw;
+  }
+}
+@media (max-width: 760px) {
+  .block-bar {
+    flex-wrap: wrap;
+    margin: 0 12px 12px;
+  }
+  .studio .block-bar input.block-name {
+    flex: 1;
+    width: auto;
+  }
+  .block-bar-spacer {
+    display: none;
+  }
+  .effects-body {
+    width: min(300px, calc(100vw - 40px));
   }
 }
 @media (prefers-reduced-motion: reduce) {
