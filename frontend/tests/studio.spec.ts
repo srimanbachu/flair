@@ -221,7 +221,7 @@ test("canvas PNG rasterization works and studio has no browser errors", async ({
   expect(errors).toEqual([]);
 });
 
-test("line words, annotations and window visibility respond to controls", async ({
+test("line words and window visibility respond to controls", async ({
   page,
 }) => {
   await page.getByText("Line effects").click();
@@ -231,10 +231,6 @@ test("line words, annotations and window visibility respond to controls", async 
   await page.getByLabel("Show file names").uncheck();
   await page.getByLabel("Show window controls").uncheck();
   await expect(page.locator(".code-window-bar")).toHaveCount(0);
-  await page.getByRole("button", { name: "Annotations", exact: true }).click();
-  await page.getByRole("button", { name: "+ label", exact: true }).click();
-  await page.getByLabel("Text", { exact: true }).fill("A useful detail");
-  await expect(page.locator(".annotation")).toContainText("A useful detail");
 });
 test("custom export dimensions and transparent background are preserved", async ({
   page,

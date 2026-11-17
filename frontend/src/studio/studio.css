@@ -581,27 +581,6 @@
   background: var(--accent-soft);
   color: var(--text);
 }
-.annotation-card .block-head {
-  padding: 6px 6px 6px 12px;
-}
-.annotation-card .block-head strong {
-  flex: 1;
-  font-size: 12px;
-  font-weight: 500;
-  text-transform: capitalize;
-}
-.studio .annotation-card input[type="color"] {
-  width: 26px;
-  height: 26px;
-  padding: 2px !important;
-  border-radius: 50%;
-}
-.annotation-body {
-  padding: 4px 12px 2px;
-}
-.annotation-body > input {
-  margin-top: 10px;
-}
 .size-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -862,38 +841,6 @@
   font-size: 0.6em;
   color: #f9d887;
   margin-left: 16px;
-}
-.annotation {
-  position: absolute;
-  cursor: move;
-  user-select: none;
-  white-space: pre;
-  line-height: 1.2;
-}
-.annotation-circle,
-.annotation-rectangle,
-.annotation-arrow {
-  line-height: 1;
-}
-.annotation-callout {
-  background: #171722dd;
-  border: 1px solid currentColor;
-  padding: 12px 18px;
-  border-radius: 9px;
-}
-.annotation-marker {
-  background: #252033;
-  border: 2px solid currentColor;
-  width: 1.8em;
-  height: 1.8em;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  -webkit-text-stroke: 1px #30283d;
-  text-shadow: 0 0 1px #30283d;
-}
-.annotation-label {
-  font-weight: 500;
 }
 .preview-status {
   display: flex;

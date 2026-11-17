@@ -15,7 +15,6 @@ import {
   Type,
   Palette,
   AppWindow,
-  MessageSquareText,
   LayoutTemplate,
   TriangleAlert,
 } from "lucide-react";
@@ -39,7 +38,6 @@ const tabIcons: Record<string, LucideIcon> = {
   Background: Palette,
   Window: AppWindow,
   Effects: Sparkles,
-  Annotations: MessageSquareText,
   Templates: LayoutTemplate,
   Export: Download,
 };
@@ -498,7 +496,6 @@ export default function Studio() {
                 card={work.card}
                 exportRef={preview}
                 scale={Math.max(0.08, scale)}
-                change={(card) => change({ ...work, card })}
                 onPickBlock={(index) => {
                   setTab("Code");
                   requestAnimationFrame(() =>

@@ -6,13 +6,11 @@ export function CardPreview({
   card: c,
   exportRef,
   scale,
-  change,
   onPickBlock,
 }: {
   card: Card;
   exportRef: RefObject<HTMLDivElement | null>;
   scale: number;
-  change: (c: Card) => void;
   onPickBlock?: (index: number) => void;
 }) {
   const p = palettes[c.theme] || palettes.Midnight;
@@ -131,74 +129,6 @@ export function CardPreview({
             </div>
           ))}
         </div>
-        {c.annotations.map((a) => (
-          <div
-            key={a.id}
-            className={`annotation annotation-${a.kind}`}
-            style={{
-              left: `${a.x}%`,
-              top: `${a.y}%`,
-              color: a.color,
-              fontSize: ["circle", "rectangle", "arrow"].includes(a.kind)
-                ? a.size * 4
-                : a.size,
-              touchAction: "none",
-            }}
-            onPointerDown={(e) => {
-              const el = e.currentTarget;
-              el.setPointerCapture(e.pointerId);
-              const start = { x: e.clientX, y: e.clientY };
-              const move = (ev: PointerEvent) => {
-                el.style.left = `${a.x + ((ev.clientX - start.x) / (c.width * scale)) * 100}%`;
-                el.style.top = `${a.y + ((ev.clientY - start.y) / (c.height * scale)) * 100}%`;
-              };
-              const end = (ev: PointerEvent) => {
-                el.removeEventListener("pointermove", move);
-                el.removeEventListener("pointerup", end);
-                change({
-                  ...c,
-                  annotations: c.annotations.map((x) =>
-                    x.id === a.id
-                      ? {
-                          ...x,
-                          x: Math.max(
-                            0,
-                            Math.min(
-                              95,
-                              a.x +
-                                ((ev.clientX - start.x) / (c.width * scale)) *
-                                  100,
-                            ),
-                          ),
-                          y: Math.max(
-                            0,
-                            Math.min(
-                              95,
-                              a.y +
-                                ((ev.clientY - start.y) / (c.height * scale)) *
-                                  100,
-                            ),
-                          ),
-                        }
-                      : x,
-                  ),
-                });
-              };
-              el.addEventListener("pointermove", move);
-              el.addEventListener("pointerup", end);
-            }}
-          >
-            {a.kind === "arrow"
-              ? "⟶"
-              : a.kind === "circle"
-                ? "◯"
-                : a.kind === "rectangle"
-                  ? "▭"
-                  : a.kind === "underline"
-                    ? "______"
-                    : a.text}
-          </div>
-        ))}
       </div>
     </div>
   );

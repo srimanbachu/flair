@@ -249,7 +249,6 @@ export const cardTabs = [
   "Background",
   "Window",
   "Effects",
-  "Annotations",
   "Templates",
   "Export",
 ];

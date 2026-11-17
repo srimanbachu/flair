@@ -105,38 +105,6 @@ export function cardTemplate(name: string): Card {
   if (name === "Code tutorial") {
     c.blocks[0].highlights = "2-7";
     c.blocks[0].comment = "2";
-    c.annotations = [
-      {
-        id: "tutorial",
-        kind: "label",
-        text: "01  Turn an idea into something real",
-        x: 14,
-        y: 86,
-        color: "#f9de8d",
-        size: 22,
-      },
-    ];
   }
-  if (
-    [
-      "Today I built…",
-      "Open-source announcement",
-      "Portfolio project",
-    ].includes(name)
-  )
-    c.annotations = [
-      {
-        id: "title",
-        kind: "label",
-        text:
-          name === "Today I built…"
-            ? "✨ Today I built something beautiful"
-            : name,
-        x: 12,
-        y: 12,
-        color: "#ffffff",
-        size: 28,
-      },
-    ];
   return c;
 }

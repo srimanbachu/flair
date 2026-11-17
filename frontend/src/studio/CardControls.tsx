@@ -1,31 +1,17 @@
 import { useState } from "react";
 import { Copy, Download, Trash2 } from "lucide-react";
 import { Field, Slider, Toggle } from "./Controls";
-import type { Annotation, Card, CodeBlock } from "./model";
+import type { Card, CodeBlock } from "./model";
 import {
   backgroundNames,
   backgroundCSS,
   makeBlock,
   palettes,
   sizes,
-  uid,
 } from "./model";
 import { cardTemplate, templateNames } from "./templates";
 import { readImage } from "./storage";
 
-const annotationKinds = [
-  "arrow",
-  "circle",
-  "rectangle",
-  "underline",
-  "label",
-  "marker",
-  "callout",
-  "emoji",
-  "sticker",
-];
-/** These render as a glyph, so they have no editable text. */
-const shapeAnnotations = ["arrow", "circle", "rectangle", "underline"];
 const languages = [
   "typescript",
   "javascript",
@@ -59,11 +45,6 @@ export function CardControls({
   const [sizeChoice, setSizeChoice] = useState("Custom");
   const set = <K extends keyof Card>(key: K, value: Card[K]) =>
     change({ ...c, [key]: value });
-  const annotate = (id: string, patch: Partial<Annotation>) =>
-    set(
-      "annotations",
-      c.annotations.map((x) => (x.id === id ? { ...x, ...patch } : x)),
-    );
   const block = (id: string, patch: Partial<CodeBlock>) =>
     set(
       "blocks",
@@ -429,87 +410,6 @@ export function CardControls({
           {slider("depth", "Depth", 0, 20, 1, "px")}
           {slider("perspective", "Perspective tilt", -25, 25, 1, "°")}
           {slider("rotation", "Rotation", -20, 20, 1, "°")}
-        </>
-      )}
-      {tab === "Annotations" && (
-        <>
-          <p className="muted">
-            Add a detail, then drag it into place on the preview.
-          </p>
-          <div className="chip-grid">
-            {annotationKinds.map((kind) => (
-              <button
-                key={kind}
-                onClick={() =>
-                  set("annotations", [
-                    ...c.annotations,
-                    {
-                      id: uid(),
-                      kind,
-                      text:
-                        (
-                          {
-                            emoji: "✨",
-                            sticker: "🚀",
-                            marker: String(c.annotations.length + 1),
-                            label: "Look here",
-                            callout: "A little detail that matters",
-                          } as Record<string, string>
-                        )[kind] || "",
-                      x: 30,
-                      y: 30,
-                      color: "#ffe08a",
-                      size: 24,
-                    },
-                  ])
-                }
-              >
-                + {kind}
-              </button>
-            ))}
-          </div>
-          {c.annotations.map((a) => (
-            <section className="block-card annotation-card" key={a.id}>
-              <div className="block-head">
-                <strong>{a.kind}</strong>
-                <input
-                  type="color"
-                  aria-label={`${a.kind} color`}
-                  value={a.color}
-                  onChange={(e) => annotate(a.id, { color: e.target.value })}
-                />
-                <button
-                  className="icon-btn"
-                  aria-label={`Remove ${a.kind}`}
-                  title="Remove"
-                  onClick={() =>
-                    set(
-                      "annotations",
-                      c.annotations.filter((x) => x.id !== a.id),
-                    )
-                  }
-                >
-                  <Trash2 size={14} strokeWidth={1.75} />
-                </button>
-              </div>
-              <div className="annotation-body">
-                {!shapeAnnotations.includes(a.kind) && (
-                  <input
-                    aria-label="Text"
-                    value={a.text}
-                    onChange={(e) => annotate(a.id, { text: e.target.value })}
-                  />
-                )}
-                <Slider
-                  label="Size"
-                  min={12}
-                  max={80}
-                  value={a.size}
-                  onChange={(size) => annotate(a.id, { size })}
-                />
-              </div>
-            </section>
-          ))}
         </>
       )}
       {tab === "Templates" && (
