@@ -19,6 +19,7 @@ import {
   Frame,
   Group,
   Hand,
+  Keyboard,
   ImagePlus,
   Layers,
   Maximize,
@@ -30,6 +31,7 @@ import {
   Presentation,
   SendToBack,
   Settings2,
+  RectangleHorizontal,
   Square,
   StickyNote,
   Trash2,
@@ -48,32 +50,64 @@ import { Field, Slider, Toggle } from "./Controls";
 import { uid } from "./model";
 import { readImage } from "./storage";
 import { validateBoard } from "./projectFiles";
-type Tool = { id: string; label: string; Icon: LucideIcon };
+type Tool = { id: string; label: string; Icon: LucideIcon; key: string };
 const toolGroups: Tool[][] = [
   [
-    { id: "hand", label: "Hand", Icon: Hand },
-    { id: "select", label: "Select", Icon: MousePointer2 },
+    { id: "hand", label: "Hand", Icon: Hand, key: "H" },
+    { id: "select", label: "Select", Icon: MousePointer2, key: "V" },
   ],
   [
-    { id: "rectangle", label: "Rectangle", Icon: Square },
-    { id: "ellipse", label: "Ellipse", Icon: Circle },
-    { id: "triangle", label: "Triangle", Icon: Triangle },
-    { id: "diamond", label: "Diamond", Icon: Diamond },
-    { id: "arrow", label: "Arrow", Icon: ArrowUpRight },
-    { id: "line", label: "Line", Icon: Minus },
+    {
+      id: "rectangle",
+      label: "Rectangle",
+      Icon: RectangleHorizontal,
+      key: "R",
+    },
+    { id: "square", label: "Square", Icon: Square, key: "S" },
+    { id: "ellipse", label: "Ellipse", Icon: Circle, key: "O" },
+    { id: "triangle", label: "Triangle", Icon: Triangle, key: "⇧T" },
+    { id: "diamond", label: "Diamond", Icon: Diamond, key: "D" },
+    { id: "arrow", label: "Arrow", Icon: ArrowUpRight, key: "A" },
+    { id: "line", label: "Line", Icon: Minus, key: "L" },
   ],
   [
-    { id: "pen", label: "Draw", Icon: PenLine },
-    { id: "text", label: "Text", Icon: Type },
-    { id: "sticky", label: "Sticky note", Icon: StickyNote },
-    { id: "code", label: "Code", Icon: Code2 },
-    { id: "icon", label: "Icon", Icon: Atom },
-    { id: "frame", label: "Frame", Icon: Frame },
-    { id: "image", label: "Image", Icon: ImagePlus },
+    { id: "pen", label: "Draw", Icon: PenLine, key: "P" },
+    { id: "text", label: "Text", Icon: Type, key: "T" },
+    { id: "sticky", label: "Sticky note", Icon: StickyNote, key: "N" },
+    { id: "code", label: "Code", Icon: Code2, key: "C" },
+    { id: "icon", label: "Icon", Icon: Atom, key: "K" },
+    { id: "frame", label: "Frame", Icon: Frame, key: "F" },
+    { id: "image", label: "Image", Icon: ImagePlus, key: "I" },
   ],
-  [{ id: "eraser", label: "Eraser", Icon: Eraser }],
+  [{ id: "eraser", label: "Eraser", Icon: Eraser, key: "E" }],
 ];
 const tools = toolGroups.flat();
+/** Single-key shortcuts; Shift+T is triangle because T is text. */
+const toolKeys: Record<string, string> = Object.fromEntries(
+  tools.map((t) => [
+    t.key.replace("⇧", "").toLowerCase() +
+      (t.key.startsWith("⇧") ? "+shift" : ""),
+    t.id,
+  ]),
+);
+const shortcutList: [string, string][] = [
+  ...tools.map((t): [string, string] => [t.key, t.label]),
+  ["Esc", "Back to grab, clear selection"],
+  ["Space + drag", "Pan from any tool"],
+  ["Shift + drag", "Box-select with grab · keep shapes square"],
+  ["Double-click", "Edit text"],
+  ["⌘/Ctrl + / −", "Zoom in / out"],
+  ["⌘/Ctrl 0", "Zoom to 100%"],
+  ["⇧1", "Fit to content"],
+  ["⌘/Ctrl A", "Select all"],
+  ["⌘/Ctrl C · V · D", "Copy · paste · duplicate"],
+  ["⌘/Ctrl G", "Group (⇧ to ungroup)"],
+  ["] · [", "Bring to front · send to back"],
+  ["Arrow keys", "Nudge (⇧ for 10px)"],
+  ["Delete", "Remove selection"],
+  ["⌘/Ctrl Z", "Undo (⇧ to redo)"],
+  ["?", "Show shortcuts"],
+];
 const kindIcon: Record<string, LucideIcon> = {
   ...Object.fromEntries(tools.map((t) => [t.id, t.Icon])),
   pencil: Pencil,
@@ -171,12 +205,14 @@ export function Canvas({
   svgRef: RefObject<SVGSVGElement | null>;
   notify: (s: string) => void;
 }) {
-  const [tool, setTool] = useState("select");
+  const [tool, setTool] = useState("hand");
+  const [spaceHeld, setSpaceHeld] = useState(false);
+  const [panning, setPanning] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [view, setView] = useState({ x: 0, y: 0, z: 1 });
   const [draft, setDraft] = useState<CanvasItem[] | null>(null);
   const [comment, setComment] = useState("");
-  const [panel, setPanel] = useState<"board" | "layers" | null>(null);
+  const [panel, setPanel] = useState<"board" | "layers" | "keys" | null>(null);
   const imageInput = useRef<HTMLInputElement>(null);
   const [marquee, setMarquee] = useState<{
     x: number;
@@ -339,6 +375,19 @@ export function Canvas({
     );
     setSelected([]);
   };
+  const fit = (target: CanvasItem[] = board.items, max = 2) => {
+    const b = bounds(target);
+    const r = host.current!.getBoundingClientRect();
+    const z = Math.max(
+      0.1,
+      Math.min(max, (r.width - 100) / b.w, (r.height - 100) / b.h),
+    );
+    setView({
+      x: (r.width - b.w * z) / 2 - b.x * z,
+      y: (r.height - b.h * z) / 2 - b.y * z,
+      z,
+    });
+  };
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
       if (
@@ -360,7 +409,67 @@ export function Canvas({
       if (e.key === "Escape") {
         setSelected([]);
         setPresent(-1);
-        setTool("select");
+        setPanel(null);
+        setTool("hand");
+        return;
+      }
+      if (present >= 0) {
+        if (e.key === "ArrowRight" || e.key === " ")
+          setPresent((p) => Math.min(frames.length - 1, p + 1));
+        if (e.key === "ArrowLeft") setPresent((p) => Math.max(0, p - 1));
+        return;
+      }
+      if (e.key === " ") {
+        e.preventDefault();
+        setSpaceHeld(true);
+        return;
+      }
+      if (e.shiftKey && e.code === "Digit1") {
+        e.preventDefault();
+        fit();
+        return;
+      }
+      if (e.key === "?") {
+        setPanel((p) => (p === "keys" ? null : "keys"));
+        return;
+      }
+      if (!e.metaKey && !e.ctrlKey && !e.altKey) {
+        const id = toolKeys[e.key.toLowerCase() + (e.shiftKey ? "+shift" : "")];
+        if (id) {
+          e.preventDefault();
+          if (id === "image") imageInput.current?.click();
+          else setTool(id);
+          return;
+        }
+        if ((e.key === "]" || e.key === "[") && active.length) {
+          const rest = board.items.filter((i) => !selected.includes(i.id));
+          commit(e.key === "]" ? [...rest, ...active] : [...active, ...rest]);
+          return;
+        }
+        const nudge = {
+          ArrowLeft: [-1, 0],
+          ArrowRight: [1, 0],
+          ArrowUp: [0, -1],
+          ArrowDown: [0, 1],
+        }[e.key];
+        if (nudge && active.length) {
+          e.preventDefault();
+          const step = e.shiftKey ? 10 : 1;
+          commit(
+            board.items.map((i) =>
+              selected.includes(i.id)
+                ? { ...i, x: i.x + nudge[0] * step, y: i.y + nudge[1] * step }
+                : i,
+            ),
+          );
+          return;
+        }
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "g") {
+        e.preventDefault();
+        if (e.shiftKey) patch({ group: "" });
+        else if (active.length > 1) patch({ group: uid() });
+        return;
       }
       if ((e.metaKey || e.ctrlKey) && e.key === "a") {
         e.preventDefault();
@@ -383,13 +492,19 @@ export function Canvas({
         duplicate();
         e.preventDefault();
       }
-      if (e.key === "ArrowRight" && present >= 0)
-        setPresent((p) => Math.min(frames.length - 1, p + 1));
-      if (e.key === "ArrowLeft" && present >= 0)
-        setPresent((p) => Math.max(0, p - 1));
     };
+    const release = (e: KeyboardEvent) => {
+      if (e.key === " ") setSpaceHeld(false);
+    };
+    const blur = () => setSpaceHeld(false);
     window.addEventListener("keydown", key);
-    return () => window.removeEventListener("keydown", key);
+    window.addEventListener("keyup", release);
+    window.addEventListener("blur", blur);
+    return () => {
+      window.removeEventListener("keydown", key);
+      window.removeEventListener("keyup", release);
+      window.removeEventListener("blur", blur);
+    };
   });
   const point = (e: ReactPointerEvent): Point => {
     const r = host.current!.getBoundingClientRect();
@@ -404,7 +519,14 @@ export function Canvas({
     if (panel === "board") setPanel(null);
     const p = point(e);
     e.currentTarget.setPointerCapture(e.pointerId);
-    if (tool === "hand" || e.button === 1) {
+    // Grab pans on empty space but still picks up objects; Shift+drag on
+    // empty space box-selects. Space or the middle button always pans.
+    if (
+      spaceHeld ||
+      e.button === 1 ||
+      (tool === "hand" && !id && !e.shiftKey)
+    ) {
+      setPanning(true);
       gesture.current = {
         start: p,
         screen: { x: e.clientX, y: e.clientY },
@@ -424,7 +546,7 @@ export function Canvas({
         );
       return;
     }
-    if (tool === "select") {
+    if (tool === "select" || tool === "hand") {
       if (!id) {
         if (!e.shiftKey) setSelected([]);
         gesture.current = {
@@ -460,7 +582,7 @@ export function Canvas({
       };
       return;
     }
-    const n = makeItem(tool, p.x, p.y);
+    const n = makeItem(tool === "square" ? "rectangle" : tool, p.x, p.y);
     if (freehand.includes(tool)) n.points = [{ x: 0, y: 0 }];
     if (tool === "frame") n.text = `Frame ${frames.length + 1}`;
     setDraft([...board.items, n]);
@@ -470,7 +592,7 @@ export function Canvas({
       screen: { x: e.clientX, y: e.clientY },
       items: [...board.items, n],
       ids: [n.id],
-      kind: "draw",
+      kind: tool === "square" ? "draw-square" : "draw",
       id: n.id,
       view,
     };
@@ -537,6 +659,16 @@ export function Canvas({
           };
         }
         if (["arrow", "line"].includes(i.kind)) return { ...i, w: dx, h: dy };
+        if (g.kind === "draw-square" || e.shiftKey) {
+          const side = Math.max(40, Math.abs(dx), Math.abs(dy));
+          return {
+            ...i,
+            x: dx < 0 ? g.start.x - side : g.start.x,
+            y: dy < 0 ? g.start.y - side : g.start.y,
+            w: side,
+            h: side,
+          };
+        }
         return {
           ...i,
           x: Math.min(g.start.x, p.x),
@@ -566,9 +698,10 @@ export function Canvas({
         }),
       );
       setDraft(null);
-      if (!freehand.includes(tool)) setTool("select");
+      if (!freehand.includes(tool)) setTool("hand");
     }
     gesture.current = null;
+    setPanning(false);
   };
   const align = (mode: string) => {
     if (active.length < 2) return;
@@ -614,19 +747,6 @@ export function Canvas({
       ),
     );
   };
-  const fit = (target: CanvasItem[] = board.items) => {
-    const b = bounds(target);
-    const r = host.current!.getBoundingClientRect();
-    const z = Math.max(
-      0.1,
-      Math.min(2, (r.width - 100) / b.w, (r.height - 100) / b.h),
-    );
-    setView({
-      x: (r.width - b.w * z) / 2 - b.x * z,
-      y: (r.height - b.h * z) / 2 - b.y * z,
-      z,
-    });
-  };
   const insertImage = async (file: File) => {
     try {
       const r = host.current!.getBoundingClientRect();
@@ -652,7 +772,7 @@ export function Canvas({
     changeBoard(next);
     setSelected([]);
     setPanel(null);
-    fit(next.items);
+    fit(next.items, 1);
   };
   const presentationFrame = present >= 0 ? frames[present] : undefined;
   const renderItems = presentationFrame
@@ -668,14 +788,19 @@ export function Canvas({
       <main className="canvas-main">
         <div
           ref={host}
-          className={`canvas-surface canvas-bg-${board.background.toLowerCase()}`}
+          className={`canvas-surface canvas-bg-${board.background.toLowerCase()} tool-${tool}`}
           style={{
-            cursor:
-              tool === "hand"
+            cursor: panning
+              ? "grabbing"
+              : spaceHeld || tool === "hand"
                 ? "grab"
                 : tool === "select"
                   ? "default"
-                  : "crosshair",
+                  : tool === "text"
+                    ? "text"
+                    : tool === "eraser"
+                      ? "cell"
+                      : "crosshair",
             backgroundPosition: `${view.x}px ${view.y}px`,
             backgroundSize: `${20 * view.z}px ${20 * view.z}px`,
           }}
@@ -695,6 +820,7 @@ export function Canvas({
             onPointerUp={up}
             onPointerCancel={() => {
               setDraft(null);
+              setPanning(false);
               gesture.current = null;
             }}
           >
@@ -710,7 +836,10 @@ export function Canvas({
                   key={i.id}
                   data-item={i.id}
                   onPointerDown={(e) => {
-                    if (tool === "select" || tool === "eraser") {
+                    if (
+                      !spaceHeld &&
+                      ["select", "hand", "eraser"].includes(tool)
+                    ) {
                       e.stopPropagation();
                       down(e, i.id);
                     }
@@ -758,7 +887,10 @@ export function Canvas({
           {board.items.length === 0 && (
             <div className="canvas-empty">
               <h2>Start sketching</h2>
-              <p>Pick a tool above, or begin from a template.</p>
+              <p>
+                Pick a tool above, or begin from a template. Press <kbd>?</kbd>{" "}
+                for shortcuts.
+              </p>
               <div className="template-chips">
                 {boardTemplates
                   .filter((n) => n !== "Blank canvas")
@@ -887,8 +1019,9 @@ export function Canvas({
               {group.map((t) => (
                 <button
                   key={t.id}
-                  title={t.label}
+                  title={`${t.label} — ${t.key}`}
                   aria-label={t.label}
+                  aria-keyshortcuts={t.key.replace("⇧", "Shift+")}
                   aria-pressed={tool === t.id}
                   className={tool === t.id ? "active" : ""}
                   onClick={() =>
@@ -898,6 +1031,7 @@ export function Canvas({
                   }
                 >
                   <t.Icon size={17} strokeWidth={1.75} />
+                  <kbd>{t.key.replace("⇧", "")}</kbd>
                 </button>
               ))}
             </Fragment>
@@ -1271,7 +1405,43 @@ export function Canvas({
           </button>
         </div>
 
+        {panel === "keys" && (
+          <div
+            className="canvas-panel keys-panel"
+            role="dialog"
+            aria-label="Keyboard shortcuts"
+          >
+            <div className="props-head">
+              <strong>Keyboard shortcuts</strong>
+              <button
+                className="icon-btn"
+                aria-label="Close shortcuts"
+                onClick={() => setPanel(null)}
+              >
+                <X size={14} />
+              </button>
+            </div>
+            <dl>
+              {shortcutList.map(([k, label]) => (
+                <Fragment key={k + label}>
+                  <dt>{label}</dt>
+                  <dd>
+                    <kbd>{k}</kbd>
+                  </dd>
+                </Fragment>
+              ))}
+            </dl>
+          </div>
+        )}
         <div className="canvas-panel canvas-corner">
+          <button
+            className={`icon-btn ${panel === "keys" ? "active" : ""}`}
+            aria-label="Keyboard shortcuts"
+            title="Keyboard shortcuts (?)"
+            onClick={() => setPanel(panel === "keys" ? null : "keys")}
+          >
+            <Keyboard size={15} strokeWidth={1.75} />
+          </button>
           <button
             disabled={!frames.length}
             title={frames.length ? "Present frames" : "Add a frame to present"}

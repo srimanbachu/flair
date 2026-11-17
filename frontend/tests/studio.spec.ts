@@ -347,3 +347,39 @@ test("wheel and pinch zoom the canvas, not the page", async ({ page }) => {
   await page.keyboard.press("ControlOrMeta+=");
   await expect(zoom).toHaveText("125%");
 });
+test("single-key canvas shortcuts switch tools and Escape returns to grab", async ({
+  page,
+}) => {
+  await page.getByRole("button", { name: "Canvas", exact: true }).click();
+  const tool = (name: string) =>
+    page.getByRole("button", { name, exact: true });
+  await expect(tool("Hand")).toHaveAttribute("aria-pressed", "true");
+  for (const [key, name] of [
+    ["r", "Rectangle"],
+    ["o", "Ellipse"],
+    ["Shift+T", "Triangle"],
+    ["a", "Arrow"],
+    ["t", "Text"],
+    ["v", "Select"],
+  ]) {
+    await page.keyboard.press(key);
+    await expect(tool(name)).toHaveAttribute("aria-pressed", "true");
+  }
+  await page.keyboard.press("Escape");
+  await expect(tool("Hand")).toHaveAttribute("aria-pressed", "true");
+  const b = (await page.locator(".canvas-surface").boundingBox())!;
+  await page.keyboard.press("s");
+  await page.mouse.move(b.x + 300, b.y + 300);
+  await page.mouse.down();
+  await page.mouse.move(b.x + 480, b.y + 360, { steps: 6 });
+  await page.mouse.up();
+  const square = page.locator("[data-item] rect").first();
+  expect(await square.getAttribute("width")).toBe(
+    await square.getAttribute("height"),
+  );
+  await expect(tool("Hand")).toHaveAttribute("aria-pressed", "true");
+  await page.keyboard.press("?");
+  await expect(
+    page.getByRole("dialog", { name: "Keyboard shortcuts" }),
+  ).toBeVisible();
+});
