@@ -268,15 +268,32 @@ export function CardControls({
       )}
       {tab === "Window" && (
         <>
-          <span className="menu-label">Style</span>
-          <div className="chip-grid" role="group" aria-label="Window style">
+          <div className="window-grid" role="group" aria-label="Window style">
             {["macOS", "Windows", "Minimal", "Terminal", "Glass"].map((n) => (
               <button
                 key={n}
+                aria-label={n}
                 aria-pressed={c.window === n}
-                className={c.window === n ? "active" : ""}
+                className={c.window === n ? "on" : ""}
                 onClick={() => set("window", n)}
               >
+                <span className={`mini-window mini-${n.toLowerCase()}`}>
+                  <span className="mini-bar">
+                    {n === "Windows" ? (
+                      <em>— ▢ ✕</em>
+                    ) : n === "Terminal" ? (
+                      <em>❯_</em>
+                    ) : n === "Minimal" ? null : (
+                      <>
+                        <i />
+                        <i />
+                        <i />
+                      </>
+                    )}
+                  </span>
+                  <span className="mini-line" />
+                  <span className="mini-line short" />
+                </span>
                 {n}
               </button>
             ))}
