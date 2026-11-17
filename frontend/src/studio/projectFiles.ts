@@ -1,4 +1,4 @@
-import { defaultCard, makeBlock } from "./model";
+import { defaultCard, makeBlock, backgroundNames, palettes } from "./model";
 import { emptyBoard, makeItem } from "./canvasModel";
 import type { Board } from "./canvasModel";
 import type { Card } from "./model";
@@ -32,6 +32,20 @@ function imageSafe(s: string) {
       "Project images must be embedded PNG, JPEG, WebP, or GIF files.",
     );
 }
+function ranges(value: object, limits: Record<string, [number, number]>) {
+  for (const [key, [min, max]] of Object.entries(limits)) {
+    const n = (value as Record<string, unknown>)[key];
+    if (typeof n !== "number" || n < min || n > max)
+      throw new Error(`Invalid ${key}: expected ${min}–${max}.`);
+  }
+}
+function uniqueIds(items: { id: string }[]) {
+  if (
+    new Set(items.map((i) => i.id)).size !== items.length ||
+    items.some((i) => !i.id)
+  )
+    throw new Error("Project contains missing or duplicate object IDs.");
+}
 export function validateCard(value: unknown): Card {
   const c = shape(value, defaultCard()) as unknown as Card;
   if (c.blocks.length < 1 || c.blocks.length > 30 || c.annotations.length > 100)
@@ -58,6 +72,32 @@ export function validateCard(value: unknown): Card {
     c.quality > 3
   )
     throw new Error("Unsupported image dimensions.");
+  ranges(c, {
+    fontSize: [10, 40],
+    lineHeight: [1, 2.5],
+    letterSpacing: [-1, 4],
+    bgBlur: [0, 40],
+    bgOpacity: [0, 100],
+    grain: [0, 50],
+    padding: [16, 160],
+    radius: [0, 40],
+    shadow: [0, 100],
+    glow: [0, 80],
+    border: [0, 8],
+    reflection: [0, 50],
+    blur: [0, 8],
+    glass: [0, 70],
+    depth: [0, 20],
+    perspective: [-25, 25],
+    rotation: [-20, 20],
+  });
+  if (!backgroundNames.includes(c.background) || !palettes[c.theme])
+    throw new Error("Unknown background or syntax theme.");
+  uniqueIds(c.blocks);
+  uniqueIds(c.annotations);
+  c.annotations.forEach((a) =>
+    ranges(a, { x: [0, 95], y: [0, 95], size: [12, 80] }),
+  );
   imageSafe(c.image);
   return c;
 }
@@ -67,6 +107,14 @@ export function validateBoard(value: unknown): Board {
     throw new Error("Canvas supports up to 2,000 objects.");
   b.items = b.items.map((i) => {
     const n = shape(i, makeItem("rectangle")) as unknown as typeof i;
+    if (n.points.length > 100000 || n.comments.length > 1000)
+      throw new Error("Canvas object is too complex.");
+    ranges(n, {
+      opacity: [0, 100],
+      fontSize: [10, 72],
+      strokeWidth: [1, 12],
+      rotation: [-180, 180],
+    });
     imageSafe(n.image);
     n.points = n.points.map(
       (p) => shape(p, { x: 0, y: 0 }) as unknown as typeof p,
@@ -75,6 +123,7 @@ export function validateBoard(value: unknown): Board {
       throw new Error("Invalid comments.");
     return n;
   });
+  uniqueIds(b.items);
   return b;
 }
 export function parseProject(

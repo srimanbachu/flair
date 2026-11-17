@@ -1,5 +1,5 @@
 import {
-  Github,
+  GitFork,
   Atom,
   Database,
   Server,
@@ -13,7 +13,7 @@ import Prism from "prismjs";
 import "prismjs/components/prism-typescript";
 import type { ReactNode } from "react";
 const icons = {
-  GitHub: Github,
+  GitHub: GitFork,
   "⚛": Atom,
   "▤ Database": Database,
   "▣ Server": Server,

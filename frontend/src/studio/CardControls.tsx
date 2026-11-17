@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Field, Slider, Toggle } from "./Controls";
 import type { Card, CodeBlock } from "./model";
 import {
@@ -22,6 +23,7 @@ export function CardControls({
   tab: string;
   notify: (s: string) => void;
 }) {
+  const [sizeChoice, setSizeChoice] = useState("Custom");
   const set = <K extends keyof Card>(key: K, value: Card[K]) =>
     change({ ...c, [key]: value });
   const block = (id: string, patch: Partial<CodeBlock>) =>
@@ -77,6 +79,20 @@ export function CardControls({
             <section className="control-section" key={b.id}>
               <div className="section-title">
                 <h3>Code block {i + 1}</h3>
+                <button
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(b.code);
+                      notify("Code copied.");
+                    } catch {
+                      notify(
+                        "Clipboard is unavailable. Select and copy the code from the editor.",
+                      );
+                    }
+                  }}
+                >
+                  Copy code
+                </button>
                 {c.blocks.length > 1 && (
                   <button
                     onClick={() =>
@@ -183,6 +199,7 @@ export function CardControls({
           ))}
           <button
             className="wide dashed"
+            disabled={c.blocks.length >= 30}
             onClick={() =>
               set("blocks", [
                 ...c.blocks,
@@ -518,11 +535,13 @@ export function CardControls({
           <Field label="Export dimensions">
             <select
               value={
-                Object.entries(sizes).find(
-                  ([, s]) => s[0] === c.width && s[1] === c.height,
-                )?.[0] || "Custom"
+                sizes[sizeChoice]?.[0] === c.width &&
+                sizes[sizeChoice]?.[1] === c.height
+                  ? sizeChoice
+                  : "Custom"
               }
               onChange={(e) => {
+                setSizeChoice(e.target.value);
                 const s = sizes[e.target.value];
                 if (s) change({ ...c, width: s[0], height: s[1] });
               }}
@@ -539,8 +558,9 @@ export function CardControls({
                 type="number"
                 min={320}
                 max={2400}
-                value={c.width}
-                onChange={(e) =>
+                key={`width-${c.width}`}
+                defaultValue={c.width}
+                onBlur={(e) =>
                   set("width", Math.max(320, Math.min(2400, +e.target.value)))
                 }
               />
@@ -550,8 +570,9 @@ export function CardControls({
                 type="number"
                 min={320}
                 max={2400}
-                value={c.height}
-                onChange={(e) =>
+                key={`height-${c.height}`}
+                defaultValue={c.height}
+                onBlur={(e) =>
                   set("height", Math.max(320, Math.min(2400, +e.target.value)))
                 }
               />

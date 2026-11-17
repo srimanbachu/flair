@@ -47,6 +47,7 @@ export default function Studio() {
   const [tab, setTab] = useState("Code");
   const [toast, setToast] = useState("");
   const [saved, setSaved] = useState(false);
+  const [draftStatus, setDraftStatus] = useState("Saving draft…");
   const [library, setLibrary] = useState(false);
   const [projects, setProjects] = useState<SavedProject[]>(readProjects);
   const [menu, setMenu] = useState(false);
@@ -104,6 +105,7 @@ export default function Studio() {
       setFuture([]);
       setWork(next);
       setSaved(false);
+      setDraftStatus("Saving draft…");
     },
     [work],
   );
@@ -125,7 +127,9 @@ export default function Studio() {
     const persist = () => {
       try {
         localStorage.setItem("flair.draft.v1", JSON.stringify(work));
+        setDraftStatus("Draft saved locally");
       } catch {
+        setDraftStatus("Draft could not be saved");
         notify(
           "Browser storage is full or unavailable. Download a project file to keep your work.",
         );
@@ -438,7 +442,7 @@ export default function Studio() {
       <footer className="studio-footer">
         <span>
           <i className="status-dot" />
-          Local workspace · draft autosaved
+          Local workspace · {draftStatus}
         </span>
         <span>Made for the things you’re proud to share.</span>
         <button onClick={() => importRef.current?.click()}>
