@@ -482,3 +482,10 @@ test("auto-sized card wraps the code with padding", async ({ page }) => {
   expect(Math.abs(left - top)).toBeLessThan(2);
   await expect(page.locator(".size-chip")).toContainText("Auto");
 });
+test("Windows-style window controls sit on the right", async ({ page }) => {
+  await page.getByRole("button", { name: "Window", exact: true }).click();
+  await page.getByRole("button", { name: "Windows", exact: true }).click();
+  const bar = (await page.locator(".code-window-bar").first().boundingBox())!;
+  const controls = (await page.locator(".windows-controls").boundingBox())!;
+  expect(controls.x).toBeGreaterThan(bar.x + bar.width / 2);
+});

@@ -797,7 +797,14 @@
   min-height: 44px;
 }
 .window-windows {
-  border-radius: 3px !important;
+  border-radius: 8px !important;
+}
+.window-windows .code-window-bar {
+  padding-right: 6px;
+}
+.windows-controls {
+  opacity: 0.7;
+  flex-shrink: 0;
 }
 .window-terminal .code-window-bar {
   font-family: monospace;

@@ -118,11 +118,9 @@ export function CardPreview({
               {(c.fileName || c.controls) && (
                 <div className="code-window-bar">
                   <span className="bar-side">
-                    {c.controls && (
+                    {c.controls && c.window !== "Windows" && (
                       <span className="window-buttons">
-                        {c.window === "Windows" ? (
-                          "−  □  ×"
-                        ) : c.window === "Terminal" ? (
+                        {c.window === "Terminal" ? (
                           "❯_"
                         ) : c.window === "Minimal" ? (
                           "•••"
@@ -135,12 +133,32 @@ export function CardPreview({
                         )}
                       </span>
                     )}
+                    {c.window === "Windows" && c.fileName && (
+                      <span className="code-filename">{b.name}</span>
+                    )}
                   </span>
                   <span className="code-filename">
-                    {c.fileName ? b.name : ""}
+                    {c.fileName && c.window !== "Windows" ? b.name : ""}
                   </span>
                   <span className="bar-side end">
                     <span className="language-badge">{b.label}</span>
+                    {c.controls && c.window === "Windows" && (
+                      // Windows puts minimise / maximise / close on the right.
+                      <svg
+                        className="windows-controls"
+                        width="132"
+                        height="16"
+                        viewBox="0 0 132 16"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.2"
+                        aria-hidden="true"
+                      >
+                        <path d="M16 8h12" />
+                        <rect x="60" y="2" width="12" height="12" rx="1.5" />
+                        <path d="M104 2l12 12M116 2l-12 12" />
+                      </svg>
+                    )}
                   </span>
                 </div>
               )}
