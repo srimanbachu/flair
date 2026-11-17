@@ -1,32 +1,11 @@
 import { useState } from "react";
-import { Copy, Download, Trash2 } from "lucide-react";
+import { Copy, Download } from "lucide-react";
 import { Field, Slider, Toggle } from "./Controls";
-import type { Card, CodeBlock } from "./model";
-import {
-  backgroundNames,
-  backgroundCSS,
-  makeBlock,
-  palettes,
-  sizes,
-} from "./model";
+import type { Card } from "./model";
+import { backgroundNames, backgroundCSS, palettes, sizes } from "./model";
 import { cardTemplate, templateNames } from "./templates";
 import { readImage } from "./storage";
 
-const languages = [
-  "typescript",
-  "javascript",
-  "tsx",
-  "jsx",
-  "python",
-  "json",
-  "sql",
-  "bash",
-  "css",
-  "markup",
-  "c",
-  "cpp",
-  "plain",
-];
 export function CardControls({
   card: c,
   change,
@@ -47,11 +26,6 @@ export function CardControls({
   const [sizeChoice, setSizeChoice] = useState("Custom");
   const set = <K extends keyof Card>(key: K, value: Card[K]) =>
     change({ ...c, [key]: value });
-  const block = (id: string, patch: Partial<CodeBlock>) =>
-    set(
-      "blocks",
-      c.blocks.map((b) => (b.id === id ? { ...b, ...patch } : b)),
-    );
   const slider = (
     key: keyof Card,
     label: string,
@@ -74,150 +48,6 @@ export function CardControls({
   return (
     <>
       <h2 className="inspector-title">{tab}</h2>
-      {tab === "Code" && (
-        <>
-          {c.blocks.map((b, i) => {
-            const effects = [
-              b.highlights,
-              b.words,
-              b.blur,
-              b.glow,
-              b.comment,
-            ].filter((v) => v.trim()).length;
-            return (
-              <section className="block-card" key={b.id}>
-                <div className="block-head">
-                  <input
-                    className="block-name"
-                    aria-label={`File name for block ${i + 1}`}
-                    placeholder="file name"
-                    value={b.name}
-                    onChange={(e) => block(b.id, { name: e.target.value })}
-                  />
-                  <select
-                    aria-label={`Language for block ${i + 1}`}
-                    value={b.language}
-                    onChange={(e) => block(b.id, { language: e.target.value })}
-                  >
-                    {languages.map((l) => (
-                      <option key={l}>{l}</option>
-                    ))}
-                  </select>
-                  <button
-                    className="icon-btn"
-                    title="Copy code"
-                    aria-label="Copy code"
-                    onClick={async () => {
-                      try {
-                        await navigator.clipboard.writeText(b.code);
-                        notify("Code copied.");
-                      } catch {
-                        notify(
-                          "Clipboard is unavailable. Select and copy the code from the editor.",
-                        );
-                      }
-                    }}
-                  >
-                    <Copy size={14} strokeWidth={1.75} />
-                  </button>
-                  {c.blocks.length > 1 && (
-                    <button
-                      className="icon-btn"
-                      title="Remove block"
-                      aria-label={`Remove block ${i + 1}`}
-                      onClick={() =>
-                        set(
-                          "blocks",
-                          c.blocks.filter((x) => x.id !== b.id),
-                        )
-                      }
-                    >
-                      <Trash2 size={14} strokeWidth={1.75} />
-                    </button>
-                  )}
-                </div>
-                <p className="block-hint">
-                  Edit this code directly on the card.
-                </p>
-                <details className="block-more">
-                  <summary>
-                    Line effects
-                    {effects > 0 && <span className="count">{effects}</span>}
-                  </summary>
-                  <Field label="Highlight lines" hint="Ranges like 2-5, 8, 12">
-                    <input
-                      placeholder="2-5, 8"
-                      value={b.highlights}
-                      onChange={(e) =>
-                        block(b.id, { highlights: e.target.value })
-                      }
-                    />
-                  </Field>
-                  <Field
-                    label="Highlight words"
-                    hint="Exact words, comma separated"
-                  >
-                    <input
-                      placeholder="create, Infinity"
-                      value={b.words}
-                      onChange={(e) => block(b.id, { words: e.target.value })}
-                    />
-                  </Field>
-                  <div className="two-col">
-                    <Field label="Blur lines">
-                      <input
-                        placeholder="4-6"
-                        value={b.blur}
-                        onChange={(e) => block(b.id, { blur: e.target.value })}
-                      />
-                    </Field>
-                    <Field label="Glow lines">
-                      <input
-                        placeholder="3, 7"
-                        value={b.glow}
-                        onChange={(e) => block(b.id, { glow: e.target.value })}
-                      />
-                    </Field>
-                  </div>
-                  <div className="two-col">
-                    <Field label="Comment dots">
-                      <input
-                        placeholder="2, 8"
-                        value={b.comment}
-                        onChange={(e) =>
-                          block(b.id, { comment: e.target.value })
-                        }
-                      />
-                    </Field>
-                    <Field label="Corner label">
-                      <input
-                        value={b.label}
-                        onChange={(e) => block(b.id, { label: e.target.value })}
-                      />
-                    </Field>
-                  </div>
-                  <small className="muted">
-                    Blur is only visual. Remove secrets before sharing project
-                    files.
-                  </small>
-                </details>
-              </section>
-            );
-          })}
-          <button
-            className="wide dashed"
-            disabled={c.blocks.length >= 30}
-            onClick={() =>
-              set("blocks", [
-                ...c.blocks,
-                makeBlock("// Another part of the story", "example.ts"),
-              ])
-            }
-          >
-            + Add code block
-          </button>
-        </>
-      )}
       {tab === "Typography" && (
         <>
           <span className="menu-label">Syntax theme</span>

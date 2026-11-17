@@ -43,10 +43,10 @@ export function Slider({
     <label className="field" htmlFor={id}>
       <span>
         {label}
-        <output>
+        <span className="slider-value">
           {value}
           {unit}
-        </output>
+        </span>
       </span>
       <input
         id={id}

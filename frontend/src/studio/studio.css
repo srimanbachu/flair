@@ -232,7 +232,7 @@
   gap: 8px;
   align-items: center;
 }
-.field output {
+.field .slider-value {
   font-size: 11px;
   color: #c9cad1;
   font-variant-numeric: tabular-nums;
@@ -627,6 +627,96 @@
 .studio .export-actions .primary {
   grid-column: 1 / -1;
   border-color: transparent;
+}
+.block-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 20px 14px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+  position: relative;
+}
+.block-tabs {
+  display: flex;
+  gap: 2px;
+  padding-right: 6px;
+  margin-right: 2px;
+  border-right: 1px solid var(--line);
+}
+.studio .block-tabs button {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+.studio .block-tabs button.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.studio .block-bar input.block-name {
+  width: 170px;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+.studio .block-bar select {
+  width: auto;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+.block-bar-spacer {
+  flex: 1;
+}
+.studio .block-bar .add-block {
+  font-size: 12px;
+  padding: 6px 10px;
+  border: 1px solid var(--line-strong);
+}
+.effects-pop {
+  position: relative;
+}
+.effects-pop summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: #b6b7c0;
+  padding: 6px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+.effects-pop summary::-webkit-details-marker {
+  display: none;
+}
+.effects-pop summary:hover,
+.effects-pop[open] summary {
+  background: #ffffff0a;
+}
+.effects-pop .count {
+  font-size: 10px;
+  min-width: 16px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  text-align: center;
+}
+.effects-body {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 0;
+  z-index: 6;
+  width: 300px;
+  padding: 4px 14px 12px;
+  background: var(--elev);
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  box-shadow: 0 16px 40px #000a;
 }
 .card-main {
   display: flex;

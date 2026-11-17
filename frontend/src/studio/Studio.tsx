@@ -26,6 +26,7 @@ import type { Board } from "./canvasModel";
 import { emptyBoard } from "./canvasModel";
 import { CardControls } from "./CardControls";
 import { CardPreview } from "./CardPreview";
+import { BlockBar } from "./BlockBar";
 import { Canvas } from "./Canvas";
 import type { SavedProject } from "./storage";
 import { download, readProjects, removeProject, saveProject } from "./storage";
@@ -33,7 +34,6 @@ import { parseProject, validateBoard, validateCard } from "./projectFiles";
 import flairLogo from "../assets/flair.png";
 import "./studio.css";
 const tabIcons: Record<string, LucideIcon> = {
-  Code: Code2,
   Typography: Type,
   Background: Palette,
   Window: AppWindow,
@@ -60,7 +60,8 @@ export default function Studio() {
   const [work, setWork] = useState(initial);
   const [past, setPast] = useState<Workspace[]>([]);
   const [future, setFuture] = useState<Workspace[]>([]);
-  const [tab, setTab] = useState("Code");
+  const [tab, setTab] = useState("Background");
+  const [activeBlock, setActiveBlock] = useState(0);
   const [toast, setToast] = useState("");
   const [saved, setSaved] = useState(false);
   const [draftStatus, setDraftStatus] = useState("Saving draft…");
@@ -508,6 +509,7 @@ export default function Studio() {
                 scale={Math.max(0.08, scale)}
                 size={dims}
                 onMeasure={setNatural}
+                onPickBlock={setActiveBlock}
                 onCodeChange={(id, code) =>
                   change({
                     ...work,
@@ -521,6 +523,13 @@ export default function Studio() {
                 }
               />
             </div>
+            <BlockBar
+              card={work.card}
+              active={activeBlock}
+              setActive={setActiveBlock}
+              change={(card) => change({ ...work, card })}
+              notify={notify}
+            />
             {contentClipped && (
               <div className="preview-status" role="status">
                 <TriangleAlert size={14} />

@@ -247,10 +247,9 @@ export function inRanges(spec: string, line: number) {
 }
 
 export const cardTabs = [
-  "Code",
-  "Typography",
   "Background",
   "Window",
+  "Typography",
   "Effects",
   "Templates",
   "Export",

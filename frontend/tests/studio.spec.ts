@@ -17,7 +17,7 @@ test("card editing, line effects and multiple blocks", async ({ page }) => {
     "filter",
     "blur(6px)",
   );
-  await page.getByRole("button", { name: "+ Add code block" }).click();
+  await page.getByRole("button", { name: "Add block" }).click();
   await expect(page.locator(".code-window")).toHaveCount(2);
 });
 test("card templates, typography and backgrounds", async ({ page }) => {
