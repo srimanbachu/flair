@@ -6,6 +6,14 @@ import { backgroundNames, backgroundCSS, palettes, sizes } from "./model";
 import { cardTemplate, templateNames } from "./templates";
 import { readImage } from "./storage";
 
+const fonts: [string, string][] = [
+  ["Mono", "monospace"],
+  ["SF Mono", '"SFMono-Regular", Consolas, monospace'],
+  ["Menlo", "Menlo, monospace"],
+  ["Courier", '"Courier New", monospace'],
+  ["Serif", "Georgia, serif"],
+  ["Sans", "system-ui, sans-serif"],
+];
 const solidColors = [
   "#0b0b0d",
   "#1c1c21",
@@ -81,50 +89,39 @@ export function CardControls({
       <h2 className="inspector-title">{tab}</h2>
       {tab === "Typography" && (
         <>
-          <span className="menu-label">Syntax theme</span>
-          <div className="swatch-grid">
+          <span className="menu-label">Theme</span>
+          <div className="theme-list">
             {Object.entries(palettes).map(([name, p]) => (
               <button
                 key={name}
-                className={c.theme === name ? "swatch chosen" : "swatch"}
-                style={{ background: p.bg, color: p.fg }}
+                aria-pressed={c.theme === name}
+                className={c.theme === name ? "on" : ""}
                 onClick={() => set("theme", name)}
               >
-                <span style={{ color: p.keyword }}>const</span>{" "}
-                <span style={{ color: p.string }}>flair</span>
-                <small>{name}</small>
+                <span className="theme-chip" style={{ background: p.bg }}>
+                  {[p.keyword, p.string, p.number].map((color) => (
+                    <i key={color} style={{ background: color }} />
+                  ))}
+                </span>
+                {name}
               </button>
             ))}
           </div>
-          <Field label="Font family">
-            <select
-              value={c.font}
-              onChange={(e) => set("font", e.target.value)}
-            >
-              {[
-                "monospace",
-                '"SFMono-Regular", Consolas, monospace',
-                '"Courier New", monospace',
-                "Menlo, monospace",
-                "Georgia, serif",
-                "system-ui, sans-serif",
-              ].map((f, i) => (
-                <option key={f} value={f}>
-                  {
-                    [
-                      "System mono",
-                      "SF Mono / Consolas",
-                      "Courier New",
-                      "Menlo",
-                      "Georgia",
-                      "System sans",
-                    ][i]
-                  }
-                </option>
-              ))}
-            </select>
-          </Field>
-          {slider("fontSize", "Font size", 10, 40, 1, "px")}
+          <span className="menu-label">Font</span>
+          <div className="font-grid" role="group" aria-label="Font family">
+            {fonts.map(([label, family]) => (
+              <button
+                key={family}
+                aria-pressed={c.font === family}
+                className={c.font === family ? "on" : ""}
+                style={{ fontFamily: family }}
+                onClick={() => set("font", family)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          {slider("fontSize", "Size", 10, 40, 1, "px")}
           {slider("lineHeight", "Line height", 1, 2.5, 0.05)}
           {slider("letterSpacing", "Letter spacing", -1, 4, 0.1, "px")}
           <Toggle

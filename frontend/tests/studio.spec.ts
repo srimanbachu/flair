@@ -26,7 +26,11 @@ test("card templates, typography and backgrounds", async ({ page }) => {
   await expect(page.locator(".code-window")).toHaveCount(2);
   await page.getByRole("button", { name: "Typography", exact: true }).click();
   await page.getByRole("button", { name: "Dracula" }).click();
-  await page.getByLabel("Font family").selectOption('"Courier New", monospace');
+  await page.getByRole("button", { name: "Courier", exact: true }).click();
+  await expect(page.locator(".syntax").first()).toHaveCSS(
+    "font-family",
+    '"Courier New", monospace',
+  );
   await page.getByRole("button", { name: "Background", exact: true }).click();
   await page.getByRole("button", { name: "Sunset", exact: true }).click();
   await expect(page.locator(".card-background")).toHaveCSS(
@@ -137,7 +141,7 @@ test("mobile layout keeps preview and controls accessible", async ({
     await page.evaluate(() => document.documentElement.scrollWidth),
   ).toBeLessThanOrEqual(390);
   await page.getByRole("button", { name: "Typography", exact: true }).click();
-  await expect(page.getByLabel("Font family")).toBeVisible();
+  await expect(page.getByRole("group", { name: "Font family" })).toBeVisible();
 });
 
 test("freehand strokes retain geometry and can be erased", async ({ page }) => {
