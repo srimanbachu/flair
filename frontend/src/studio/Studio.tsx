@@ -24,7 +24,6 @@ import { Canvas } from "./Canvas";
 import type { SavedProject } from "./storage";
 import { download, readProjects, removeProject, saveProject } from "./storage";
 import { parseProject, validateBoard, validateCard } from "./projectFiles";
-import { canvasSVG } from "./CanvasExport";
 import "./studio.css";
 type Workspace = { kind: "card" | "canvas"; card: Card; board: Board };
 function initial(): Workspace {
@@ -64,6 +63,41 @@ export default function Studio() {
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(() => setToast(""), 5000);
   }, []);
+  useEffect(() => {
+    if (!library) return;
+    const previous = document.activeElement as HTMLElement | null;
+    const modal = document.querySelector<HTMLElement>('[role="dialog"]');
+    const selector =
+      'button:not(:disabled), input, select, textarea, [tabindex="0"]';
+    modal?.querySelector<HTMLElement>(selector)?.focus();
+    const key = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setLibrary(false);
+      if (event.key !== "Tab" || !modal) return;
+      const nodes = [...modal.querySelectorAll<HTMLElement>(selector)];
+      const first = nodes[0],
+        last = nodes[nodes.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      }
+      if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+    };
+    window.addEventListener("keydown", key);
+    return () => {
+      window.removeEventListener("keydown", key);
+      previous?.focus();
+    };
+  }, [library]);
+  const replaceWorkspace = (next: Workspace) => {
+    setWork(next);
+    setPast([]);
+    setFuture([]);
+    setSaved(false);
+    setProjectId(null);
+  };
   const change = useCallback(
     (next: Workspace) => {
       setPast((p) => [...p, work]);
@@ -88,7 +122,7 @@ export default function Studio() {
     setSaved(false);
   }, [future, work]);
   useEffect(() => {
-    const t = setTimeout(() => {
+    const persist = () => {
       try {
         localStorage.setItem("flair.draft.v1", JSON.stringify(work));
       } catch {
@@ -96,8 +130,13 @@ export default function Studio() {
           "Browser storage is full or unavailable. Download a project file to keep your work.",
         );
       }
-    }, 600);
-    return () => clearTimeout(t);
+    };
+    const t = setTimeout(persist, 600);
+    window.addEventListener("pagehide", persist);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener("pagehide", persist);
+    };
   }, [work, notify]);
   useEffect(() => {
     const el = stage.current;
@@ -172,6 +211,7 @@ export default function Studio() {
     setMenu(false);
   };
   const exportCanvas = async (format: string) => {
+    const { canvasSVG } = await import("./CanvasExport");
     const { text, bounds: b } = canvasSVG(work.board);
     if (format === "svg") {
       download("flair-canvas.svg", text, "image/svg+xml");
@@ -419,7 +459,7 @@ export default function Studio() {
             if (f.size > 20 * 1024 * 1024)
               throw new Error("Project must be under 20 MB.");
             const p = parseProject(await f.text());
-            change({
+            replaceWorkspace({
               ...work,
               kind: p.kind,
               ...(p.kind === "card" ? { card: p.data } : { board: p.data }),
@@ -473,7 +513,7 @@ export default function Studio() {
             <div className="library-actions">
               <button
                 onClick={() => {
-                  change({
+                  replaceWorkspace({
                     ...work,
                     ...(work.kind === "card"
                       ? { card: defaultCard() }
@@ -515,7 +555,7 @@ export default function Studio() {
                     <button
                       onClick={() => {
                         try {
-                          change({
+                          replaceWorkspace({
                             ...work,
                             kind: p.kind,
                             ...(p.kind === "card"

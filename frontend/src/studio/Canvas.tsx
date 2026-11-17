@@ -6,6 +6,7 @@ import { CanvasShape } from "./CanvasShape";
 import { Field, Slider, Toggle } from "./Controls";
 import { uid } from "./model";
 import { readImage } from "./storage";
+import { validateBoard } from "./projectFiles";
 const tools = [
   "select",
   "hand",
@@ -61,6 +62,41 @@ export function Canvas({
   const [draft, setDraft] = useState<CanvasItem[] | null>(null);
   const [comment, setComment] = useState("");
   const [present, setPresent] = useState(-1);
+  const [live, setLive] = useState(false);
+  const [room, setRoom] = useState("studio");
+  const channel = useRef<BroadcastChannel | null>(null);
+  const current = useRef({ board, change, notify });
+  useEffect(() => {
+    current.current = { board, change, notify };
+  });
+  useEffect(() => {
+    if (!live || !room.trim()) return;
+    if (!("BroadcastChannel" in window)) return;
+    const c = new BroadcastChannel(`flair.canvas.${room.trim()}`);
+    channel.current = c;
+    c.onmessage = (event) => {
+      if (event.data?.type === "request")
+        c.postMessage({ type: "state", board: current.current.board });
+      if (event.data?.type === "state") {
+        try {
+          current.current.change(validateBoard(event.data.board));
+        } catch {
+          current.current.notify(
+            "A shared canvas update was invalid and was ignored.",
+          );
+        }
+      }
+    };
+    c.postMessage({ type: "request" });
+    return () => {
+      c.close();
+      channel.current = null;
+    };
+  }, [live, room]);
+  const changeBoard = (next: Board) => {
+    channel.current?.postMessage({ type: "state", board: next });
+    change(next);
+  };
   const gesture = useRef<{
     start: Point;
     screen: Point;
@@ -76,7 +112,7 @@ export function Canvas({
   const active = board.items.filter((i) => selected.includes(i.id));
   const first = active[0];
   const frames = board.items.filter((i) => i.kind === "frame");
-  const commit = (next: CanvasItem[]) => change({ ...board, items: next });
+  const commit = (next: CanvasItem[]) => changeBoard({ ...board, items: next });
   const patch = (p: Partial<CanvasItem>) =>
     commit(
       board.items.map((i) => (selected.includes(i.id) ? { ...i, ...p } : i)),
@@ -270,7 +306,22 @@ export function Canvas({
   };
   const up = () => {
     if (draft) {
-      commit(draft);
+      commit(
+        draft.map((i) => {
+          if (!["pen", "pencil", "brush"].includes(i.kind) || !i.points.length)
+            return i;
+          const minX = Math.min(...i.points.map((p) => p.x)),
+            minY = Math.min(...i.points.map((p) => p.y));
+          return {
+            ...i,
+            x: i.x + minX,
+            y: i.y + minY,
+            w: Math.max(1, ...i.points.map((p) => p.x - minX)),
+            h: Math.max(1, ...i.points.map((p) => p.y - minY)),
+            points: i.points.map((p) => ({ x: p.x - minX, y: p.y - minY })),
+          };
+        }),
+      );
       setDraft(null);
       if (!["pen", "pencil", "brush"].includes(tool)) setTool("select");
     }
@@ -342,16 +393,36 @@ export function Canvas({
           <h2>Canvas</h2>
           <p>Connect the dots. Make ideas visible.</p>
         </div>
+        <section className="local-sharing">
+          <Toggle
+            label="Live sharing between browser tabs"
+            value={live}
+            onChange={setLive}
+          />
+          {live && (
+            <>
+              <Field label="Local room">
+                <input value={room} onChange={(e) => setRoom(e.target.value)} />
+              </Field>
+              <p className="muted">
+                Open Flair in another tab in this browser and join the same
+                room. Latest edit wins. This does not connect across devices.
+              </p>
+            </>
+          )}
+        </section>
         <Field label="Board title">
           <input
             value={board.title}
-            onChange={(e) => change({ ...board, title: e.target.value })}
+            onChange={(e) => changeBoard({ ...board, title: e.target.value })}
           />
         </Field>
         <Field label="Background">
           <select
             value={board.background}
-            onChange={(e) => change({ ...board, background: e.target.value })}
+            onChange={(e) =>
+              changeBoard({ ...board, background: e.target.value })
+            }
           >
             {["Dots", "Grid", "Plain", "Light"].map((n) => (
               <option key={n}>{n}</option>
@@ -361,7 +432,7 @@ export function Canvas({
         <Toggle
           label="Snap to 10px grid"
           value={board.snap}
-          onChange={(snap) => change({ ...board, snap })}
+          onChange={(snap) => changeBoard({ ...board, snap })}
         />
         <Field label="Insert image">
           <input
@@ -654,7 +725,7 @@ export function Canvas({
               className="wide template-button"
               key={n}
               onClick={() => {
-                change(boardTemplate(n));
+                changeBoard(boardTemplate(n));
                 setSelected([]);
                 setView({ x: 0, y: 0, z: 0.7 });
               }}
