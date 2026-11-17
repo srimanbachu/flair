@@ -19,9 +19,35 @@ export const templateNames = [
   "GitHub commit",
   "Open-source announcement",
 ];
+/** Solid background + syntax theme pairings that keep templates calm. */
+const looks: Record<string, [string, string]> = {
+  "GitHub README snippet": ["#0d1117", "Midnight"],
+  "X / Twitter code post": ["#e7e5e0", "Midnight"],
+  "LinkedIn post": ["#b3cdf6", "Midnight"],
+  "Instagram square": ["#f2b5d4", "Rosé"],
+  "YouTube thumbnail": ["#f6e2b3", "Midnight"],
+  "Portfolio project": ["#ffffff", "Paper"],
+  "Today I built…": ["#c9bdf5", "Rosé"],
+  "Code tutorial": ["#14403b", "Nord"],
+  "Error → Fix": ["#f4b8a8", "Midnight"],
+  "Before → After": ["#b5e3c4", "Midnight"],
+  "Architecture diagram": ["#1c1c21", "Nord"],
+  "Terminal screenshot": ["#0b0b0d", "Terminal"],
+  "JSON showcase": ["#9fe0d8", "Midnight"],
+  "API response": ["#1e3a5f", "Ocean"],
+  "SQL query": ["#e7e5e0", "Paper"],
+  "GitHub commit": ["#0b0b0d", "Terminal"],
+  "Open-source announcement": ["#f6e2b3", "Midnight"],
+};
 export function cardTemplate(name: string): Card {
   const c = defaultCard();
   c.title = name;
+  const [bg, theme] = looks[name] || ["#1c1c21", "Midnight"];
+  c.background = "Solid";
+  c.color = bg;
+  c.theme = theme;
+  c.grain = 0;
+  c.shadow = 32;
   if (
     ["Instagram", "YouTube", "Twitter", "LinkedIn"].some((n) =>
       name.includes(n),
@@ -84,8 +110,6 @@ export function cardTemplate(name: string): Card {
     c.blocks[0].label = "SQL";
   }
   if (name.includes("Terminal") || name === "GitHub commit") {
-    c.theme = "Terminal";
-    c.background = "Terminal";
     c.window = "Terminal";
     c.blocks = [
       makeBlock(
