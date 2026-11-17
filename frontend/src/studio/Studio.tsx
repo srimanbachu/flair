@@ -363,6 +363,25 @@ export default function Studio() {
             <i className="status-dot" />
             <span>{draftStatus}</span>
           </span>
+          <button
+            title={`Start a new ${work.kind === "card" ? "card" : "canvas"} (undo with ⌘/Ctrl Z)`}
+            onClick={() => {
+              // Undoable, so no confirmation is needed.
+              change(
+                work.kind === "card"
+                  ? { ...work, card: defaultCard() }
+                  : { ...work, board: emptyBoard() },
+              );
+              setProjectId(null);
+              setActiveBlock(0);
+              notify(
+                `Started a new ${work.kind === "card" ? "card" : "canvas"}. Press ⌘/Ctrl Z to undo.`,
+              );
+            }}
+          >
+            <Plus size={16} />
+            <span>New {work.kind === "card" ? "card" : "canvas"}</span>
+          </button>
           <button onClick={() => setLibrary(true)}>
             <FolderOpen size={16} />
             <span>My projects</span>

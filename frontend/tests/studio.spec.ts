@@ -676,3 +676,21 @@ test("plain text picks up theme colours", async ({ page }) => {
   await expect(line.locator(".token.function")).toHaveText("Hi");
   await expect(line.locator(".token.operator").first()).toHaveText(",");
 });
+test("New starts a fresh card or canvas and can be undone", async ({
+  page,
+}) => {
+  await page.getByLabel("Code block 1", { exact: true }).fill("draft code");
+  await page.getByRole("button", { name: "New card", exact: true }).click();
+  await expect(page.locator(".code-window .line-text").first()).toHaveText(
+    "Hi there how is it going? its all good here,",
+  );
+  await page.getByRole("button", { name: "Undo", exact: true }).click();
+  await expect(page.locator(".code-window .line-text").first()).toHaveText(
+    "draft code",
+  );
+  await page.getByRole("button", { name: "Canvas", exact: true }).click();
+  await page.getByRole("button", { name: "Flowchart" }).click();
+  await expect(page.locator("[data-item]")).not.toHaveCount(0);
+  await page.getByRole("button", { name: "New canvas", exact: true }).click();
+  await expect(page.locator("[data-item]")).toHaveCount(0);
+});
