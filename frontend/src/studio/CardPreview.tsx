@@ -10,6 +10,7 @@ export function CardPreview({
   size,
   onMeasure,
   onPickBlock,
+  onCodeChange,
 }: {
   card: Card;
   exportRef: RefObject<HTMLDivElement | null>;
@@ -17,6 +18,7 @@ export function CardPreview({
   size: { w: number; h: number };
   onMeasure: (size: { w: number; h: number }) => void;
   onPickBlock?: (index: number) => void;
+  onCodeChange: (id: string, code: string) => void;
 }) {
   const p = palettes[c.theme] || palettes.Midnight;
   useEffect(() => {
@@ -101,8 +103,13 @@ export function CardPreview({
             <div
               key={b.id}
               className={`code-window window-${c.window.toLowerCase()}`}
-              title="Click to edit this code"
-              onClick={() => onPickBlock?.(index)}
+              onClick={(e) => {
+                onPickBlock?.(index);
+                if (!(e.target instanceof HTMLTextAreaElement))
+                  e.currentTarget
+                    .querySelector<HTMLTextAreaElement>(".code-editor")
+                    ?.focus();
+              }}
               style={{
                 background: c.gradientBorder
                   ? `linear-gradient(${surface},${surface}) padding-box,linear-gradient(135deg,${c.color},${c.color2}) border-box`
@@ -162,7 +169,45 @@ export function CardPreview({
                   </span>
                 </div>
               )}
-              <CodeView card={c} block={b} />
+              <div className="code-body">
+                <CodeView card={c} block={b} />
+                {/* A transparent textarea laid exactly over the highlighted
+                    code: you see the colours, the caret and selection come
+                    from the textarea. It is filtered out of exports. */}
+                <textarea
+                  className="code-editor"
+                  aria-label={`Code block ${index + 1}`}
+                  spellCheck={false}
+                  autoCapitalize="off"
+                  autoComplete="off"
+                  value={b.code}
+                  onChange={(e) => onCodeChange(b.id, e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Escape") e.currentTarget.blur();
+                    if (e.key !== "Tab" || e.shiftKey) return;
+                    e.preventDefault();
+                    const el = e.currentTarget;
+                    const start = el.selectionStart;
+                    onCodeChange(
+                      b.id,
+                      el.value.slice(0, start) +
+                        "  " +
+                        el.value.slice(el.selectionEnd),
+                    );
+                    requestAnimationFrame(() =>
+                      el.setSelectionRange(start + 2, start + 2),
+                    );
+                  }}
+                  style={{
+                    fontFamily: c.font,
+                    fontSize: c.fontSize,
+                    lineHeight: c.lineHeight,
+                    letterSpacing: c.letterSpacing,
+                    caretColor: p.fg,
+                    paddingLeft: 28 + (c.lineNumbers ? 38 : 0),
+                  }}
+                />
+              </div>
             </div>
           ))}
         </div>

@@ -136,33 +136,9 @@ export function CardControls({
                     </button>
                   )}
                 </div>
-                <textarea
-                  className="code-input"
-                  aria-label={`Code block ${i + 1}`}
-                  spellCheck={false}
-                  rows={Math.min(
-                    18,
-                    Math.max(6, b.code.split("\n").length + 1),
-                  )}
-                  value={b.code}
-                  onChange={(e) => block(b.id, { code: e.target.value })}
-                  onKeyDown={(e) => {
-                    // Tab indents; Escape releases focus so Tab can move on.
-                    if (e.key === "Escape") e.currentTarget.blur();
-                    if (e.key !== "Tab" || e.shiftKey) return;
-                    e.preventDefault();
-                    const el = e.currentTarget;
-                    const start = el.selectionStart;
-                    const next =
-                      el.value.slice(0, start) +
-                      "  " +
-                      el.value.slice(el.selectionEnd);
-                    block(b.id, { code: next });
-                    requestAnimationFrame(() =>
-                      el.setSelectionRange(start + 2, start + 2),
-                    );
-                  }}
-                />
+                <p className="block-hint">
+                  Edit this code directly on the card.
+                </p>
                 <details className="block-more">
                   <summary>
                     Line effects

@@ -276,6 +276,7 @@ export default function Studio() {
     height: Math.round(dims.h),
     style: { transform: "none" },
     backgroundColor: format === "jpeg" ? "#0b0b0d" : undefined,
+    filter: (node: HTMLElement) => !node.classList?.contains("code-editor"),
   });
   const copyCardImage = async () => {
     if (!preview.current) return;
@@ -507,16 +508,17 @@ export default function Studio() {
                 scale={Math.max(0.08, scale)}
                 size={dims}
                 onMeasure={setNatural}
-                onPickBlock={(index) => {
-                  setTab("Code");
-                  requestAnimationFrame(() =>
-                    document
-                      .querySelector<HTMLTextAreaElement>(
-                        `[aria-label="Code block ${index + 1}"]`,
-                      )
-                      ?.focus(),
-                  );
-                }}
+                onCodeChange={(id, code) =>
+                  change({
+                    ...work,
+                    card: {
+                      ...work.card,
+                      blocks: work.card.blocks.map((b) =>
+                        b.id === id ? { ...b, code } : b,
+                      ),
+                    },
+                  })
+                }
               />
             </div>
             {contentClipped && (

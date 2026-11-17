@@ -447,10 +447,23 @@ test("export tab downloads directly", async ({ page }) => {
   await page.getByRole("button", { name: "Download JPEG" }).click();
   expect((await promise).suggestedFilename()).toBe("flair-card.jpg");
 });
-test("clicking the preview jumps to that code block", async ({ page }) => {
+test("code is edited directly on the card", async ({ page }) => {
   await page.getByRole("button", { name: "Typography", exact: true }).click();
-  await page.locator(".code-window").first().click();
-  await expect(page.getByLabel("Code block 1", { exact: true })).toBeFocused();
+  await page.locator(".code-window-bar").first().click();
+  const editor = page.getByLabel("Code block 1", { exact: true });
+  await expect(editor).toBeFocused();
+  await editor.fill('const flair = "inline";');
+  await expect(page.locator(".code-window .line-text").first()).toHaveText(
+    'const flair = "inline";',
+  );
+  // The overlay covers exactly the same box as the rendered code.
+  const [syntax, overlay] = await page.evaluate(() =>
+    [".code-window .syntax", ".code-window .code-editor"].map((q) => {
+      const r = document.querySelector(q)!.getBoundingClientRect();
+      return [r.x, r.y, r.width, r.height].map(Math.round).join();
+    }),
+  );
+  expect(overlay).toBe(syntax);
 });
 test("dragging empty canvas box-selects instead of panning", async ({
   page,
