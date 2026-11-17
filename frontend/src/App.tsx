@@ -3,12 +3,12 @@ import OpeningPage from "./InfoPage/OpeningPage";
 import Studio from "./studio/Studio";
 
 function App() {
-  return(
+  return (
     <Routes>
-      <Route path="/intro"  element={ <OpeningPage/> }/>
-      <Route path="/"  element={  <Studio/> }/>
+      <Route path="/intro" element={<OpeningPage />} />
+      <Route path="/" element={<Studio />} />
     </Routes>
-  )
+  );
 }
 
-export default App 
+export default App;
