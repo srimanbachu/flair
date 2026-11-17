@@ -64,12 +64,17 @@ export function CardPreview({
   return (
     <div
       className="card-scaled"
-      style={{ width: size.w * scale, height: size.h * scale }}
+      style={{
+        width: size.w * scale,
+        height: size.h * scale,
+        borderRadius: c.bgRadius * scale,
+      }}
     >
       <div
         className={`card-art ${c.autoSize ? "card-auto" : "card-fixed"}`}
         ref={exportRef}
         style={{
+          borderRadius: c.bgRadius,
           width: c.autoSize ? undefined : c.width,
           height: c.autoSize ? undefined : c.height,
           transform: `scale(${scale})`,

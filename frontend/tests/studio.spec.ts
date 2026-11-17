@@ -583,3 +583,9 @@ test("changing the language updates the card label and file name", async ({
   await expect(page.locator(".language-badge").first()).toHaveText("Python");
   await expect(page.locator(".code-filename").first()).toHaveText("hello.py");
 });
+test("background corners can be rounded", async ({ page }) => {
+  const slider = page.getByRole("slider", { name: /Background corners/ });
+  await slider.focus();
+  await page.keyboard.press("End");
+  await expect(page.locator(".card-art")).toHaveCSS("border-radius", "80px");
+});

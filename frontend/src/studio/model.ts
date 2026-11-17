@@ -41,6 +41,8 @@ export type Card = {
   grain: number;
   padding: number;
   radius: number;
+  /** Corner rounding of the card background itself. */
+  bgRadius: number;
   shadow: number;
   glow: number;
   border: number;
@@ -94,6 +96,7 @@ export const defaultCard = (): Card => ({
   grain: 0,
   padding: 64,
   radius: 16,
+  bgRadius: 4,
   shadow: 40,
   glow: 0,
   border: 1,

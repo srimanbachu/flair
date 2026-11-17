@@ -877,7 +877,6 @@
   flex-shrink: 0;
   position: relative;
   box-shadow: 0 24px 70px #0008;
-  border-radius: 6px;
 }
 .card-art {
   transform-origin: top left;
@@ -886,7 +885,6 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-radius: 4px;
   background: transparent;
   isolation: isolate;
 }

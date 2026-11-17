@@ -92,6 +92,7 @@ export function validateCard(value: unknown): Card {
     grain: [0, 50],
     padding: [16, 160],
     radius: [0, 40],
+    bgRadius: [0, 80],
     shadow: [0, 100],
     glow: [0, 80],
     border: [0, 8],

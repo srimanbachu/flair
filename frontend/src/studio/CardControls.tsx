@@ -285,6 +285,7 @@ export function CardControls({
           {slider("bgOpacity", "Background opacity", 0, 100, 1, "%")}
           {slider("bgBlur", "Background blur", 0, 40, 1, "px")}
           {slider("grain", "Grain", 0, 50, 1, "%")}
+          {slider("bgRadius", "Background corners", 0, 80, 1, "px")}
         </>
       )}
       {tab === "Window" && (
@@ -330,7 +331,7 @@ export function CardControls({
             onChange={(v) => set("controls", v)}
           />
           {slider("padding", "Outer spacing", 16, 160, 1, "px")}
-          {slider("radius", "Corner radius", 0, 40, 1, "px")}
+          {slider("radius", "Window corners", 0, 40, 1, "px")}
         </>
       )}
       {tab === "Effects" && (
