@@ -69,8 +69,13 @@ export function CardPreview({
           className="code-stack"
           style={
             {
-              transform: `perspective(1200px) rotateY(${c.perspective}deg) rotate(${c.rotation}deg)`,
-              filter: `blur(${c.blur}px)`,
+              // Identity transforms/filters still force a raster layer, which
+              // blurs text once the preview is scaled down, so skip them.
+              transform:
+                c.perspective || c.rotation
+                  ? `perspective(1200px) rotateY(${c.perspective}deg) rotate(${c.rotation}deg)`
+                  : undefined,
+              filter: c.blur ? `blur(${c.blur}px)` : undefined,
               WebkitBoxReflect: c.reflection
                 ? `below 14px linear-gradient(transparent,rgba(255,255,255,${c.reflection / 100}))`
                 : undefined,
@@ -89,7 +94,8 @@ export function CardPreview({
                 borderRadius: c.radius,
                 border: `${c.border}px solid ${c.gradientBorder ? "transparent" : "#ffffff26"}`,
                 boxShadow: `0 ${c.shadow / 2}px ${c.shadow}px #0005,0 0 ${c.glow}px ${c.color}88,${c.depth}px ${c.depth}px 0 #0005`,
-                backdropFilter: "blur(16px)",
+                backdropFilter:
+                  c.glass || c.window === "Glass" ? "blur(16px)" : undefined,
               }}
             >
               {(c.fileName || c.controls) && (

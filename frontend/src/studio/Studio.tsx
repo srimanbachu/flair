@@ -12,7 +12,14 @@ import {
   Plus,
   Upload,
   Sparkles,
+  Type,
+  Palette,
+  AppWindow,
+  MessageSquareText,
+  LayoutTemplate,
+  TriangleAlert,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { toPng, toJpeg } from "html-to-image";
 import type { Card } from "./model";
 import { defaultCard, uid, cardTabs } from "./model";
@@ -26,6 +33,16 @@ import { download, readProjects, removeProject, saveProject } from "./storage";
 import { parseProject, validateBoard, validateCard } from "./projectFiles";
 import flairLogo from "../assets/flair.png";
 import "./studio.css";
+const tabIcons: Record<string, LucideIcon> = {
+  Code: Code2,
+  Typography: Type,
+  Background: Palette,
+  Window: AppWindow,
+  Effects: Sparkles,
+  Annotations: MessageSquareText,
+  Templates: LayoutTemplate,
+  Export: Download,
+};
 type Workspace = { kind: "card" | "canvas"; card: Card; board: Board };
 function initial(): Workspace {
   try {
@@ -405,19 +422,22 @@ export default function Studio() {
       {work.kind === "card" ? (
         <div className="card-workspace">
           <nav className="tool-rail" aria-label="Card settings">
-            {cardTabs.map((t, i) => (
-              <button
-                key={t}
-                title={t}
-                aria-label={t}
-                aria-pressed={tab === t}
-                className={tab === t ? "active" : ""}
-                onClick={() => setTab(t)}
-              >
-                <span>{["⌘", "Aa", "◒", "▣", "✧", "↗", "▦", "⇩"][i]}</span>
-                <small>{t}</small>
-              </button>
-            ))}
+            {cardTabs.map((t) => {
+              const Icon = tabIcons[t] || Code2;
+              return (
+                <button
+                  key={t}
+                  title={t}
+                  aria-label={t}
+                  aria-pressed={tab === t}
+                  className={tab === t ? "active" : ""}
+                  onClick={() => setTab(t)}
+                >
+                  <Icon size={18} strokeWidth={1.75} />
+                  <small>{t}</small>
+                </button>
+              );
+            })}
           </nav>
           <aside className="inspector">
             <CardControls
@@ -429,14 +449,26 @@ export default function Studio() {
           </aside>
           <main className="card-main">
             <div className="workspace-heading">
-              <div>
-                <span className="eyebrow">THE SPOTLIGHT IS YOURS</span>
-                <h1>{work.card.title}</h1>
-              </div>
-              <span className="live-badge">
-                <i />
-                Live preview
-              </span>
+              <input
+                className="card-title-input"
+                aria-label="Card title"
+                value={work.card.title}
+                placeholder="Untitled card"
+                onChange={(e) =>
+                  change({
+                    ...work,
+                    card: { ...work.card, title: e.target.value },
+                  })
+                }
+              />
+              <button
+                className="size-chip"
+                title="Change export size"
+                onClick={() => setTab("Export")}
+              >
+                {work.card.width} × {work.card.height}
+                <ChevronDown size={12} />
+              </button>
             </div>
             <div className="preview-stage" ref={stage}>
               <CardPreview
@@ -446,17 +478,14 @@ export default function Studio() {
                 change={(card) => change({ ...work, card })}
               />
             </div>
-            <div className="preview-status">
-              <span>
-                <Sparkles size={14} />
-                {contentClipped
-                  ? "Content may be cropped. Increase dimensions or reduce type size."
-                  : "A little code. A lot of personality."}
-              </span>
-              <button onClick={() => setTab("Export")}>
-                {work.card.width} × {work.card.height} <ChevronDown size={12} />
-              </button>
-            </div>
+            {contentClipped && (
+              <div className="preview-status" role="status">
+                <TriangleAlert size={14} />
+                Content may be cropped. Increase the size or reduce the type
+                size.
+                <button onClick={() => setTab("Export")}>Adjust size</button>
+              </div>
+            )}
           </main>
         </div>
       ) : (

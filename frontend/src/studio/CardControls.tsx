@@ -52,29 +52,9 @@ export function CardControls({
   );
   return (
     <>
-      <div className="panel-heading">
-        <span className="eyebrow">MAKE IT YOURS</span>
-        <h2>{tab}</h2>
-        <p>
-          {(
-            {
-              Code: "Your next great snippet starts here.",
-              Background: "Set the scene for your code.",
-              Templates: "A head start for every story.",
-              Annotations: "Draw attention to the details.",
-              Export: "Ready for wherever you share.",
-            } as Record<string, string>
-          )[tab] || "Small details. A big difference."}
-        </p>
-      </div>
+      <h2 className="inspector-title">{tab}</h2>
       {tab === "Code" && (
         <>
-          <Field label="Card title">
-            <input
-              value={c.title}
-              onChange={(e) => set("title", e.target.value)}
-            />
-          </Field>
           {c.blocks.map((b, i) => (
             <section className="control-section" key={b.id}>
               <div className="section-title">

@@ -6,9 +6,9 @@ test("card editing, line effects and multiple blocks", async ({ page }) => {
   await page
     .getByLabel("Card title", { exact: true })
     .fill("A beautiful snippet");
-  await expect(
-    page.getByRole("heading", { name: "A beautiful snippet" }),
-  ).toBeVisible();
+  await expect(page.getByLabel("Card title", { exact: true })).toHaveValue(
+    "A beautiful snippet",
+  );
   await page.getByLabel("Highlight lines", { exact: true }).fill("2-4");
   await expect(page.locator(".line-highlight")).toHaveCount(3);
   await page.getByLabel("Blur lines", { exact: true }).fill("5");
