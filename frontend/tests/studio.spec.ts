@@ -197,7 +197,7 @@ test("canvas PNG rasterization works and studio has no browser errors", async ({
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.screenshot({ path: "/private/tmp/flair-desktop.png" });
+  await page.screenshot({ path: test.info().outputPath("studio-desktop.png") });
   await page.getByRole("button", { name: "Canvas", exact: true }).click();
   await page.getByRole("button", { name: "System architecture" }).click();
   await page.getByRole("button", { name: "Export", exact: true }).click();
@@ -294,16 +294,14 @@ test("uploaded background is embedded and saved in project file", async ({
   page,
 }) => {
   await page.getByRole("button", { name: "Background", exact: true }).click();
-  await page
-    .getByLabel("Upload background")
-    .setInputFiles({
-      name: "pixel.png",
-      mimeType: "image/png",
-      buffer: Buffer.from(
-        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l9sAAAAASUVORK5CYII=",
-        "base64",
-      ),
-    });
+  await page.getByLabel("Upload background").setInputFiles({
+    name: "pixel.png",
+    mimeType: "image/png",
+    buffer: Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l9sAAAAASUVORK5CYII=",
+      "base64",
+    ),
+  });
   await expect(
     page.getByRole("button", { name: "Remove uploaded image" }),
   ).toBeVisible();

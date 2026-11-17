@@ -14,6 +14,11 @@ export function CardPreview({
   change: (c: Card) => void;
 }) {
   const p = palettes[c.theme] || palettes.Midnight;
+  const surface = `${p.bg}${Math.round(
+    (1 - (c.window === "Glass" ? Math.max(35, c.glass) : c.glass) / 100) * 255,
+  )
+    .toString(16)
+    .padStart(2, "0")}`;
   return (
     <div
       className="card-scaled"
@@ -40,7 +45,7 @@ export function CardPreview({
         {c.grain > 0 && (
           <svg
             className="grain"
-            style={{ opacity: c.grain / 100 }}
+            style={{ opacity: (c.grain / 100) * (c.bgOpacity / 100) }}
             width="100%"
             height="100%"
           >
@@ -78,10 +83,8 @@ export function CardPreview({
               className={`code-window window-${c.window.toLowerCase()}`}
               style={{
                 background: c.gradientBorder
-                  ? `linear-gradient(${p.bg},${p.bg}) padding-box,linear-gradient(135deg,${c.color},${c.color2}) border-box`
-                  : `${p.bg}${Math.round((1 - c.glass / 100) * 255)
-                      .toString(16)
-                      .padStart(2, "0")}`,
+                  ? `linear-gradient(${surface},${surface}) padding-box,linear-gradient(135deg,${c.color},${c.color2}) border-box`
+                  : surface,
                 color: p.fg,
                 borderRadius: c.radius,
                 border: `${c.border}px solid ${c.gradientBorder ? "transparent" : "#ffffff26"}`,

@@ -282,6 +282,26 @@ export default function Studio() {
       setBusy(false);
     }
   };
+  const cardHeight = work.card.blocks.reduce(
+    (sum, b) =>
+      sum +
+      b.code.split("\n").length * work.card.fontSize * work.card.lineHeight +
+      51 +
+      (work.card.fileName || work.card.controls ? 52 : 0) +
+      20,
+    -20,
+  );
+  const contentClipped =
+    cardHeight > work.card.height - work.card.padding * 2 ||
+    work.card.blocks.some(
+      (b) =>
+        Math.max(...b.code.split("\n").map((line) => line.length)) *
+          work.card.fontSize *
+          0.62 +
+          52 +
+          (work.card.lineNumbers ? 38 : 0) >
+        work.card.width - work.card.padding * 2,
+    );
   return (
     <div className="studio">
       <header className="studio-header">
@@ -423,7 +443,10 @@ export default function Studio() {
             </div>
             <div className="preview-status">
               <span>
-                <Sparkles size={14} />A little code. A lot of personality.
+                <Sparkles size={14} />
+                {contentClipped
+                  ? "Content may be cropped. Increase dimensions or reduce type size."
+                  : "A little code. A lot of personality."}
               </span>
               <button onClick={() => setTab("Export")}>
                 {work.card.width} × {work.card.height} <ChevronDown size={12} />

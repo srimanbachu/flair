@@ -572,7 +572,6 @@
 }
 .window-glass {
   backdrop-filter: blur(30px);
-  background: #21203388 !important;
 }
 .syntax {
   padding: 23px 26px 28px;
