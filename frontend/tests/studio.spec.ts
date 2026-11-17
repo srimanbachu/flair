@@ -744,3 +744,17 @@ test("workspaces live on their own routes", async ({ page }) => {
   await page.goto("/nowhere");
   await expect(page).toHaveURL(/\/cards/);
 });
+test("card inspector tabs have their own URLs", async ({ page }) => {
+  await expect(page).toHaveURL(/\/cards\/background$/);
+  await page
+    .getByRole("button", { name: "Export", exact: true })
+    .last()
+    .click();
+  await expect(page).toHaveURL(/\/cards\/export$/);
+  await page.goto("/cards/typography");
+  await expect(
+    page.getByRole("button", { name: "Typography", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await page.goto("/cards/nope");
+  await expect(page).toHaveURL(/\/cards\/background$/);
+});

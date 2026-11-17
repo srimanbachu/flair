@@ -1,5 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import {
+  Navigate,
+  NavLink,
+  useLocation,
+  useMatch,
+  useNavigate,
+} from "react-router-dom";
 import {
   Code2,
   PenTool,
@@ -70,7 +76,6 @@ export default function Studio() {
     kind === "canvas" ? "/canvas" : "/cards";
   const [past, setPast] = useState<Workspace[]>([]);
   const [future, setFuture] = useState<Workspace[]>([]);
-  const [tab, setTab] = useState("Background");
   const [activeBlock, setActiveBlock] = useState(0);
   const [toast, setToast] = useState("");
   const [saved, setSaved] = useState(false);
@@ -87,6 +92,10 @@ export default function Studio() {
     setWork({ ...work, kind: routeKind });
     setProjectId(null);
   }
+  // Card inspector tabs are routes too: /cards/background, /cards/export…
+  const tabSlug = useMatch("/cards/:tab")?.params.tab;
+  const tab = cardTabs.find((t) => t.toLowerCase() === tabSlug) ?? cardTabs[0];
+  const openTab = (t: string) => navigate(`/cards/${t.toLowerCase()}`);
   const preview = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const svg = useRef<SVGSVGElement>(null);
@@ -347,6 +356,10 @@ export default function Studio() {
   };
   return (
     <div className="studio">
+      {/* Canonical tab URLs: /cards and unknown tabs go to a real tab. */}
+      {routeKind === "card" && tabSlug !== tab.toLowerCase() && (
+        <Navigate to={`/cards/${tab.toLowerCase()}`} replace />
+      )}
       <header className="studio-header">
         <a className="brand" href="/" aria-label="Flair home">
           Flair
@@ -463,7 +476,7 @@ export default function Studio() {
                   aria-label={t}
                   aria-pressed={tab === t}
                   className={tab === t ? "active" : ""}
-                  onClick={() => setTab(t)}
+                  onClick={() => openTab(t)}
                 >
                   <Icon size={18} strokeWidth={1.75} />
                   <small>{t}</small>
@@ -499,7 +512,7 @@ export default function Studio() {
               <button
                 className="size-chip"
                 title="Change export size"
-                onClick={() => setTab("Export")}
+                onClick={() => openTab("Export")}
               >
                 {work.card.autoSize && "Auto · "}
                 {Math.round(dims.w)} × {Math.round(dims.h)}
