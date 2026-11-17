@@ -333,6 +333,10 @@ export default function Studio() {
           </button>
         </div>
         <div className="header-actions">
+          <span className="draft-status" role="note" title={draftStatus}>
+            <i className="status-dot" />
+            <span>{draftStatus}</span>
+          </span>
           <button onClick={() => setLibrary(true)}>
             <FolderOpen size={16} />
             <span>My projects</span>
@@ -463,17 +467,6 @@ export default function Studio() {
           notify={notify}
         />
       )}
-      <footer className="studio-footer">
-        <span>
-          <i className="status-dot" />
-          Local workspace · {draftStatus}
-        </span>
-        <span>Made for the things you’re proud to share.</span>
-        <button onClick={() => importRef.current?.click()}>
-          <Upload size={13} />
-          Import project
-        </button>
-      </footer>
       <input
         hidden
         ref={importRef}
