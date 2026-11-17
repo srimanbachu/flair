@@ -9,6 +9,7 @@ test("card editing, line effects and multiple blocks", async ({ page }) => {
   await expect(page.getByLabel("Card title", { exact: true })).toHaveValue(
     "A beautiful snippet",
   );
+  await page.getByText("Line effects").click();
   await page.getByLabel("Highlight lines", { exact: true }).fill("2-4");
   await expect(page.locator(".line-highlight")).toHaveCount(3);
   await page.getByLabel("Blur lines", { exact: true }).fill("5");
@@ -223,6 +224,7 @@ test("canvas PNG rasterization works and studio has no browser errors", async ({
 test("line words, annotations and window visibility respond to controls", async ({
   page,
 }) => {
+  await page.getByText("Line effects").click();
   await page.getByLabel("Highlight words", { exact: true }).fill("Infinity");
   await expect(page.locator(".syntax mark")).toHaveText("Infinity");
   await page.getByRole("button", { name: "Window", exact: true }).click();
@@ -413,4 +415,11 @@ test("text is typed and edited directly on the canvas", async ({ page }) => {
   await page.mouse.click(b.x + 200, b.y + 500);
   await page.keyboard.press("Escape");
   await expect(page.locator("[data-item]")).toHaveCount(1);
+});
+test("Tab indents inside the code editor", async ({ page }) => {
+  const editor = page.getByLabel("Code block 1", { exact: true });
+  await editor.fill("return 1;");
+  await editor.press("Home");
+  await editor.press("Tab");
+  await expect(editor).toHaveValue("  return 1;");
 });
