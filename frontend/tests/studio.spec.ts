@@ -589,3 +589,17 @@ test("background corners can be rounded", async ({ page }) => {
   await page.keyboard.press("End");
   await expect(page.locator(".card-art")).toHaveCSS("border-radius", "80px");
 });
+test("window color overrides the theme and keeps text legible", async ({
+  page,
+}) => {
+  await page.getByRole("button", { name: "Window", exact: true }).click();
+  await page.getByRole("button", { name: "Window #ffffff" }).click();
+  const win = page.locator(".code-window").first();
+  await expect(win).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  await expect(page.locator(".syntax").first()).toHaveCSS(
+    "color",
+    "rgb(31, 35, 40)",
+  );
+  await page.getByRole("button", { name: "Use theme color" }).click();
+  await expect(win).not.toHaveCSS("background-color", "rgb(255, 255, 255)");
+});

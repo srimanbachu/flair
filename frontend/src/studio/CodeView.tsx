@@ -11,7 +11,7 @@ import "prismjs/components/prism-markup";
 import "prismjs/components/prism-c";
 import "prismjs/components/prism-cpp";
 import type { Card, CodeBlock } from "./model";
-import { inRanges, palettes } from "./model";
+import { cardColors, inRanges } from "./model";
 import type { CSSProperties } from "react";
 function tokenNodes(
   tokens: (string | Prism.Token)[],
@@ -43,7 +43,7 @@ function tokenNodes(
   });
 }
 export function CodeView({ card, block }: { card: Card; block: CodeBlock }) {
-  const p = palettes[card.theme] || palettes.Midnight;
+  const p = cardColors(card);
   const style = {
     "--syntax-keyword": p.keyword,
     "--syntax-string": p.string,

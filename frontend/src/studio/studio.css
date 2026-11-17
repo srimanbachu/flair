@@ -480,6 +480,12 @@
   opacity: 0;
   cursor: pointer;
 }
+.studio .color-dot.theme-default span {
+  font-size: 11px;
+  font-weight: 600;
+  color: #ffffffaa;
+  mix-blend-mode: difference;
+}
 .gradient-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

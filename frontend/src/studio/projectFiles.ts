@@ -103,6 +103,8 @@ export function validateCard(value: unknown): Card {
     perspective: [-25, 25],
     rotation: [-20, 20],
   });
+  if (c.windowColor && !/^#[0-9a-f]{6}$/i.test(c.windowColor))
+    throw new Error("Invalid window colour.");
   if (!backgroundNames.includes(c.background) || !palettes[c.theme])
     throw new Error("Unknown background or syntax theme.");
   uniqueIds(c.blocks);

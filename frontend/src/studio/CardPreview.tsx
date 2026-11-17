@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties, RefObject } from "react";
 import type { Card } from "./model";
-import { backgroundCSS, palettes } from "./model";
+import { backgroundCSS, cardColors } from "./model";
 import { CodeView } from "./CodeView";
 export function CardPreview({
   card: c,
@@ -20,7 +20,7 @@ export function CardPreview({
   onPickBlock?: (index: number) => void;
   onCodeChange: (id: string, code: string) => void;
 }) {
-  const p = palettes[c.theme] || palettes.Midnight;
+  const p = cardColors(c);
   const stack = useRef<HTMLDivElement>(null);
   const [fit, setFit] = useState(1);
   useEffect(() => {

@@ -27,6 +27,18 @@ const effectKeys = [
   "perspective",
   "rotation",
 ] as const;
+const windowColors = [
+  "#0b0b0d",
+  "#1c1c21",
+  "#13233a",
+  "#1d2b22",
+  "#2a1f2e",
+  "#ffffff",
+  "#fffdf7",
+  "#f4f1ea",
+  "#eef4ff",
+  "#f6e2b3",
+];
 const fonts: [string, string][] = [
   ["Mono", "monospace"],
   ["SF Mono", '"SFMono-Regular", Consolas, monospace'],
@@ -326,6 +338,37 @@ export function CardControls({
                 {n}
               </button>
             ))}
+          </div>
+          <span className="menu-label">Window color</span>
+          <div className="color-grid" role="group" aria-label="Window color">
+            <button
+              className={`color-dot theme-default ${c.windowColor ? "" : "on"}`}
+              aria-label="Use theme color"
+              aria-pressed={!c.windowColor}
+              title="Use the theme's color"
+              style={{ background: palettes[c.theme]?.bg }}
+              onClick={() => set("windowColor", "")}
+            >
+              <span>Aa</span>
+            </button>
+            {windowColors.map((color) => (
+              <button
+                key={color}
+                className={`color-dot ${c.windowColor === color ? "on" : ""}`}
+                style={{ background: color }}
+                aria-label={`Window ${color}`}
+                aria-pressed={c.windowColor === color}
+                onClick={() => set("windowColor", color)}
+              />
+            ))}
+            <label className="color-dot custom" title="Custom color">
+              <input
+                type="color"
+                aria-label="Custom window color"
+                value={c.windowColor || palettes[c.theme]?.bg || "#000000"}
+                onChange={(e) => set("windowColor", e.target.value)}
+              />
+            </label>
           </div>
           <Toggle
             label="Show file names"

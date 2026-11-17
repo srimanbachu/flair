@@ -32,6 +32,8 @@ export type Card = {
   fileName: boolean;
   controls: boolean;
   window: string;
+  /** Solid window colour; empty uses the syntax theme's own. */
+  windowColor: string;
   background: string;
   color: string;
   color2: string;
@@ -87,6 +89,7 @@ export const defaultCard = (): Card => ({
   fileName: true,
   controls: true,
   window: "macOS",
+  windowColor: "",
   background: "Solid",
   color: "#9fe0d8",
   color2: "#7c5cff",
@@ -317,6 +320,19 @@ export const isLight = (hex: string) => {
     150
   );
 };
+/** Theme colours for a card, with the custom window colour applied. When
+ *  the window and theme differ in tone, plain text flips to stay legible. */
+export function cardColors(c: Pick<Card, "theme" | "windowColor">) {
+  const p = palettes[c.theme] || palettes.Midnight;
+  if (!c.windowColor) return p;
+  const fg =
+    isLight(c.windowColor) === isLight(p.bg)
+      ? p.fg
+      : isLight(c.windowColor)
+        ? "#1f2328"
+        : "#e6edf3";
+  return { ...p, bg: c.windowColor, fg };
+}
 export const backgroundNames = [
   "Midnight",
   "Aurora",
