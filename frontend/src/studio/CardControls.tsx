@@ -2,10 +2,28 @@ import { useRef, useState } from "react";
 import { Copy, Download, ImageUp } from "lucide-react";
 import { Field, Slider, Toggle } from "./Controls";
 import type { Card } from "./model";
-import { backgroundNames, backgroundCSS, palettes, sizes } from "./model";
+import {
+  backgroundNames,
+  backgroundCSS,
+  defaultCard,
+  palettes,
+  sizes,
+} from "./model";
 import { cardTemplate, templateNames } from "./templates";
 import { readImage } from "./storage";
 
+const effectKeys = [
+  "shadow",
+  "border",
+  "gradientBorder",
+  "glow",
+  "glass",
+  "blur",
+  "reflection",
+  "depth",
+  "perspective",
+  "rotation",
+] as const;
 const fonts: [string, string][] = [
   ["Mono", "monospace"],
   ["SF Mono", '"SFMono-Regular", Consolas, monospace'],
@@ -311,24 +329,35 @@ export function CardControls({
       )}
       {tab === "Effects" && (
         <>
-          <span className="menu-label">Light</span>
           {slider("shadow", "Shadow", 0, 100, 1, "px")}
-          {slider("glow", "Glow", 0, 80, 1, "px")}
-          {slider("reflection", "Reflection", 0, 50, 1, "%")}
-          <span className="menu-label">Edges</span>
           {slider("border", "Border", 0, 8, 1, "px")}
           <Toggle
             label="Gradient border"
             value={c.gradientBorder}
             onChange={(v) => set("gradientBorder", v)}
           />
-          <span className="menu-label">Glass</span>
-          {slider("glass", "Glass transparency", 0, 70, 1, "%")}
-          {slider("blur", "Window blur", 0, 8, 0.5, "px")}
-          <span className="menu-label">Depth</span>
-          {slider("depth", "Depth", 0, 20, 1, "px")}
-          {slider("perspective", "Perspective tilt", -25, 25, 1, "°")}
-          {slider("rotation", "Rotation", -20, 20, 1, "°")}
+          {slider("glow", "Glow", 0, 80, 1, "px")}
+          <details className="panel-more">
+            <summary>More effects</summary>
+            {slider("glass", "Glass", 0, 70, 1, "%")}
+            {slider("blur", "Window blur", 0, 8, 0.5, "px")}
+            {slider("reflection", "Reflection", 0, 50, 1, "%")}
+            {slider("depth", "Depth", 0, 20, 1, "px")}
+            {slider("perspective", "Tilt", -25, 25, 1, "°")}
+            {slider("rotation", "Rotation", -20, 20, 1, "°")}
+          </details>
+          <button
+            className="reset-link"
+            onClick={() => {
+              const d = defaultCard();
+              change({
+                ...c,
+                ...Object.fromEntries(effectKeys.map((k) => [k, d[k]])),
+              });
+            }}
+          >
+            Reset effects
+          </button>
         </>
       )}
       {tab === "Templates" && (
