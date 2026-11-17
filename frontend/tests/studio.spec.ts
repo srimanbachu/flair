@@ -534,3 +534,23 @@ test("auto-sized export matches the size shown on the card", async ({
   expect(bytes.readUInt32BE(16)).toBe(w);
   expect(bytes.readUInt32BE(20)).toBe(h);
 });
+test("drafts saved before auto sizing open fitted to the code", async ({
+  page,
+}) => {
+  const draft = await page.evaluate(async () => {
+    const { defaultCard } = await import("/src/studio/model.ts");
+    const card: Record<string, unknown> = { ...defaultCard() };
+    delete card.autoSize;
+    return JSON.stringify({
+      kind: "card",
+      card,
+      board: { title: "Old", items: [], background: "Dots", snap: true },
+    });
+  });
+  await page.addInitScript(
+    (d) => localStorage.setItem("flair.draft.v1", d),
+    draft,
+  );
+  await page.reload();
+  await expect(page.locator(".size-chip")).toContainText("Auto");
+});

@@ -47,9 +47,10 @@ function uniqueIds(items: { id: string }[]) {
     throw new Error("Project contains missing or duplicate object IDs.");
 }
 export function validateCard(value: unknown): Card {
-  // Projects saved before auto sizing existed keep their fixed size.
+  // Cards saved before auto sizing existed move to "Fit to code" so the
+  // background wraps the window instead of a fixed 1200x900 frame.
   if (value && typeof value === "object" && !("autoSize" in value))
-    value = { ...value, autoSize: false };
+    value = { ...value, autoSize: true };
   const c = shape(value, defaultCard()) as unknown as Card;
   if (c.blocks.length < 1 || c.blocks.length > 30 || c.annotations.length > 100)
     throw new Error("Too many blocks or annotations.");
