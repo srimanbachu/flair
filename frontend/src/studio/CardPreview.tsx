@@ -7,11 +7,13 @@ export function CardPreview({
   exportRef,
   scale,
   change,
+  onPickBlock,
 }: {
   card: Card;
   exportRef: RefObject<HTMLDivElement | null>;
   scale: number;
   change: (c: Card) => void;
+  onPickBlock?: (index: number) => void;
 }) {
   const p = palettes[c.theme] || palettes.Midnight;
   const surface = `${p.bg}${Math.round(
@@ -82,10 +84,12 @@ export function CardPreview({
             } as CSSProperties
           }
         >
-          {c.blocks.map((b) => (
+          {c.blocks.map((b, index) => (
             <div
               key={b.id}
               className={`code-window window-${c.window.toLowerCase()}`}
+              title="Click to edit this code"
+              onClick={() => onPickBlock?.(index)}
               style={{
                 background: c.gradientBorder
                   ? `linear-gradient(${surface},${surface}) padding-box,linear-gradient(135deg,${c.color},${c.color2}) border-box`

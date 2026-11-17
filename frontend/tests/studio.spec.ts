@@ -435,3 +435,8 @@ test("export tab downloads directly", async ({ page }) => {
   await page.getByRole("button", { name: "Download JPEG" }).click();
   expect((await promise).suggestedFilename()).toBe("flair-card.jpg");
 });
+test("clicking the preview jumps to that code block", async ({ page }) => {
+  await page.getByRole("button", { name: "Typography", exact: true }).click();
+  await page.locator(".code-window").first().click();
+  await expect(page.getByLabel("Code block 1", { exact: true })).toBeFocused();
+});

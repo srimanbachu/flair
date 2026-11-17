@@ -779,6 +779,9 @@
   overflow: hidden;
   position: relative;
 }
+.card-scaled .code-window {
+  cursor: text;
+}
 .code-window-bar {
   display: flex;
   align-items: center;

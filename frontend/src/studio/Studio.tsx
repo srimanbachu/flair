@@ -499,6 +499,16 @@ export default function Studio() {
                 exportRef={preview}
                 scale={Math.max(0.08, scale)}
                 change={(card) => change({ ...work, card })}
+                onPickBlock={(index) => {
+                  setTab("Code");
+                  requestAnimationFrame(() =>
+                    document
+                      .querySelector<HTMLTextAreaElement>(
+                        `[aria-label="Code block ${index + 1}"]`,
+                      )
+                      ?.focus(),
+                  );
+                }}
               />
             </div>
             {contentClipped && (
