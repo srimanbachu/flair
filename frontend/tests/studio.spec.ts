@@ -502,3 +502,11 @@ test("Windows-style window controls sit on the right", async ({ page }) => {
   const controls = (await page.locator(".windows-controls").boundingBox())!;
   expect(controls.x).toBeGreaterThan(bar.x + bar.width / 2);
 });
+test("solid background colors apply to the card", async ({ page }) => {
+  await page.getByRole("button", { name: "Solid", exact: true }).click();
+  await page.getByRole("button", { name: "Solid #e7e5e0" }).click();
+  await expect(page.locator(".card-background")).toHaveCSS(
+    "background-color",
+    "rgb(231, 229, 224)",
+  );
+});

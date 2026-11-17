@@ -1,11 +1,34 @@
-import { useState } from "react";
-import { Copy, Download } from "lucide-react";
+import { useRef, useState } from "react";
+import { Copy, Download, ImageUp } from "lucide-react";
 import { Field, Slider, Toggle } from "./Controls";
 import type { Card } from "./model";
 import { backgroundNames, backgroundCSS, palettes, sizes } from "./model";
 import { cardTemplate, templateNames } from "./templates";
 import { readImage } from "./storage";
 
+const solidColors = [
+  "#0b0b0d",
+  "#1c1c21",
+  "#2e2e35",
+  "#e7e5e0",
+  "#ffffff",
+  "#f6e2b3",
+  "#f4b8a8",
+  "#f2b5d4",
+  "#c9bdf5",
+  "#b3cdf6",
+  "#b5e3c4",
+  "#9fe0d8",
+  "#1e3a5f",
+  "#14403b",
+  "#5b2a1c",
+  "#3b1d4f",
+];
+const gradientNames = backgroundNames.filter(
+  (n) => !["Solid", "Image"].includes(n),
+);
+/** Backgrounds built from the two custom colours. */
+const customGradients = ["Gradient", "Mesh", "Radial", "Blobs"];
 export function CardControls({
   card: c,
   change,
@@ -24,6 +47,14 @@ export function CardControls({
   onCopyImage: () => void;
 }) {
   const [sizeChoice, setSizeChoice] = useState("Custom");
+  const [bgMode, setBgMode] = useState<"Solid" | "Gradient" | "Image">(
+    c.background === "Solid"
+      ? "Solid"
+      : c.background === "Image"
+        ? "Image"
+        : "Gradient",
+  );
+  const imageInput = useRef<HTMLInputElement>(null);
   const set = <K extends keyof Card>(key: K, value: Card[K]) =>
     change({ ...c, [key]: value });
   const slider = (
@@ -105,68 +136,134 @@ export function CardControls({
       )}
       {tab === "Background" && (
         <>
-          <div className="swatch-grid">
-            {backgroundNames.map((name) => (
+          <div className="segmented" role="group" aria-label="Background type">
+            {(["Solid", "Gradient", "Image"] as const).map((m) => (
               <button
-                key={name}
-                className={`bg-swatch ${c.background === name ? "chosen" : ""}`}
-                style={{
-                  background: backgroundCSS({ ...c, background: name }),
-                }}
-                onClick={() => set("background", name)}
+                key={m}
+                aria-pressed={bgMode === m}
+                className={bgMode === m ? "active" : ""}
+                onClick={() => setBgMode(m)}
               >
-                <span>{name}</span>
+                {m}
               </button>
             ))}
           </div>
-          <div className="two-col">
-            <Field label="Primary">
-              <input
-                type="color"
-                value={c.color}
-                onChange={(e) => set("color", e.target.value)}
-              />
-            </Field>
-            <Field label="Secondary">
-              <input
-                type="color"
-                value={c.color2}
-                onChange={(e) => set("color2", e.target.value)}
-              />
-            </Field>
-          </div>
-          <Field
-            label="Upload background"
-            hint="PNG, JPG, WebP, GIF · up to 5 MB"
-          >
-            <input
-              type="file"
-              accept="image/png,image/jpeg,image/webp,image/gif"
-              onChange={async (e) => {
-                const f = e.target.files?.[0];
-                if (f)
-                  try {
-                    change({
-                      ...c,
-                      image: await readImage(f),
-                      background: "Image",
-                    });
-                  } catch (err) {
-                    notify(String(err));
+          {bgMode === "Solid" && (
+            <div className="color-grid" role="group" aria-label="Solid colors">
+              {solidColors.map((color) => {
+                const on = c.background === "Solid" && c.color === color;
+                return (
+                  <button
+                    key={color}
+                    className={`color-dot ${on ? "on" : ""}`}
+                    style={{ background: color }}
+                    aria-label={`Solid ${color}`}
+                    aria-pressed={on}
+                    onClick={() => change({ ...c, background: "Solid", color })}
+                  />
+                );
+              })}
+              <label className="color-dot custom" title="Custom color">
+                <input
+                  type="color"
+                  aria-label="Custom solid color"
+                  value={c.color}
+                  onChange={(e) =>
+                    change({ ...c, background: "Solid", color: e.target.value })
                   }
-              }}
-            />
-          </Field>
-          {c.image && (
-            <button
-              onClick={() => change({ ...c, image: "", background: "Aurora" })}
-            >
-              Remove uploaded image
-            </button>
+                />
+              </label>
+            </div>
           )}
-          {slider("bgBlur", "Background blur", 0, 40, 1, "px")}
+          {bgMode === "Gradient" && (
+            <>
+              <div className="gradient-grid">
+                {gradientNames.map((name) => (
+                  <button
+                    key={name}
+                    title={name}
+                    aria-label={name}
+                    aria-pressed={c.background === name}
+                    className={c.background === name ? "on" : ""}
+                    style={{
+                      background: backgroundCSS({ ...c, background: name }),
+                    }}
+                    onClick={() => set("background", name)}
+                  />
+                ))}
+              </div>
+              {customGradients.includes(c.background) && (
+                <div className="color-pair">
+                  <span>Colors</span>
+                  {(["color", "color2"] as const).map((k, i) => (
+                    <label
+                      key={k}
+                      className="color-dot custom-solid"
+                      style={{ background: c[k] }}
+                    >
+                      <input
+                        type="color"
+                        aria-label={i ? "Secondary color" : "Primary color"}
+                        value={c[k]}
+                        onChange={(e) => set(k, e.target.value)}
+                      />
+                    </label>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+          {bgMode === "Image" && (
+            <div className="image-drop">
+              {c.image ? (
+                <>
+                  <span
+                    className="image-thumb"
+                    style={{ backgroundImage: `url("${c.image}")` }}
+                  />
+                  <button
+                    onClick={() =>
+                      change({ ...c, image: "", background: "Aurora" })
+                    }
+                  >
+                    Remove uploaded image
+                  </button>
+                </>
+              ) : (
+                <button onClick={() => imageInput.current?.click()}>
+                  <ImageUp size={16} strokeWidth={1.75} />
+                  Upload an image
+                  <small>PNG, JPG, WebP or GIF · up to 5 MB</small>
+                </button>
+              )}
+            </div>
+          )}
+          <input
+            ref={imageInput}
+            hidden
+            type="file"
+            aria-label="Upload background"
+            accept="image/png,image/jpeg,image/webp,image/gif"
+            onChange={async (e) => {
+              const f = e.target.files?.[0];
+              e.target.value = "";
+              if (f)
+                try {
+                  change({
+                    ...c,
+                    image: await readImage(f),
+                    background: "Image",
+                  });
+                  setBgMode("Image");
+                } catch (err) {
+                  notify(String(err));
+                }
+            }}
+          />
+          <span className="menu-label">Adjust</span>
           {slider("bgOpacity", "Background opacity", 0, 100, 1, "%")}
-          {slider("grain", "Noise / grain", 0, 50, 1, "%")}
+          {slider("bgBlur", "Background blur", 0, 40, 1, "px")}
+          {slider("grain", "Grain", 0, 50, 1, "%")}
         </>
       )}
       {tab === "Window" && (
