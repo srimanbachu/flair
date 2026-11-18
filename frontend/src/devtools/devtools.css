@@ -45,3 +45,19 @@
 .dev-inspector .dev-inspector-note { margin-bottom: 28px; font-size: 10px; }
 .dev-license { color: var(--muted); font-size: 10px; text-decoration: none; }
 .dev-license:hover { color: var(--accent); }
+@media (max-width: 1000px) {
+  .dev-tools { grid-template-columns: minmax(0, 1fr) 260px; }
+  .dev-content { padding: 28px 22px; }
+  .dev-heading { align-items: flex-start; }
+  .dev-library-badge { display: none; }
+}
+@media (max-width: 680px) {
+  .dev-tools { display: flex; flex-direction: column; overflow-y: auto; }
+  .dev-content { padding: 24px 16px; overflow: visible; }
+  .dev-heading { margin-bottom: 24px; }
+  .dev-heading h1 { font-size: 28px; }
+  .dev-inspector { border-left: 0; border-top: 1px solid var(--line); overflow: visible; padding: 20px 16px; }
+  .dev-preview { height: 100px; }
+  .dev-icon-grid { grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); }
+  .dev-search { flex-basis: 100%; }
+}
