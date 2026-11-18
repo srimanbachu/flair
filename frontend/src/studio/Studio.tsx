@@ -103,6 +103,8 @@ export default function Studio() {
   const [scale, setScale] = useState(0.55);
   const [natural, setNatural] = useState({ w: 0, h: 0 });
   const [projectId, setProjectId] = useState<string | null>(null);
+  // Deleting from the library can't be undone, so it takes a second click.
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   if (routeKind && routeKind !== work.kind) {
     // A saved project belongs to one workspace, so forget it on switch.
     setWork({ ...work, kind: routeKind });
@@ -539,9 +541,17 @@ export default function Studio() {
             </div>
             {!projects.length && (
               <div className="library-empty">
-                <FolderOpen size={38} />
+                <FolderOpen size={32} />
                 <h3>No saved projects yet</h3>
-                <p>Press ⌘/Ctrl S to save the current card or canvas here.</p>
+                <p>
+                  Save the current {work.kind === "card" ? "card" : "canvas"}{" "}
+                  to keep it here, or press <kbd>⌘/Ctrl</kbd> <kbd>S</kbd> any
+                  time.
+                </p>
+                <button className="primary" onClick={save}>
+                  <Save size={16} />
+                  Save current {work.kind === "card" ? "card" : "canvas"}
+                </button>
               </div>
             )}
             <div className="project-grid">
@@ -578,8 +588,21 @@ export default function Studio() {
                       Open project
                     </button>
                     <button
-                      aria-label={`Delete ${p.name}`}
+                      className={
+                        confirmDelete === p.id ? "danger-confirm" : undefined
+                      }
+                      aria-label={
+                        confirmDelete === p.id
+                          ? `Confirm deleting ${p.name}`
+                          : `Delete ${p.name}`
+                      }
+                      onBlur={() => setConfirmDelete(null)}
                       onClick={() => {
+                        if (confirmDelete !== p.id) {
+                          setConfirmDelete(p.id);
+                          return;
+                        }
+                        setConfirmDelete(null);
                         try {
                           removeProject(p.id);
                           setProjects(readProjects());
@@ -592,7 +615,7 @@ export default function Studio() {
                         }
                       }}
                     >
-                      Delete
+                      {confirmDelete === p.id ? "Click to confirm" : "Delete"}
                     </button>
                   </div>
                 </article>

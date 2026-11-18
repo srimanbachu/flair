@@ -1300,21 +1300,51 @@
 .project-grid .section-title {
   margin-top: 13px;
 }
+.studio .project-grid .section-title button {
+  font-size: 12px;
+  padding: 6px 10px;
+  color: var(--text-2);
+}
+.studio .project-grid .section-title button:first-child {
+  background: var(--elev);
+  color: var(--text);
+}
+.studio .project-grid .section-title button:first-child:hover {
+  background: var(--fill-strong);
+}
+.studio .project-grid .section-title button.danger-confirm {
+  color: #e5484d;
+  background: #e5484d1f;
+}
 .library-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
   text-align: center;
-  padding: 55px;
+  padding: 56px 24px;
+  border-radius: 16px;
+  background: var(--panel);
   color: var(--muted);
 }
 .library-empty svg {
-  opacity: 0.5;
+  opacity: 0.6;
 }
 .library-empty h3 {
-  font-size: 18px;
-  margin-top: 18px;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--text);
+  margin: 10px 0 0;
 }
 .library-empty p {
   font-size: 12px;
+  margin-bottom: 10px;
 }
+.library-empty kbd {
+  font-size: 10px;
+  padding: 2px 5px;
+}
+
 .canvas-surface {
   position: relative;
   background-color: var(--board);
