@@ -1,8 +1,30 @@
 @import url('https://fonts.googleapis.com/css2?family=Bpmf+Huninn&family=Limelight&family=Outfit:wght@100..900&family=Vend+Sans:ital,wght@0,300..700;1,300..700&display=swap');
 
+/* Theme tokens. Surfaces are separated by tone rather than strokes, so each
+   step up (bg → panel → surface → elev) is a small, deliberate lift. */
 :root {
+  --bg: #000000;
+  --stage: #050505;
+  --panel: #0a0a0a;
+  --surface: #111111;
+  --elev: #181818;
+  --field: #141414;
+  --hover: #ffffff0b;
+  --fill: #ffffff12;
+  --fill-strong: #ffffff1c;
+  --line: #ffffff0f;
+  --line-strong: #ffffff1c;
+  --text: #ededed;
+  --text-2: #b4b4b8;
+  --muted: #838388;
+  --accent: #8fdcd8;
+  --accent-hover: #a9e6e3;
+  --accent-ink: #062120;
+  --accent-soft: #8fdcd81c;
+  --shadow: 0 12px 40px #000000b3;
+  --scrim: #000000a6;
   font-family: "Outfit", sans-serif;
   color-scheme: dark;
-  background: #0b0b0d;
-  color: #ececf0;
+  background: var(--bg);
+  color: var(--text);
 }

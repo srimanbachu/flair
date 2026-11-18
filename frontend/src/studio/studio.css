@@ -1,15 +1,4 @@
 .studio {
-  --bg: #0b0b0d;
-  --panel: #111114;
-  --elev: #18181c;
-  --field: #0e0e11;
-  --line: #ffffff0f;
-  --line-strong: #ffffff1c;
-  --text: #ececf0;
-  --muted: #85858f;
-  --accent: #8fdcd8;
-  --accent-ink: #062120;
-  --accent-soft: #8fdcd81c;
   height: 100dvh;
   min-height: 620px;
   background: var(--bg);
@@ -123,7 +112,7 @@
 }
 .mode-switch .active,
 .mode-switch a[aria-current="page"] {
-  background: #23232a;
+  background: var(--elev);
   color: var(--accent);
   box-shadow: 0 2px 5px #0002;
 }
@@ -856,7 +845,7 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  background: #0e0e11;
+  background: var(--stage);
 }
 .workspace-heading {
   display: flex;
@@ -1156,7 +1145,7 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 14px 17px;
-  background: #23232a;
+  background: var(--elev);
   border: 1px solid var(--line-strong);
   box-shadow: 0 8px 40px #0006;
   z-index: 100;
@@ -1319,12 +1308,12 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  background: #0e0e11;
+  background: var(--stage);
 }
 .canvas-panel {
   position: absolute;
   z-index: 4;
-  background: #151518f0;
+  background: var(--surface);
   border: 1px solid var(--line-strong);
   border-radius: 12px;
   box-shadow: 0 10px 30px #0009;
@@ -1437,7 +1426,7 @@
   align-items: center;
   gap: 2px;
   padding: 4px;
-  background: #151518f0;
+  background: var(--surface);
   border: 1px solid var(--line-strong);
   border-radius: 12px;
   box-shadow: 0 10px 30px #0009;
@@ -1760,7 +1749,7 @@
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: #151518f0;
+  background: var(--surface);
   border: 1px solid var(--line-strong);
   border-radius: 12px;
   display: flex;
@@ -1803,7 +1792,7 @@
 }
 body {
   margin: 0;
-  background: #0b0b0d;
+  background: var(--bg);
 }
 a {
   color: inherit;
