@@ -454,7 +454,11 @@ export default function Studio() {
           </>}
         </div>
       </header>
-      {onProjects ? (
+      {onDevTools ? (
+        <Suspense fallback={<main className="dev-loading" role="status">Loading Dev Tools…</main>}>
+          <DevTools notify={notify} />
+        </Suspense>
+      ) : onProjects ? (
         <main className="projects-page">
           <section className="library-modal" aria-label="My projects">
             <div className="section-title">
