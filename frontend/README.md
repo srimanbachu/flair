@@ -9,7 +9,7 @@ npm ci
 npm run dev
 ```
 
-The card editor is at `/`; the original introduction remains at `/intro`.
+The card editor is at `/cards` (and redirects from `/`). Canvas is at `/canvas`, saved projects at `/projects`, and Dev Tools at `/dev-tools`. The original introduction remains at `/intro`.
 
 ```sh
 npm run build      # TypeScript + production bundle
@@ -46,6 +46,14 @@ Use the floating toolbar to select, pan, draw with pen/pencil/brush, erase whole
 - Wheel to zoom, use the hand to pan, and **Fit** to show the board. Optional snapping uses a 10px grid. Background choices are dots, grid, plain dark, and plain light.
 - Architecture, flowchart, mind-map, and wireframe templates supply editable objects and attached connectors.
 - Canvas exports include all objects independently of the current pan, zoom, or selection. Download PNG, SVG, or editable project JSON. Large PNGs are scaled to fit an 8192px maximum edge; SVG preserves vector geometry.
+
+## Dev Tools
+
+Browse every icon exported by the installed `lucide-react` package, search by name, or use the Development filter. Select an icon to preview it, adjust its size and stroke width, and copy either JSX with its React import or a standalone SVG. The grid loads 96 icons at a time; search always covers the entire catalog. The catalog is loaded only when Dev Tools opens.
+
+Clipboard actions report success or failure and include a browser fallback. The JSX preview can also be selected manually. Lucide icons use the ISC license linked in the inspector. This page uses the existing dependency; no separate npm package is published yet.
+
+Run `npx playwright test tests/devtools.spec.ts` to check browsing, direct routes, draft preservation, clipboard output, and the phone layout.
 
 ## Local projects and sharing
 
