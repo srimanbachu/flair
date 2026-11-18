@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { SearchX } from "lucide-react";
 import { catalog, collections, defaultIcon } from "./catalog";
@@ -20,6 +20,12 @@ export default function DevTools({
   const location = useLocation();
   const isLibrary = location.pathname.replace(/\/+$/, "") === "/dev-tools";
   const selected = isLibrary ? defaultIcon : iconAtPath(location.pathname);
+  const title = isLibrary ? "Dev Tools · Flair" : selected ? `${selected.name} · Dev Tools · Flair` : "Icon not found · Flair";
+  useEffect(() => {
+    const previous = document.title;
+    document.title = title;
+    return () => { document.title = previous; };
+  }, [title]);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Category>("All icons");
   const [collection, setCollection] = useState("all");
