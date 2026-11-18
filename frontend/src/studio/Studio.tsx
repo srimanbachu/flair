@@ -187,7 +187,7 @@ export default function Studio() {
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [dims.w, dims.h, work.kind]);
+  }, [dims.w, dims.h, work.kind, onDevTools, onProjects]);
   const save = useCallback(() => {
     try {
       const id = projectId || uid();
@@ -209,6 +209,7 @@ export default function Studio() {
     }
   }, [work, projectId, notify]);
   useEffect(() => {
+    if (onDevTools) return;
     const key = (e: KeyboardEvent) => {
       if (!(e.metaKey || e.ctrlKey)) return;
       if (e.key === "s") {
@@ -228,7 +229,7 @@ export default function Studio() {
     };
     window.addEventListener("keydown", key);
     return () => window.removeEventListener("keydown", key);
-  }, [undo, redo, save]);
+  }, [undo, redo, save, onDevTools]);
   const projectFile = () => {
     download(
       "flair-project.json",
