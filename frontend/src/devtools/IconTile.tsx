@@ -1,4 +1,6 @@
 import type { IconEntry } from "./catalog";
+import { Link } from "react-router-dom";
+import { iconPath } from "./iconRoutes";
 import { Artwork } from "./Artwork";
 import { useIconData } from "./useIconData";
 
@@ -14,13 +16,17 @@ export function IconTile({
   const { name, label } = entry;
   const { data, error } = useIconData(entry);
   return (
-    <button
+    <Link
+      to={iconPath(entry)}
       className={`dev-icon-tile${selected ? " selected" : ""}`}
       aria-label={name}
-      aria-pressed={selected}
+      aria-current={selected ? "page" : undefined}
       title={name}
       data-icon-id={entry.id}
-      onClick={() => onSelect(entry)}
+      onClick={(event) => {
+        if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey)
+          onSelect(entry);
+      }}
     >
       {data ? (
         <Artwork artwork={data.artwork} size={24} />
@@ -30,6 +36,6 @@ export function IconTile({
         </span>
       )}
       <span>{label}</span>
-    </button>
+    </Link>
   );
 }

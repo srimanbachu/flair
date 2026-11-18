@@ -70,7 +70,7 @@ export default function DevTools({
             entries={results}
             selected={selected.id}
             limit={limit}
-            onSelect={(entry) => {
+            onSelect={() => {
               if (window.matchMedia("(max-width: 680px)").matches)
                 document
                   .getElementById("dev-icon-details")
