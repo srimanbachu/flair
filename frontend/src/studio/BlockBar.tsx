@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Copy, Plus, Trash2, WandSparkles } from "lucide-react";
 import { Field } from "./Controls";
 import type { Card, CodeBlock } from "./model";
@@ -44,6 +45,27 @@ export function BlockBar({
   const effects = [b.highlights, b.words, b.blur, b.glow, b.comment].filter(
     (v) => v.trim(),
   ).length;
+  // The effects popover closes on a press anywhere outside it, or Escape.
+  const pop = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    const close = (event: Event) => {
+      const el = pop.current;
+      if (!el?.open) return;
+      if (event instanceof KeyboardEvent) {
+        if (event.key !== "Escape") return;
+        el.open = false;
+        el.querySelector("summary")?.focus();
+        return;
+      }
+      if (!el.contains(event.target as Node)) el.open = false;
+    };
+    document.addEventListener("pointerdown", close);
+    document.addEventListener("keydown", close);
+    return () => {
+      document.removeEventListener("pointerdown", close);
+      document.removeEventListener("keydown", close);
+    };
+  }, []);
   return (
     <div className="block-bar" role="group" aria-label="Code block settings">
       {c.blocks.length > 1 && (
@@ -92,7 +114,7 @@ export function BlockBar({
           </option>
         ))}
       </select>
-      <details className="effects-pop">
+      <details className="effects-pop" ref={pop}>
         <summary title="Highlight, blur or glow lines">
           <WandSparkles size={14} strokeWidth={1.75} />
           Line effects
