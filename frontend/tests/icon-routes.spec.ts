@@ -1,6 +1,30 @@
 import { test, expect } from "@playwright/test";
 import manifest from "../src/devtools/data/manifest.json" with { type: "json" };
 
+test("icon permalinks can be copied and opened on a phone", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/dev-tools/developer-logos/vscode");
+  await page.getByRole("button", { name: "Copy icon link", exact: true }).click();
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe("http://127.0.0.1:5173/dev-tools/developer-logos/vscode");
+  await expect(page.getByRole("button", { name: "Copy TSX", exact: true })).toBeEnabled();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  await page.reload();
+  await expect(page.locator(".dev-inspector h2")).toHaveText("Vscode");
+  await expect(page.getByRole("button", { name: "Copy TSX", exact: true })).toBeEnabled();
+});
+
+test("following icon routes keeps the card draft and undo history", async ({ page }) => {
+  await page.goto("/cards");
+  await page.getByLabel("Card title", { exact: true }).fill("My original draft");
+  await page.getByRole("link", { name: "Dev Tools", exact: true }).click();
+  await page.getByLabel("Search icons").fill("braces");
+  await page.locator('[data-icon-id="lucide:braces"]').click();
+  await page.getByRole("link", { name: "Code Cards", exact: true }).click();
+  await expect(page.getByLabel("Card title", { exact: true })).toHaveValue("My original draft");
+  await expect(page.getByRole("button", { name: "Undo", exact: true })).toBeEnabled();
+});
+
 test("icon links preserve browser history and library search", async ({ page }) => {
   await page.goto("/dev-tools");
   await page.getByLabel("Search icons").fill("braces");
