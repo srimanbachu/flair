@@ -31,6 +31,8 @@ import {
   AppWindow,
   LayoutTemplate,
   Wrench,
+  Sun,
+  Moon,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { toPng, toJpeg, toBlob } from "html-to-image";
@@ -46,6 +48,7 @@ import type { SavedProject } from "./storage";
 import { download, readProjects, removeProject, saveProject } from "./storage";
 import { parseProject, validateBoard, validateCard } from "./projectFiles";
 import flairLogo from "../assets/flair.png";
+import { useTheme } from "../theme";
 import "./studio.css";
 const DevTools = lazy(() => import("../devtools/DevTools"));
 const tabIcons: Record<string, LucideIcon> = {
@@ -73,6 +76,7 @@ function initial(): Workspace {
 }
 export default function Studio() {
   const [work, setWork] = useState(initial);
+  const { theme, toggle: toggleTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   // The URL decides the workspace: /cards or /canvas.
@@ -355,10 +359,20 @@ export default function Studio() {
         <Navigate to={`/cards/${tab.toLowerCase()}`} replace />
       )}
       <header className="studio-header">
-        <a className="brand" href="/" aria-label="Flair home">
-          Flair
-          <img className="brand-logo" src={flairLogo} alt="" />
-        </a>
+        <div className="header-start">
+          <a className="brand" href="/" aria-label="Flair home">
+            Flair
+            <img className="brand-logo" src={flairLogo} alt="" />
+          </a>
+          <button
+            className="icon-button theme-toggle"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+            title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+          >
+            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+        </div>
         <div className="mode-switch" aria-label="Workspace">
           <NavLink to="/cards" title="Code Cards" aria-label="Code Cards">
             <Code2 size={16} />
