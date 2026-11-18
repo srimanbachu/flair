@@ -84,7 +84,11 @@ export function IconInspector({
         {data?.artwork.stroke ? "Outline" : data ? "Vector" : "Loading…"}
       </p>
       <button className="dev-permalink" onClick={copyLink}>
-        {copied === `${entry.id}:link` ? <Check size={12} /> : <Link2 size={12} />}
+        {copied === `${entry.id}:link` ? (
+          <Check size={12} />
+        ) : (
+          <Link2 size={12} />
+        )}
         Copy icon link
       </button>
       <div className="dev-options">

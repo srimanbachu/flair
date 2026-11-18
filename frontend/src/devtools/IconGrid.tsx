@@ -5,13 +5,11 @@ export function IconGrid({
   entries,
   selected,
   limit,
-  onSelect,
   onMore,
 }: {
   entries: IconEntry[];
   selected: string;
   limit: number;
-  onSelect: (entry: IconEntry) => void;
   onMore: () => void;
 }) {
   return (
@@ -22,7 +20,6 @@ export function IconGrid({
             key={entry.id}
             entry={entry}
             selected={selected === entry.id}
-            onSelect={onSelect}
           />
         ))}
       </div>

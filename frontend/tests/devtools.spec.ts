@@ -74,7 +74,9 @@ test("Dev Tools remains usable on a phone", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: "Copy SVG", exact: true }),
   ).toBeVisible();
-  await expect(page.getByRole("button", { name: "Copy TSX", exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Copy TSX", exact: true }),
+  ).toBeVisible();
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth),
   ).toBeLessThanOrEqual(390);
@@ -216,7 +218,9 @@ test("failed asset loads disable copying and can be retried", async ({
   await expect(
     page.getByRole("button", { name: "Copy SVG", exact: true }),
   ).toBeDisabled();
-  await expect(page.getByRole("button", { name: "Copy TSX", exact: true })).toBeDisabled();
+  await expect(
+    page.getByRole("button", { name: "Copy TSX", exact: true }),
+  ).toBeDisabled();
   await expect(page.getByRole("alert")).toContainText("Couldn't load");
   fail = false;
   await page.getByRole("button", { name: "Retry loading icon" }).click();

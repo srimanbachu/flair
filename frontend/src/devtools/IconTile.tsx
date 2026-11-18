@@ -7,11 +7,9 @@ import { useIconData } from "./useIconData";
 export function IconTile({
   entry,
   selected,
-  onSelect,
 }: {
   entry: IconEntry;
   selected: boolean;
-  onSelect: (entry: IconEntry) => void;
 }) {
   const { name, label } = entry;
   const { data, error } = useIconData(entry);
@@ -23,10 +21,6 @@ export function IconTile({
       aria-current={selected ? "page" : undefined}
       title={name}
       data-icon-id={entry.id}
-      onClick={(event) => {
-        if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey)
-          onSelect(entry);
-      }}
     >
       {data ? (
         <Artwork artwork={data.artwork} size={24} />

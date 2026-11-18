@@ -20,12 +20,28 @@ export default function DevTools({
   const location = useLocation();
   const isLibrary = location.pathname.replace(/\/+$/, "") === "/dev-tools";
   const selected = isLibrary ? defaultIcon : iconAtPath(location.pathname);
-  const title = isLibrary ? "Dev Tools · Flair" : selected ? `${selected.name} · Dev Tools · Flair` : "Icon not found · Flair";
+  const title = isLibrary
+    ? "Dev Tools · Flair"
+    : selected
+      ? `${selected.name} · Dev Tools · Flair`
+      : "Icon not found · Flair";
   useEffect(() => {
     const previous = document.title;
     document.title = title;
-    return () => { document.title = previous; };
+    return () => {
+      document.title = previous;
+    };
   }, [title]);
+  useEffect(() => {
+    if (
+      !isLibrary &&
+      selected &&
+      window.matchMedia("(max-width: 680px)").matches
+    )
+      document
+        .getElementById("dev-icon-details")
+        ?.scrollIntoView({ block: "start" });
+  }, [location.pathname, isLibrary, selected]);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Category>("All icons");
   const [collection, setCollection] = useState("all");
@@ -36,7 +52,7 @@ export default function DevTools({
   );
   if (!selected) return <IconNotFound />;
   return (
-    <main className="dev-tools">
+    <main className={`dev-tools${isLibrary ? "" : " dev-tools-detail"}`}>
       <div className="dev-content">
         {!isLibrary && <IconBreadcrumb entry={selected} />}
         <header className="dev-heading">
@@ -79,12 +95,6 @@ export default function DevTools({
             entries={results}
             selected={selected.id}
             limit={limit}
-            onSelect={() => {
-              if (window.matchMedia("(max-width: 680px)").matches)
-                document
-                  .getElementById("dev-icon-details")
-                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
-            }}
             onMore={() => setLimit((value) => value + 96)}
           />
         ) : (

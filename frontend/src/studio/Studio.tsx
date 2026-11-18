@@ -84,7 +84,9 @@ export default function Studio() {
   const workspacePath = (kind: Workspace["kind"]) =>
     kind === "canvas" ? "/canvas" : "/cards";
   const onProjects = location.pathname === "/projects";
-  const onDevTools = location.pathname === "/dev-tools" || location.pathname.startsWith("/dev-tools/");
+  const onDevTools =
+    location.pathname === "/dev-tools" ||
+    location.pathname.startsWith("/dev-tools/");
   const [past, setPast] = useState<Workspace[]>([]);
   const [future, setFuture] = useState<Workspace[]>([]);
   const [activeBlock, setActiveBlock] = useState(0);

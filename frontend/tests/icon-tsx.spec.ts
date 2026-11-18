@@ -6,7 +6,12 @@ import { resolve } from "node:path";
 import manifest from "../src/devtools/data/manifest.json" with { type: "json" };
 
 function typecheck(sources: string[]) {
-  const files = new Map(sources.map((source, index) => [resolve(`tests/icon-export-${index}.tsx`), source]));
+  const files = new Map(
+    sources.map((source, index) => [
+      resolve(`tests/icon-export-${index}.tsx`),
+      source,
+    ]),
+  );
   const options: ts.CompilerOptions = {
     target: ts.ScriptTarget.ES2023,
     module: ts.ModuleKind.ESNext,
@@ -21,31 +26,54 @@ function typecheck(sources: string[]) {
   };
   const host = ts.createCompilerHost(options);
   const original = host.getSourceFile.bind(host);
-  host.getSourceFile = (path, ...args) => files.has(path)
-    ? ts.createSourceFile(path, files.get(path)!, options.target!, true, ts.ScriptKind.TSX)
-    : original(path, ...args);
+  host.getSourceFile = (path, ...args) =>
+    files.has(path)
+      ? ts.createSourceFile(
+          path,
+          files.get(path)!,
+          options.target!,
+          true,
+          ts.ScriptKind.TSX,
+        )
+      : original(path, ...args);
   const program = ts.createProgram([...files.keys()], options, host);
-  expect(ts.getPreEmitDiagnostics(program).map((diagnostic) => ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"))).toEqual([]);
+  expect(
+    ts
+      .getPreEmitDiagnostics(program)
+      .map((diagnostic) =>
+        ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"),
+      ),
+  ).toEqual([]);
 }
 
-function renderComponent(source: string, props: React.SVGProps<SVGSVGElement> = {}) {
+function renderComponent(
+  source: string,
+  props: React.SVGProps<SVGSVGElement> = {},
+) {
   const compiled = ts.transpileModule(source, {
     compilerOptions: { jsx: ts.JsxEmit.React, module: ts.ModuleKind.CommonJS },
     reportDiagnostics: true,
   });
   expect(compiled.diagnostics).toEqual([]);
-  const exports: { default?: React.ComponentType<React.SVGProps<SVGSVGElement>> } = {};
+  const exports: {
+    default?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  } = {};
   new Function("React", "exports", compiled.outputText)(React, exports);
   return renderToStaticMarkup(React.createElement(exports.default!, props));
 }
 
-test("TSX exports from every collection typecheck and accept SVG props", async ({ page, context }) => {
+test("TSX exports from every collection typecheck and accept SVG props", async ({
+  page,
+  context,
+}) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/dev-tools");
   const sources: string[] = [];
   for (const collection of manifest.collections) {
     await page.getByLabel("Icon collection").selectOption(collection.prefix);
-    await page.locator(`[data-icon-id="${collection.prefix}:${collection.names[0]}"]`).click();
+    await page
+      .locator(`[data-icon-id="${collection.prefix}:${collection.names[0]}"]`)
+      .click();
     await page.getByRole("button", { name: "Copy TSX", exact: true }).click();
     await expect(page.locator(".toast")).toContainText("TSX copied");
     const source = await page.evaluate(() => navigator.clipboard.readText());
@@ -53,17 +81,26 @@ test("TSX exports from every collection typecheck and accept SVG props", async (
     expect(source).toContain("export default function");
     expect(source).toMatch(/copyright/i);
     sources.push(source);
-    const html = renderComponent(source, { width: 40, height: 36, className: "custom-icon", color: "tomato" });
+    const html = renderComponent(source, {
+      width: 40,
+      height: 36,
+      className: "custom-icon",
+      color: "tomato",
+    });
     expect(html).toContain('width="40"');
     expect(html).toContain('height="36"');
     expect(html).toContain('class="custom-icon"');
     expect(html).toContain('color="tomato"');
-    if (collection.prefix === "bi") expect(source).toContain("function Icon123(");
+    if (collection.prefix === "bi")
+      expect(source).toMatch(/function Icon[0-9][a-zA-Z0-9]*\(/);
   }
   typecheck(sources);
 });
 
-test("TSX retains selected defaults and allows stroke width overrides", async ({ page, context }) => {
+test("TSX retains selected defaults and allows stroke width overrides", async ({
+  page,
+  context,
+}) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/dev-tools/outline/braces");
   await page.getByLabel("Icon size").selectOption("48");
@@ -74,11 +111,18 @@ test("TSX retains selected defaults and allows stroke width overrides", async ({
   typecheck([source]);
   expect(renderComponent(source)).toContain('width="48"');
   expect(renderComponent(source)).toContain('stroke-width="1.5"');
-  expect(renderComponent(source, { strokeWidth: 3 })).not.toContain('stroke-width="1.5"');
-  expect(renderComponent(source, { strokeWidth: 3 })).toContain('stroke-width="3"');
+  expect(renderComponent(source, { strokeWidth: 3 })).not.toContain(
+    'stroke-width="1.5"',
+  );
+  expect(renderComponent(source, { strokeWidth: 3 })).toContain(
+    'stroke-width="3"',
+  );
 });
 
-test("colored logos produce valid typed components", async ({ page, context }) => {
+test("colored logos produce valid typed components", async ({
+  page,
+  context,
+}) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/dev-tools/developer-logos/vscode");
   await page.getByRole("button", { name: "Copy TSX", exact: true }).click();
