@@ -26,6 +26,13 @@
 .studio * {
   box-sizing: border-box;
 }
+.dev-loading {
+  display: grid;
+  flex: 1;
+  place-items: center;
+  color: var(--muted);
+  font-size: 13px;
+}
 .studio button,
 .studio input,
 .studio select,

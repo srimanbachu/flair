@@ -2,7 +2,7 @@ import type { IconEntry } from "./catalog";
 
 export const categories = ["All icons", "Development"] as const;
 export type Category = (typeof categories)[number];
-const development = /code|terminal|braces|brackets|bug|database|server|git|file|folder|cloud|network|webhook|workflow|cpu|memory|binary|container|package|blocks|component|puzzle|command|keyboard|monitor|laptop|hard.drive|ethernet|usb|circuit|regex|variable|function|square.*/i;
+const development = /code|terminal|braces|brackets|bug|database|server|git|file|folder|cloud|network|webhook|workflow|cpu|memory|binary|container|package|blocks|component|puzzle|command|keyboard|monitor|laptop|hard.drive|ethernet|usb|circuit|regex|variable|function/i;
 
 export function searchIcons(icons: IconEntry[], query: string, category: Category) {
   const words = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
