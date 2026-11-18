@@ -21,3 +21,13 @@
 .studio .dev-categories button { color: var(--muted); font-size: 12px; padding: 9px 12px; }
 .studio .dev-categories .active { color: var(--accent); background: var(--accent-soft); }
 .dev-result-count { color: var(--muted); font-size: 11px; margin: 22px 0 14px; }
+.dev-icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+.studio .dev-icon-tile { min-height: 102px; min-width: 0; flex-direction: column; gap: 15px; padding: 16px 8px 12px; border: 1px solid var(--line); background: var(--panel); border-radius: 8px; color: #b7b7c2; }
+.studio .dev-icon-tile:hover { background: var(--elev); border-color: var(--line-strong); color: var(--text); }
+.studio .dev-icon-tile.selected { background: var(--accent-soft); border-color: #8fdcd855; color: var(--accent); }
+.dev-icon-tile span { font-size: 10px; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.studio .dev-load-more { display: flex; margin: 24px auto 4px; border: 1px solid var(--line-strong); color: var(--muted); font-size: 12px; }
+.dev-empty { text-align: center; padding: 64px 16px; color: var(--muted); }
+.dev-empty h2 { font-size: 18px; font-weight: 500; color: var(--text); }
+.dev-empty p { font-size: 13px; }
+.studio .dev-empty button { color: var(--accent); }
