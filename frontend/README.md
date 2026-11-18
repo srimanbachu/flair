@@ -66,6 +66,10 @@ Update `scripts/icon-sources.json` deliberately to add a source or move to a new
 
 Run `npx playwright test tests/devtools.spec.ts` to check browsing, direct routes, draft preservation, clipboard output, and the phone layout.
 
+Each icon also has a shareable route at `/dev-tools/<collection-style>/<icon-name>`, for example `/dev-tools/outline/terminal` or `/dev-tools/developer-logos/vscode`. Tiles are real links, so opening them in a new tab works. Direct links and reloads select the same icon, browser Back/Forward tracks selections, and the breadcrumb returns to the library while keeping the current filters. **Copy icon link** copies its permanent URL. Unknown icon URLs show a missing-icon page with a link back to the library.
+
+Run `npx playwright test tests/icon-routes.spec.ts tests/icon-tsx.spec.ts` for route uniqueness across the full catalog, direct navigation for every collection, mobile links, and strict TypeScript checks for exported components, including numeric icon names and colored logos.
+
 ## Local projects and sharing
 
 The current card and canvas draft autosave to `localStorage`. **Save** adds or updates a named entry in **My projects**. Open, delete, import, or create projects from the library. Undo/redo history lasts for the current editing session; opening or importing another project starts a new history.
