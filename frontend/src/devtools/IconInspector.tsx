@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Link2 } from "lucide-react";
 import { collections } from "./catalog";
 import type { IconEntry } from "./catalog";
 import { jsxSource, svgSource, tsxSource } from "./source";
 import { copyText } from "./clipboard";
 import { Artwork } from "./Artwork";
 import { useIconData } from "./useIconData";
+import { iconPath } from "./iconRoutes";
 
 export function IconInspector({
   entry,
@@ -22,6 +23,15 @@ export function IconInspector({
     (item) => item.prefix === entry.collection,
   )!;
   const copyKey = `${entry.id}:${size}:${strokeWidth}`;
+  async function copyLink() {
+    try {
+      await copyText(new URL(iconPath(entry), window.location.origin).href);
+      setCopied(`${entry.id}:link`);
+      notify("Icon link copied to clipboard.");
+    } catch {
+      notify("Could not copy the link. Copy the page URL from your browser.");
+    }
+  }
   async function copy(format: "JSX" | "TSX" | "SVG") {
     if (!data) return;
     try {
@@ -73,6 +83,10 @@ export function IconInspector({
         {collection.label} ·{" "}
         {data?.artwork.stroke ? "Outline" : data ? "Vector" : "Loading…"}
       </p>
+      <button className="dev-permalink" onClick={copyLink}>
+        {copied === `${entry.id}:link` ? <Check size={12} /> : <Link2 size={12} />}
+        Copy icon link
+      </button>
       <div className="dev-options">
         <label>
           Size{" "}
