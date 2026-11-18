@@ -31,3 +31,17 @@
 .dev-empty h2 { font-size: 18px; font-weight: 500; color: var(--text); }
 .dev-empty p { font-size: 13px; }
 .studio .dev-empty button { color: var(--accent); }
+.dev-inspector { padding: 28px 22px; background: var(--panel); border-left: 1px solid var(--line); overflow-y: auto; }
+.dev-preview { display: flex; align-items: center; justify-content: center; height: 180px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; color: var(--accent); margin-bottom: 24px; background-image: radial-gradient(#ffffff0c 1px, transparent 1px); background-size: 16px 16px; }
+.dev-inspector h2 { font-size: 17px; font-weight: 500; margin: 0 0 7px; overflow-wrap: anywhere; }
+.dev-inspector p { color: var(--muted); font-size: 11px; margin: 0 0 24px; }
+.dev-options { display: flex; gap: 12px; margin-bottom: 20px; }
+.dev-options label { flex: 1; color: var(--muted); font-size: 11px; }
+.dev-options select { width: 100%; padding: 9px; margin-top: 7px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--field); color: var(--text); }
+.dev-copy-actions { display: flex; gap: 8px; }
+.studio .dev-copy-actions button { flex: 1; padding: 9px 8px; font-size: 12px; }
+.studio .dev-copy-svg { border: 1px solid var(--line-strong); background: var(--elev); }
+.dev-source { padding: 14px; margin: 20px 0 14px; background: var(--bg); border: 1px solid var(--line); border-radius: 7px; font: 11px/1.8 ui-monospace, SFMono-Regular, Consolas, monospace; color: #b6b7c2; white-space: pre-wrap; overflow-wrap: anywhere; user-select: text; }
+.dev-inspector .dev-inspector-note { margin-bottom: 28px; font-size: 10px; }
+.dev-license { color: var(--muted); font-size: 10px; text-decoration: none; }
+.dev-license:hover { color: var(--accent); }
