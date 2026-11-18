@@ -931,7 +931,7 @@
 .card-scaled {
   flex-shrink: 0;
   position: relative;
-  box-shadow: 0 24px 70px #0008;
+  box-shadow: var(--card-shadow);
 }
 .card-art {
   transform-origin: top left;
