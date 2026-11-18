@@ -9,7 +9,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "playwright test",
-    "format": "prettier --write src/studio tests playwright.config.ts"
+    "format": "prettier --write src/studio src/devtools/*.{ts,tsx,css} tests playwright.config.ts",
+    "icons:collect": "python3 scripts/collect-icons.py",
+    "icons:check": "python3 scripts/collect-icons.py --check"
   },
   "dependencies": {
     "canvas": "^3.2.3",

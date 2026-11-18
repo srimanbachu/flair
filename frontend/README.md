@@ -49,9 +49,20 @@ Use the floating toolbar to select, pan, draw with pen/pencil/brush, erase whole
 
 ## Dev Tools
 
-Browse every icon exported by the installed `lucide-react` package, search by name, or use the Development filter. Select an icon to preview it, adjust its size and stroke width, and copy either JSX with its React import or a standalone SVG. The grid loads 96 icons at a time; search always covers the entire catalog. The catalog is loaded only when Dev Tools opens.
+Browse 15,023 locally bundled icons from seven open-source collections, search by name, filter by collection, or use the Development filter for code, infrastructure, and developer logos. The grid loads 96 icons at a time; search covers the entire catalog. Exact duplicate artwork, hidden entries, and aliases are excluded from the count. Outline, filled, wordmark, and size variants are included as distinct artwork.
 
-Clipboard actions report success or failure and include a browser fallback. The JSX preview can also be selected manually. Lucide icons use the ISC license linked in the inspector. This page uses the existing dependency; no separate npm package is published yet.
+Select an icon, adjust size and (for stroked artwork) stroke width, and copy self-contained JSX or SVG without an icon-package import. Colored logos keep their fills, gradients, masks, and view boxes. Copies include the applicable license notice. Clipboard actions report success or failure and include a browser fallback; the JSX preview can also be selected manually. No separate npm package is published yet.
+
+Icon names are indexed only when Dev Tools opens; SVG geometry is fetched from local, content-hashed collection files as needed and cached for the session. Browsing and copying require no external icon API. Failed loads have a retry action, and each rendered icon namespaces its SVG definitions to avoid gradient and mask collisions.
+
+The import uses published open-source data from a pinned [Iconify icon-sets snapshot](https://github.com/iconify/icon-sets/tree/81ad501f19cc13e548e4cb6a9c63a3873c87262a). Original websites, authors, versions, SHA-256 checksums, and license URLs are recorded in [`public/icons/sources.json`](public/icons/sources.json); complete copyright and permission notices ship in [`public/icons/NOTICE.txt`](public/icons/NOTICE.txt). Product labels describe the styles; original source names remain in the provenance and required notices.
+
+```sh
+npm run icons:check    # Offline validation of all SVGs, counts, hashes and notices
+npm run icons:collect  # Rebuild from the pinned sources; requires Python 3, curl and network
+```
+
+Update `scripts/icon-sources.json` deliberately to add a source or move to a newer snapshot. The importer accepts MIT/ISC collections, permits only static SVG elements and local references, and rejects executable content and external resources before writing assets. After rebuilding, run the checks and browser tests and remove any superseded collection files shown by Git.
 
 Run `npx playwright test tests/devtools.spec.ts` to check browsing, direct routes, draft preservation, clipboard output, and the phone layout.
 
