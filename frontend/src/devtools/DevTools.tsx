@@ -9,6 +9,7 @@ import { IconGrid } from "./IconGrid";
 import { IconInspector } from "./IconInspector";
 import { iconAtPath } from "./iconRoutes";
 import { IconNotFound } from "./IconNotFound";
+import { IconBreadcrumb } from "./IconBreadcrumb";
 import "./devtools.css";
 
 export default function DevTools({
@@ -31,6 +32,7 @@ export default function DevTools({
   return (
     <main className="dev-tools">
       <div className="dev-content">
+        {!isLibrary && <IconBreadcrumb entry={selected} />}
         <header className="dev-heading">
           <div>
             <span className="dev-eyebrow">THE DEVELOPER'S CORNER</span>
