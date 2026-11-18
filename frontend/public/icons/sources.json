@@ -1,0 +1,156 @@
+[
+  {
+    "prefix": "lucide",
+    "name": "Lucide",
+    "website": "https://lucide.dev/",
+    "author": {
+      "name": "Lucide Contributors",
+      "url": "https://github.com/lucide-icons/lucide"
+    },
+    "source": "https://raw.githubusercontent.com/iconify/icon-sets/81ad501f19cc13e548e4cb6a9c63a3873c87262a/json/lucide.json",
+    "sourceSha256": "7fb99f28f086990e35e0e71bf9280bc3d94d4281e345b9e06d594bb1e44b21ab",
+    "version": null,
+    "license": {
+      "title": "ISC",
+      "spdx": "ISC",
+      "url": "https://github.com/lucide-icons/lucide/blob/main/LICENSE"
+    },
+    "licenseSource": "https://raw.githubusercontent.com/lucide-icons/lucide/main/LICENSE",
+    "licenseSha256": "ee35498e6684b30c9efaae009415884772f4450b3f6a3ae49103cd550a2c8ceb",
+    "count": 2088,
+    "duplicatesExcluded": 1,
+    "file": "collections/lucide-ca111dfa0ef2.json"
+  },
+  {
+    "prefix": "tabler",
+    "name": "Tabler Icons",
+    "website": "https://tabler.io/icons",
+    "author": {
+      "name": "Paweł Kuna",
+      "url": "https://github.com/tabler/tabler-icons"
+    },
+    "source": "https://raw.githubusercontent.com/iconify/icon-sets/81ad501f19cc13e548e4cb6a9c63a3873c87262a/json/tabler.json",
+    "sourceSha256": "5aef849f1700a1f2757441d0cdafb222a43ae39d67bc72670c9bc7f039e94435",
+    "version": "3.52.0",
+    "license": {
+      "title": "MIT",
+      "spdx": "MIT",
+      "url": "https://github.com/tabler/tabler-icons/blob/master/LICENSE"
+    },
+    "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/master/LICENSE",
+    "licenseSha256": "673c26961804abba117ce7744e8304dc0a48486d0460312946b24fd0d6a8236f",
+    "count": 6521,
+    "duplicatesExcluded": 24,
+    "file": "collections/tabler-744a656f9486.json"
+  },
+  {
+    "prefix": "bi",
+    "name": "Bootstrap Icons",
+    "website": "https://icons.getbootstrap.com/",
+    "author": {
+      "name": "The Bootstrap Authors",
+      "url": "https://github.com/twbs/icons"
+    },
+    "source": "https://raw.githubusercontent.com/iconify/icon-sets/81ad501f19cc13e548e4cb6a9c63a3873c87262a/json/bi.json",
+    "sourceSha256": "c8500368e5848ec5958d15e38fd33f61a9d3c7a00dbc516b78a0703c629e35d7",
+    "version": "1.13.2",
+    "license": {
+      "title": "MIT",
+      "spdx": "MIT",
+      "url": "https://github.com/twbs/icons/blob/main/LICENSE.md"
+    },
+    "licenseSource": "https://raw.githubusercontent.com/twbs/icons/main/LICENSE",
+    "licenseSha256": "5b2e1cc7660ce577a576b0d86da4343d4c6b9153d5593047fc1de38609dc2dd5",
+    "count": 2076,
+    "duplicatesExcluded": 2,
+    "file": "collections/bi-43caa7674777.json"
+  },
+  {
+    "prefix": "heroicons",
+    "name": "HeroIcons",
+    "website": "https://heroicons.com/",
+    "author": {
+      "name": "Refactoring UI Inc",
+      "url": "https://github.com/tailwindlabs/heroicons"
+    },
+    "source": "https://raw.githubusercontent.com/iconify/icon-sets/81ad501f19cc13e548e4cb6a9c63a3873c87262a/json/heroicons.json",
+    "sourceSha256": "fca0072086b18fbdf36fb61eeb6c58eacaa37209268cc7754c0c01762df721e7",
+    "version": "2.2.0",
+    "license": {
+      "title": "MIT",
+      "spdx": "MIT",
+      "url": "https://github.com/tailwindlabs/heroicons/blob/master/LICENSE"
+    },
+    "licenseSource": "https://raw.githubusercontent.com/tailwindlabs/heroicons/master/LICENSE",
+    "licenseSha256": "fdd854c84f367147ac4376837dee5002b0d2db39e8effed810ebc48f9bb70318",
+    "count": 1281,
+    "duplicatesExcluded": 7,
+    "file": "collections/heroicons-70c251de8849.json"
+  },
+  {
+    "prefix": "feather",
+    "name": "Feather Icons",
+    "website": "https://feathericons.com/",
+    "author": {
+      "name": "Cole Bemis",
+      "url": "https://github.com/feathericons/feather"
+    },
+    "source": "https://raw.githubusercontent.com/iconify/icon-sets/81ad501f19cc13e548e4cb6a9c63a3873c87262a/json/feather.json",
+    "sourceSha256": "02b55814997df1313c24a89c768f2cc4b60baff17b9d5a4dd9ff8895a9ddd11b",
+    "version": null,
+    "license": {
+      "title": "MIT",
+      "spdx": "MIT",
+      "url": "https://github.com/feathericons/feather/blob/master/LICENSE"
+    },
+    "licenseSource": "https://raw.githubusercontent.com/feathericons/feather/master/LICENSE",
+    "licenseSha256": "d04c03730c6d485b19ad17481529ef37413fcd6d71cb40d4ebae93e808a22e39",
+    "count": 231,
+    "duplicatesExcluded": 55,
+    "file": "collections/feather-bb62da9014ce.json"
+  },
+  {
+    "prefix": "devicon",
+    "name": "Devicon",
+    "website": "https://devicon.dev/",
+    "author": {
+      "name": "konpa",
+      "url": "https://github.com/devicons/devicon/tree/master"
+    },
+    "source": "https://raw.githubusercontent.com/iconify/icon-sets/81ad501f19cc13e548e4cb6a9c63a3873c87262a/json/devicon.json",
+    "sourceSha256": "24bc113f54ea5be3bec458de3fa1ef167d2bd9397aed70c8ab9bc6eb8d6b2c35",
+    "version": null,
+    "license": {
+      "title": "MIT",
+      "spdx": "MIT",
+      "url": "https://github.com/devicons/devicon/blob/master/LICENSE"
+    },
+    "licenseSource": "https://raw.githubusercontent.com/devicons/devicon/master/LICENSE",
+    "licenseSha256": "35a8bb686e0ec4f23368612b1771b0e0b7ec34bb085c4618c5d84b8fef50fc1e",
+    "count": 1155,
+    "duplicatesExcluded": 0,
+    "file": "collections/devicon-08093d6e45ef.json"
+  },
+  {
+    "prefix": "iconoir",
+    "name": "Iconoir",
+    "website": "https://iconoir.com/",
+    "author": {
+      "name": "Luca Burgio",
+      "url": "https://github.com/iconoir-icons/iconoir"
+    },
+    "source": "https://raw.githubusercontent.com/iconify/icon-sets/81ad501f19cc13e548e4cb6a9c63a3873c87262a/json/iconoir.json",
+    "sourceSha256": "5e304cea2aa2ef86e3b126422b17c3475e7a6e776799df240d1993804d9546dd",
+    "version": "7.12.2",
+    "license": {
+      "title": "MIT",
+      "spdx": "MIT",
+      "url": "https://github.com/iconoir-icons/iconoir/blob/main/LICENSE"
+    },
+    "licenseSource": "https://raw.githubusercontent.com/iconoir-icons/iconoir/main/LICENSE",
+    "licenseSha256": "10fc9f3910587dcee1592637899570622b00d8b1028970d0bbf3d79b36b9e4b1",
+    "count": 1671,
+    "duplicatesExcluded": 0,
+    "file": "collections/iconoir-d66105b05659.json"
+  }
+]

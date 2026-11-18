@@ -1,0 +1,42 @@
+{
+  "revision": "81ad501f19cc13e548e4cb6a9c63a3873c87262a",
+  "repository": "https://github.com/iconify/icon-sets",
+  "collections": [
+    {
+      "prefix": "lucide",
+      "label": "Outline",
+      "website": "https://lucide.dev/"
+    },
+    {
+      "prefix": "tabler",
+      "label": "Line & filled",
+      "website": "https://tabler.io/icons"
+    },
+    {
+      "prefix": "bi",
+      "label": "Interface",
+      "website": "https://icons.getbootstrap.com/",
+      "licenseSource": "https://raw.githubusercontent.com/twbs/icons/main/LICENSE"
+    },
+    {
+      "prefix": "heroicons",
+      "label": "UI essentials",
+      "website": "https://heroicons.com/"
+    },
+    {
+      "prefix": "feather",
+      "label": "Classic outline",
+      "website": "https://feathericons.com/"
+    },
+    {
+      "prefix": "devicon",
+      "label": "Developer logos",
+      "website": "https://devicon.dev/"
+    },
+    {
+      "prefix": "iconoir",
+      "label": "Fine outline",
+      "website": "https://iconoir.com/"
+    }
+  ]
+}
