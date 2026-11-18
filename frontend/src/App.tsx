@@ -12,7 +12,7 @@ function App() {
         <Route path="/cards/*" element={null} />
         <Route path="/canvas" element={null} />
         <Route path="/projects" element={null} />
-        <Route path="/dev-tools" element={null} />
+        <Route path="/dev-tools/*" element={null} />
       </Route>
       <Route path="*" element={<Navigate to="/cards" replace />} />
     </Routes>
