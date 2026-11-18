@@ -16,12 +16,12 @@ export function IconGrid({
 }) {
   return (
     <>
-      <div className="dev-icon-grid" aria-label="Lucide icons">
+      <div className="dev-icon-grid" aria-label="Icon catalog">
         {entries.slice(0, limit).map((entry) => (
           <IconTile
-            key={entry.name}
+            key={entry.id}
             entry={entry}
-            selected={selected === entry.name}
+            selected={selected === entry.id}
             onSelect={onSelect}
           />
         ))}

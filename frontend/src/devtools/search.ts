@@ -9,6 +9,7 @@ export function searchIcons(
   icons: IconEntry[],
   query: string,
   category: Category,
+  collection = "all",
 ) {
   const words = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
   return icons.filter((icon) => {
@@ -16,7 +17,10 @@ export function searchIcons(
       .toLowerCase()
       .replace(/[-_]/g, " ");
     return (
-      (category === "All icons" || development.test(icon.label)) &&
+      (collection === "all" || collection === icon.collection) &&
+      (category === "All icons" ||
+        icon.collection === "devicon" ||
+        development.test(icon.label)) &&
       words.every((word) => text.includes(word.replace(/[-_]/g, " ")))
     );
   });

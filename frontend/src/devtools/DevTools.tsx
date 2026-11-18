@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { SearchX } from "lucide-react";
-import { catalog, defaultIcon } from "./catalog";
+import { catalog, collections, defaultIcon } from "./catalog";
 import { searchIcons } from "./search";
 import type { Category } from "./search";
 import { IconSearch } from "./IconSearch";
@@ -15,11 +15,12 @@ export default function DevTools({
 }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Category>("All icons");
+  const [collection, setCollection] = useState("all");
   const [selected, setSelected] = useState(defaultIcon);
   const [limit, setLimit] = useState(96);
   const results = useMemo(
-    () => searchIcons(catalog, query, category),
-    [query, category],
+    () => searchIcons(catalog, query, category, collection),
+    [query, category, collection],
   );
   return (
     <main className="dev-tools">
@@ -34,11 +35,18 @@ export default function DevTools({
               Small tools. A little less friction. Start with the perfect icon.
             </p>
           </div>
-          <span className="dev-library-badge">Lucide React</span>
+          <span className="dev-library-badge">
+            {collections.length} collections
+          </span>
         </header>
         <IconSearch
           query={query}
           category={category}
+          collection={collection}
+          onCollection={(value) => {
+            setCollection(value);
+            setLimit(96);
+          }}
           onQuery={(value) => {
             setQuery(value);
             setLimit(96);
@@ -55,7 +63,7 @@ export default function DevTools({
         {results.length ? (
           <IconGrid
             entries={results}
-            selected={selected.name}
+            selected={selected.id}
             limit={limit}
             onSelect={(entry) => {
               setSelected(entry);
@@ -75,6 +83,7 @@ export default function DevTools({
               onClick={() => {
                 setQuery("");
                 setCategory("All icons");
+                setCollection("all");
                 setLimit(96);
               }}
             >

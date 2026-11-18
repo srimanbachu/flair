@@ -1,8 +1,11 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Check, Copy } from "lucide-react";
+import { collections } from "./catalog";
 import type { IconEntry } from "./catalog";
 import { jsxSource, svgSource } from "./source";
 import { copyText } from "./clipboard";
+import { Artwork } from "./Artwork";
+import { useIconData } from "./useIconData";
 
 export function IconInspector({
   entry,
@@ -14,20 +17,25 @@ export function IconInspector({
   const [size, setSize] = useState(24);
   const [strokeWidth, setStrokeWidth] = useState(2);
   const [copied, setCopied] = useState("");
-  const svg = useRef<SVGSVGElement>(null);
-  const { Icon, name } = entry;
+  const { data, error, retry } = useIconData(entry);
+  const collection = collections.find(
+    (item) => item.prefix === entry.collection,
+  )!;
+  const copyKey = `${entry.id}:${size}:${strokeWidth}`;
   async function copy(format: "JSX" | "SVG") {
+    if (!data) return;
     try {
-      if (!svg.current) return;
       await copyText(
         format === "JSX"
-          ? jsxSource(name, size, strokeWidth)
-          : svgSource(svg.current),
+          ? jsxSource(data.artwork, size, strokeWidth, data.license)
+          : svgSource(data.artwork, size, strokeWidth, data.license),
       );
-      setCopied(`${name}:${size}:${strokeWidth}:${format}`);
-      notify(`${name} ${format} copied to clipboard.`);
+      setCopied(`${copyKey}:${format}`);
+      notify(`${entry.name} ${format} copied to clipboard.`);
     } catch {
-      notify("Could not access your clipboard. Select and copy the JSX below.");
+      notify(
+        "Could not access your clipboard. Select and copy the source below.",
+      );
     }
   }
   return (
@@ -36,16 +44,27 @@ export function IconInspector({
       className="dev-inspector"
       aria-label="Icon details"
     >
-      <div className="dev-preview">
-        <Icon
-          ref={svg}
-          size={size}
-          strokeWidth={strokeWidth}
-          aria-hidden="true"
-        />
+      <div className="dev-preview" aria-busy={!data && !error}>
+        {data ? (
+          <Artwork
+            artwork={data.artwork}
+            size={size}
+            strokeWidth={strokeWidth}
+          />
+        ) : error ? (
+          <div role="alert">
+            <p>{error}</p>
+            <button onClick={retry}>Retry loading icon</button>
+          </div>
+        ) : (
+          <span className="dev-icon-loading">Loading icon…</span>
+        )}
       </div>
-      <h2>{name}</h2>
-      <p>Lucide React · Outline</p>
+      <h2>{entry.name}</h2>
+      <p>
+        {collection.label} ·{" "}
+        {data?.artwork.stroke ? "Outline" : data ? "Vector" : "Loading…"}
+      </p>
       <div className="dev-options">
         <label>
           Size{" "}
@@ -66,6 +85,12 @@ export function IconInspector({
           <select
             aria-label="Stroke width"
             value={strokeWidth}
+            disabled={!data?.artwork.stroke}
+            title={
+              data && !data.artwork.stroke
+                ? "This icon uses filled shapes."
+                : undefined
+            }
             onChange={(event) => setStrokeWidth(Number(event.target.value))}
           >
             {[1, 1.5, 2, 2.5, 3].map((value) => (
@@ -80,10 +105,11 @@ export function IconInspector({
         {(["JSX", "SVG"] as const).map((format) => (
           <button
             key={format}
+            disabled={!data}
             className={format === "JSX" ? "primary" : "dev-copy-svg"}
             onClick={() => copy(format)}
           >
-            {copied === `${name}:${size}:${strokeWidth}:${format}` ? (
+            {copied === `${copyKey}:${format}` ? (
               <Check size={14} />
             ) : (
               <Copy size={14} />
@@ -93,18 +119,22 @@ export function IconInspector({
         ))}
       </div>
       <pre className="dev-source" tabIndex={0} aria-label="JSX source">
-        <code>{jsxSource(name, size, strokeWidth)}</code>
+        <code>
+          {data
+            ? jsxSource(data.artwork, size, strokeWidth)
+            : "Loading source…"}
+        </code>
       </pre>
       <p className="dev-inspector-note">
-        Ready to drop into your next project.
+        Self-contained SVG and JSX. No icon package required.
       </p>
       <a
         className="dev-license"
-        href="https://lucide.dev/license"
+        href={`${import.meta.env.BASE_URL}icons/NOTICE.txt`}
         target="_blank"
         rel="noreferrer"
       >
-        Lucide · ISC license ↗
+        Icon licenses ↗
       </a>
     </aside>
   );

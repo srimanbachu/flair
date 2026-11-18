@@ -1,15 +1,27 @@
-import { icons } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import manifest from "./data/manifest.json";
 
-export type IconEntry = { name: string; label: string; Icon: LucideIcon };
+export type IconEntry = {
+  id: string;
+  key: string;
+  name: string;
+  label: string;
+  collection: string;
+};
 
-// Use the installed package as the source of truth; no hand-maintained icon list.
-export const catalog: IconEntry[] = Object.entries(icons)
-  .map(([name, Icon]) => ({
-    name,
-    label: name.replace(/([a-z0-9])([A-Z])/g, "$1 $2"),
-    Icon,
-  }))
-  .sort((a, b) => a.name.localeCompare(b.name));
+export const collections = manifest.collections;
+export const catalog: IconEntry[] = collections.flatMap((collection) =>
+  collection.names.map((key) => ({
+    id: `${collection.prefix}:${key}`,
+    key,
+    name: key
+      .split("-")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(""),
+    label: key.replaceAll("-", " "),
+    collection: collection.prefix,
+  })),
+);
 
-export const defaultIcon = catalog.find((icon) => icon.name === "Terminal")!;
+export const defaultIcon = catalog.find(
+  (icon) => icon.id === "lucide:terminal",
+)!;

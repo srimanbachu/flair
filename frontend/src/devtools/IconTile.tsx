@@ -1,4 +1,6 @@
 import type { IconEntry } from "./catalog";
+import { Artwork } from "./Artwork";
+import { useIconData } from "./useIconData";
 
 export function IconTile({
   entry,
@@ -9,16 +11,24 @@ export function IconTile({
   selected: boolean;
   onSelect: (entry: IconEntry) => void;
 }) {
-  const { Icon, name, label } = entry;
+  const { name, label } = entry;
+  const { data, error } = useIconData(entry);
   return (
     <button
       className={`dev-icon-tile${selected ? " selected" : ""}`}
       aria-label={name}
       aria-pressed={selected}
       title={name}
+      data-icon-id={entry.id}
       onClick={() => onSelect(entry)}
     >
-      <Icon size={24} strokeWidth={1.75} aria-hidden="true" />
+      {data ? (
+        <Artwork artwork={data.artwork} size={24} />
+      ) : (
+        <span className="dev-icon-placeholder" aria-hidden="true">
+          {error ? "!" : "·"}
+        </span>
+      )}
       <span>{label}</span>
     </button>
   );

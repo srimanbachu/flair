@@ -1,17 +1,22 @@
 import { Search, X } from "lucide-react";
 import { categories } from "./search";
 import type { Category } from "./search";
+import { collections } from "./catalog";
 
 export function IconSearch({
   query,
   category,
+  collection,
   onQuery,
   onCategory,
+  onCollection,
 }: {
   query: string;
   category: Category;
+  collection: string;
   onQuery: (value: string) => void;
   onCategory: (value: Category) => void;
+  onCollection: (value: string) => void;
 }) {
   return (
     <div className="dev-toolbar">
@@ -29,6 +34,19 @@ export function IconSearch({
           </button>
         )}
       </div>
+      <select
+        className="dev-collection-select"
+        aria-label="Icon collection"
+        value={collection}
+        onChange={(event) => onCollection(event.target.value)}
+      >
+        <option value="all">All collections</option>
+        {collections.map((item) => (
+          <option key={item.prefix} value={item.prefix}>
+            {item.label} · {item.count.toLocaleString()}
+          </option>
+        ))}
+      </select>
       <div className="dev-categories" aria-label="Icon categories">
         {categories.map((value) => (
           <button
