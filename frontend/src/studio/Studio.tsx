@@ -358,6 +358,10 @@ export default function Studio() {
             <PenTool size={16} />
             Canvas
           </NavLink>
+          <NavLink to="/dev-tools">
+            <Wrench size={16} />
+            Dev Tools
+          </NavLink>
         </div>
         <div className="header-actions">
           <span className="draft-status" role="note" title={draftStatus}>
