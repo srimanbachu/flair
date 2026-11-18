@@ -38,8 +38,8 @@
 }
 .dev-library-badge {
   color: var(--accent);
-  border: 1px solid var(--line-strong);
-  border-radius: 6px;
+  background: var(--accent-soft);
+  border-radius: 999px;
   padding: 6px 10px;
   font-size: 11px;
   white-space: nowrap;
@@ -54,9 +54,9 @@
   max-width: 100%;
   height: 40px;
   padding: 0 10px;
-  border: 1px solid var(--line-strong);
-  border-radius: 8px;
-  background: var(--panel);
+  border: 0;
+  border-radius: 10px;
+  background: var(--surface);
   color: var(--text);
   font-size: 12px;
 }
@@ -77,9 +77,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: var(--panel);
-  border: 1px solid var(--line-strong);
-  border-radius: 8px;
+  background: var(--surface);
+  border-radius: 10px;
   padding: 0 12px;
   color: var(--muted);
   height: 40px;
@@ -132,19 +131,16 @@
   flex-direction: column;
   gap: 15px;
   padding: 16px 8px 12px;
-  border: 1px solid var(--line);
   background: var(--panel);
-  border-radius: 8px;
-  color: #b7b7c2;
+  border-radius: 12px;
+  color: var(--text-2);
 }
 .studio .dev-icon-tile:hover {
-  background: var(--elev);
-  border-color: var(--line-strong);
+  background: var(--surface);
   color: var(--text);
 }
 .studio .dev-icon-tile.selected {
   background: var(--accent-soft);
-  border-color: #8fdcd855;
   color: var(--accent);
 }
 .dev-icon-tile span {
@@ -157,8 +153,8 @@
 .studio .dev-load-more {
   display: flex;
   margin: 24px auto 4px;
-  border: 1px solid var(--line-strong);
-  color: var(--muted);
+  background: var(--surface);
+  color: var(--text-2);
   font-size: 12px;
 }
 .dev-empty {
@@ -230,11 +226,10 @@
   justify-content: center;
   height: 180px;
   background: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 12px;
   color: var(--accent);
   margin-bottom: 24px;
-  background-image: radial-gradient(#ffffff0c 1px, transparent 1px);
+  background-image: radial-gradient(var(--fill) 1px, transparent 1px);
   background-size: 16px 16px;
 }
 .dev-inspector h2 {
@@ -262,8 +257,8 @@
   width: 100%;
   padding: 9px;
   margin-top: 7px;
-  border: 1px solid var(--line-strong);
-  border-radius: 6px;
+  border: 0;
+  border-radius: 8px;
   background: var(--field);
   color: var(--text);
 }
@@ -282,7 +277,9 @@
   font-size: 11px;
 }
 .studio .dev-copy-svg {
-  border: 1px solid var(--line-strong);
+  background: var(--surface);
+}
+.studio .dev-copy-svg:hover {
   background: var(--elev);
 }
 .dev-source {
@@ -291,14 +288,13 @@
   padding: 14px;
   margin: 20px 0 14px;
   background: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: 7px;
+  border-radius: 10px;
   font:
     11px/1.8 ui-monospace,
     SFMono-Regular,
     Consolas,
     monospace;
-  color: #b6b7c2;
+  color: var(--text-2);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   user-select: text;
