@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { lazy, Suspense, useState, useRef, useEffect, useCallback } from "react";
 import {
   Navigate,
   NavLink,
@@ -23,6 +23,7 @@ import {
   Palette,
   AppWindow,
   LayoutTemplate,
+  Wrench,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { toPng, toJpeg, toBlob } from "html-to-image";
@@ -39,6 +40,7 @@ import { download, readProjects, removeProject, saveProject } from "./storage";
 import { parseProject, validateBoard, validateCard } from "./projectFiles";
 import flairLogo from "../assets/flair.png";
 import "./studio.css";
+const DevTools = lazy(() => import("../devtools/DevTools"));
 const tabIcons: Record<string, LucideIcon> = {
   Typography: Type,
   Background: Palette,
@@ -75,6 +77,7 @@ export default function Studio() {
   const workspacePath = (kind: Workspace["kind"]) =>
     kind === "canvas" ? "/canvas" : "/cards";
   const onProjects = location.pathname === "/projects";
+  const onDevTools = location.pathname === "/dev-tools";
   const [past, setPast] = useState<Workspace[]>([]);
   const [future, setFuture] = useState<Workspace[]>([]);
   const [activeBlock, setActiveBlock] = useState(0);
