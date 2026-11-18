@@ -64,18 +64,47 @@ test("first visit follows the system theme", async ({ page }) => {
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
 });
 
-test("the canvas board stays dark in light mode", async ({ page }) => {
-  await page.emulateMedia({ colorScheme: "light" });
-  await page.goto("/canvas");
-  await expect(page.locator(".canvas-surface")).toHaveCSS(
-    "background-color",
-    "rgb(0, 0, 0)",
-  );
-  await expect(page.locator(".studio-header")).toBeVisible();
-  await expect(page.locator("body")).toHaveCSS(
-    "background-color",
-    "rgb(255, 255, 255)",
-  );
+for (const [theme, board, ink] of [
+  ["light", "rgb(255, 255, 255)", "#1f2328"],
+  ["dark", "rgb(0, 0, 0)", "#d8dbe0"],
+] as const)
+  test(`the canvas board and its export follow ${theme} mode`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ colorScheme: theme });
+    await page.goto("/canvas");
+    await expect(page.locator(".canvas-surface")).toHaveCSS(
+      "background-color",
+      board,
+    );
+    await page.getByRole("button", { name: "System architecture" }).click();
+    await expect(
+      page.locator(`.canvas-surface [stroke="${ink}"]`).first(),
+    ).toBeAttached();
+    await page.getByRole("button", { name: /Export/ }).click();
+    const download = page.waitForEvent("download");
+    await page.getByRole("button", { name: /SVG vector/ }).click();
+    const file = await (await download).path();
+    const svg = (await import("node:fs")).readFileSync(file!, "utf8");
+    expect(svg).toContain(ink);
+  });
+
+test("line effects popover closes on an outside press or Escape", async ({
+  page,
+}) => {
+  await page.goto("/cards/typography");
+  const pop = page.locator("details.effects-pop");
+  await page.getByText("Line effects").click();
+  await expect(pop).toHaveAttribute("open", "");
+  // Pressing inside the popover keeps it open.
+  await pop.locator("input").first().click();
+  await expect(pop).toHaveAttribute("open", "");
+  await page.locator(".inspector").click({ position: { x: 20, y: 20 } });
+  await expect(pop).not.toHaveAttribute("open");
+  await page.getByText("Line effects").click();
+  await expect(pop).toHaveAttribute("open", "");
+  await page.keyboard.press("Escape");
+  await expect(pop).not.toHaveAttribute("open");
 });
 
 test("studio chrome has no strokes", async ({ page }) => {

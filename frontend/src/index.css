@@ -2,10 +2,9 @@
 
 /* Theme tokens. Surfaces are separated by tone rather than strokes, so each
    step up (bg → panel → surface → elev) is a small, deliberate lift.
-   The canvas board is a dark drawing surface in both themes: its ink colours
-   and PNG/SVG exports are tuned for dark, so it always takes the dark set. */
-:root,
-.canvas-surface {
+   The canvas board follows the theme; built-in drawing colours swap to
+   light counterparts in src/studio/canvasPalette.ts. */
+:root {
   --bg: #000000;
   --stage: #000000;
   --panel: #0c0c0c;
@@ -30,6 +29,8 @@
   --card-shadow: 0 24px 70px #00000088;
   --scrim: #000000a6;
   --board: #000000;
+  --board-dot: #77708355;
+  --board-grid: #77708322;
   color-scheme: dark;
 }
 :root[data-theme="light"] {
@@ -56,6 +57,9 @@
   --shadow: 0 12px 40px #0000001f, 0 2px 6px #0000000d;
   --card-shadow: 0 20px 60px #0000002b, 0 4px 14px #00000014;
   --scrim: #00000059;
+  --board: #ffffff;
+  --board-dot: #00000029;
+  --board-grid: #00000012;
   color-scheme: light;
 }
 :root {

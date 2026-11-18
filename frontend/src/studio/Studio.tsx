@@ -263,7 +263,7 @@ export default function Studio() {
   };
   const exportCanvas = async (format: string) => {
     const { canvasSVG } = await import("./CanvasExport");
-    const { text, bounds: b } = canvasSVG(work.board);
+    const { text, bounds: b } = canvasSVG(work.board, theme);
     if (format === "svg") {
       download("flair-canvas.svg", text, "image/svg+xml");
       return;
@@ -284,7 +284,7 @@ export default function Studio() {
       canvas.width = b.w * factor;
       canvas.height = b.h * factor;
       const ctx = canvas.getContext("2d")!;
-      ctx.fillStyle = "#000000";
+      ctx.fillStyle = theme === "light" ? "#ffffff" : "#000000";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       const a = document.createElement("a");
@@ -714,6 +714,7 @@ export default function Studio() {
           change={(board) => change({ ...work, board })}
           svgRef={svg}
           notify={notify}
+          theme={theme}
         />
       )}
       <input

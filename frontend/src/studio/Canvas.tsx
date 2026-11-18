@@ -44,6 +44,8 @@ import type { LucideIcon } from "lucide-react";
 import type { PointerEvent as ReactPointerEvent, RefObject } from "react";
 import type { Board, CanvasItem, Point } from "./canvasModel";
 import { bounds, makeItem, boardTemplate, boardTemplates } from "./canvasModel";
+import type { Theme } from "../theme";
+import { boardColors, paint } from "./canvasPalette";
 import { CanvasShape } from "./CanvasShape";
 import { Field, Slider, Toggle } from "./Controls";
 import { uid } from "./model";
@@ -142,11 +144,13 @@ function Swatches({
   value,
   options,
   onChange,
+  theme,
 }: {
   label: string;
   value: string;
   options: string[];
   onChange: (v: string) => void;
+  theme: Theme;
 }) {
   return (
     <div className="swatch-row" role="group" aria-label={label}>
@@ -156,7 +160,9 @@ function Swatches({
           <button
             key={c}
             className={`dot ${value === c ? "on" : ""} ${c === "transparent" ? "none" : ""}`}
-            style={c === "transparent" ? undefined : { background: c }}
+            style={
+              c === "transparent" ? undefined : { background: paint(c, theme) }
+            }
             aria-label={`${label} ${c === "transparent" ? "none" : c}`}
             aria-pressed={value === c}
             onClick={() => onChange(c)}
@@ -201,12 +207,15 @@ export function Canvas({
   change,
   svgRef,
   notify,
+  theme,
 }: {
   board: Board;
   change: (b: Board) => void;
   svgRef: RefObject<SVGSVGElement | null>;
   notify: (s: string) => void;
+  theme: Theme;
 }) {
+  const accent = boardColors[theme].accent;
   const [tool, setTool] = useState("select");
   const [spaceHeld, setSpaceHeld] = useState(false);
   const [panning, setPanning] = useState(false);
@@ -548,7 +557,8 @@ export function Canvas({
   const down = (e: ReactPointerEvent, id?: string, resize = false) => {
     if (present >= 0) return;
     e.preventDefault();
-    if (panel === "board") setPanel(null);
+    // Popovers close on a board press; the layers panel stays docked.
+    if (panel === "board" || panel === "keys") setPanel(null);
     const p = point(e);
     e.currentTarget.setPointerCapture(e.pointerId);
     // One pointer tool: drag empty space to box-select (a three-finger
@@ -929,6 +939,7 @@ export function Canvas({
                     item={i}
                     items={items}
                     selected={present < 0 && selected.includes(i.id)}
+                    theme={theme}
                   />
                 </g>
               ))}
@@ -941,8 +952,8 @@ export function Canvas({
                     width={10}
                     height={10}
                     rx={2}
-                    fill="#8fdcd8"
-                    stroke="#000000"
+                    fill={accent}
+                    stroke={boardColors[theme].base}
                     style={{ cursor: "nwse-resize" }}
                     onPointerDown={(e) => {
                       e.stopPropagation();
@@ -956,8 +967,8 @@ export function Canvas({
                   y={marquee.y}
                   width={marquee.w}
                   height={marquee.h}
-                  fill="#8fdcd814"
-                  stroke="#8fdcd8"
+                  fill={`${accent}14`}
+                  stroke={accent}
                   strokeDasharray="4 4"
                   pointerEvents="none"
                 />
@@ -1023,7 +1034,7 @@ export function Canvas({
                         ? "#30281b"
                         : isCode
                           ? "#bfe3c2"
-                          : editItem.stroke,
+                          : paint(editItem.stroke, theme),
                   }}
                 />
               );
@@ -1249,6 +1260,7 @@ export function Canvas({
               value={first.stroke}
               options={strokeColors}
               onChange={(stroke) => patch({ stroke })}
+              theme={theme}
             />
             {!isLine &&
               !freehand.includes(first.kind) &&
@@ -1258,6 +1270,7 @@ export function Canvas({
                   value={first.fill}
                   options={fillColors}
                   onChange={(fill) => patch({ fill })}
+                  theme={theme}
                 />
               )}
             <Slider

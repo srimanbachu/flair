@@ -2,6 +2,8 @@ import { renderToStaticMarkup } from "react-dom/server";
 import type { Board, CanvasItem } from "./canvasModel";
 import { bounds, endpoints } from "./canvasModel";
 import { CanvasShape } from "./CanvasShape";
+import type { Theme } from "../theme";
+import { boardColors } from "./canvasPalette";
 export function exportBounds(items: CanvasItem[]) {
   const objects = items.map((i) => {
     let points = [
@@ -37,9 +39,11 @@ export function exportBounds(items: CanvasItem[]) {
   });
   return bounds(objects);
 }
-export function canvasSVG(board: Board) {
+/** The board as SVG, drawn in the theme the person is looking at. */
+export function canvasSVG(board: Board, theme: Theme = "dark") {
   const b = exportBounds(board.items);
-  const base = "#000000";
+  const colors = boardColors[theme];
+  const base = colors.base;
   return {
     bounds: b,
     text: renderToStaticMarkup(
@@ -57,16 +61,16 @@ export function canvasSVG(board: Board) {
             patternUnits="userSpaceOnUse"
           >
             {board.background === "Dots" ? (
-              <circle cx="1" cy="1" r="1" fill="#77708366" />
+              <circle cx="1" cy="1" r="1" fill={colors.dot} />
             ) : board.background === "Grid" ? (
-              <path d="M 20 0 H 0 V 20" stroke="#77708333" fill="none" />
+              <path d="M 20 0 H 0 V 20" stroke={colors.grid} fill="none" />
             ) : null}
           </pattern>
         </defs>
         <rect x={b.x} y={b.y} width={b.w} height={b.h} fill={base} />
         <rect x={b.x} y={b.y} width={b.w} height={b.h} fill="url(#export-bg)" />
         {board.items.map((i) => (
-          <CanvasShape key={i.id} item={i} items={board.items} />
+          <CanvasShape key={i.id} item={i} items={board.items} theme={theme} />
         ))}
       </svg>,
     ),

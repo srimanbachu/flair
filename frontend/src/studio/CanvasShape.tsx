@@ -46,19 +46,26 @@ function codeTokens(tokens: (string | Prism.Token)[]): ReactNode {
 }
 import type { CanvasItem } from "./canvasModel";
 import { endpoints } from "./canvasModel";
+import type { Theme } from "../theme";
+import { boardColors, paint } from "./canvasPalette";
 export const CanvasShape = memo(function CanvasShape({
   item: i,
   items,
   selected = false,
+  theme = "dark",
 }: {
   item: CanvasItem;
   items: CanvasItem[];
   selected?: boolean;
+  theme?: Theme;
 }) {
   const Icon =
     i.kind === "icon" ? icons[i.text as keyof typeof icons] : undefined;
-  const fill = i.gradient ? `url(#gradient-${i.id})` : i.fill;
-  const shapeProps = { fill, stroke: i.stroke, strokeWidth: i.strokeWidth };
+  const ink = paint(i.stroke, theme);
+  const tint = paint(i.fill, theme);
+  const accent = boardColors[theme].accent;
+  const fill = i.gradient ? `url(#gradient-${i.id})` : tint;
+  const shapeProps = { fill, stroke: ink, strokeWidth: i.strokeWidth };
   const isLine = ["arrow", "line"].includes(i.kind);
   const e = endpoints(i, items);
   return (
@@ -72,8 +79,8 @@ export const CanvasShape = memo(function CanvasShape({
     >
       <defs>
         <linearGradient id={`gradient-${i.id}`} x2="1" y2="1">
-          <stop stopColor={i.fill} />
-          <stop offset="1" stopColor={i.stroke} />
+          <stop stopColor={tint} />
+          <stop offset="1" stopColor={ink} />
         </linearGradient>
         <marker
           id={`arrow-${i.id}`}
@@ -84,7 +91,7 @@ export const CanvasShape = memo(function CanvasShape({
           markerHeight="8"
           orient="auto-start-reverse"
         >
-          <path d="M 0 0 L 10 5 L 0 10 z" fill={i.stroke} />
+          <path d="M 0 0 L 10 5 L 0 10 z" fill={ink} />
         </marker>
       </defs>
       {isLine ? (
@@ -94,7 +101,7 @@ export const CanvasShape = memo(function CanvasShape({
             y1={e.a.y}
             x2={e.b.x}
             y2={e.b.y}
-            stroke={i.stroke}
+            stroke={ink}
             strokeWidth={i.strokeWidth}
             markerEnd={i.kind === "arrow" ? `url(#arrow-${i.id})` : undefined}
           />
@@ -111,7 +118,7 @@ export const CanvasShape = memo(function CanvasShape({
         <polyline
           points={i.points.map((p) => `${i.x + p.x},${i.y + p.y}`).join(" ")}
           fill="none"
-          stroke={i.stroke}
+          stroke={ink}
           strokeWidth={
             i.kind === "brush"
               ? i.strokeWidth * 3
@@ -168,7 +175,7 @@ export const CanvasShape = memo(function CanvasShape({
               y={i.y + (i.h - i.fontSize) / 2}
               width={i.fontSize}
               height={i.fontSize}
-              stroke={i.stroke}
+              stroke={ink}
               strokeWidth={1.5}
             />
           )}
@@ -188,7 +195,7 @@ export const CanvasShape = memo(function CanvasShape({
                   ? "#30281b"
                   : i.kind === "code"
                     ? "#bfe3c2"
-                    : i.stroke
+                    : ink
               }
               fontFamily={i.kind === "code" ? "monospace" : i.font}
               fontSize={i.fontSize}
@@ -213,12 +220,12 @@ export const CanvasShape = memo(function CanvasShape({
       )}
       {i.comments.length > 0 && (
         <g>
-          <circle cx={i.x + i.w} cy={i.y} r={12} fill="#8fdcd8" />
+          <circle cx={i.x + i.w} cy={i.y} r={12} fill={accent} />
           <text
             x={i.x + i.w}
             y={i.y + 4}
             textAnchor="middle"
-            fill="#062120"
+            fill={theme === "light" ? "#ffffff" : "#062120"}
             fontSize={12}
           >
             {i.comments.length}
@@ -232,7 +239,7 @@ export const CanvasShape = memo(function CanvasShape({
           width={isLine ? Math.abs(e.b.x - e.a.x) + 12 : i.w + 12}
           height={isLine ? Math.abs(e.b.y - e.a.y) + 12 : i.h + 12}
           fill="none"
-          stroke="#8fdcd8"
+          stroke={accent}
           strokeWidth={1.5}
           strokeDasharray="5 4"
           pointerEvents="none"

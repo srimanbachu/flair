@@ -22,7 +22,7 @@ Browser tests use an installed Google Chrome (`channel: chrome`). Change the Pla
 
 ## Appearance
 
-Flair ships a pitch-black dark theme and a pure-white light theme. The first visit follows the system setting; the sun/moon button beside the logo switches themes and remembers the choice in `localStorage` (`flair.theme`). Theme tokens live on `:root` in `src/index.css`, and surfaces are separated by tone rather than borders. The canvas board stays dark in both themes so drawings match their PNG/SVG exports.
+Flair ships a pitch-black dark theme and a pure-white light theme. The first visit follows the system setting; the sun/moon button beside the logo switches themes and remembers the choice in `localStorage` (`flair.theme`). Theme tokens live on `:root` in `src/index.css`, and surfaces are separated by tone rather than borders. The canvas board follows the theme too: built-in drawing colours are stored once and drawn with light-mode counterparts on a white board (`src/studio/canvasPalette.ts`), and PNG/SVG exports use the theme you are viewing.
 
 ## Code cards
 

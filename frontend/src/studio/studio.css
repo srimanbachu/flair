@@ -1362,12 +1362,12 @@
   touch-action: none;
 }
 .canvas-bg-dots {
-  background-image: radial-gradient(#77708344 1px, transparent 1px);
+  background-image: radial-gradient(var(--board-dot) 1px, transparent 1px);
 }
 .canvas-bg-grid {
   background-image:
-    linear-gradient(#77708318 1px, transparent 1px),
-    linear-gradient(90deg, #77708318 1px, transparent 1px);
+    linear-gradient(var(--board-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--board-grid) 1px, transparent 1px);
 }
 /* ---------- Canvas: full-bleed board with floating panels ---------- */
 .canvas-layout {
