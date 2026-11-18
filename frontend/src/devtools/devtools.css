@@ -96,7 +96,7 @@
   padding: 0 12px;
   color: var(--muted);
   height: 40px;
-  transition: background 0.15s;
+  transition: background var(--dur-fast) var(--ease);
 }
 .dev-search:hover,
 .dev-search:focus-within {

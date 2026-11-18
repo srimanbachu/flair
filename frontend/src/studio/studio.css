@@ -11,8 +11,8 @@
   flex-direction: column;
   overflow: hidden;
   transition:
-    background 0.2s,
-    color 0.2s;
+    background var(--dur) var(--ease),
+    color var(--dur) var(--ease);
 }
 .studio * {
   box-sizing: border-box;
@@ -41,9 +41,14 @@
   background: transparent;
   color: inherit;
   padding: 8px 10px;
+  /* Hover and press feedback for every button. transform is included so the
+     press dip in motion.css eases in and back out instead of snapping. */
   transition:
-    background 0.15s,
-    color 0.15s;
+    background var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease),
+    opacity var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
 }
 .studio button:hover {
   background: var(--hover);
@@ -302,7 +307,7 @@
   width: 100%;
   min-width: 0;
   outline-offset: 1px;
-  transition: background 0.15s;
+  transition: background var(--dur-fast) var(--ease);
 }
 /* Filled fields lift on hover and focus. Transparent editors that sit over
    artwork (the card code editor, canvas text, inline titles) are excluded:
@@ -432,7 +437,7 @@
   border-radius: 999px;
   background: var(--fill-strong);
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background var(--dur-fast) var(--ease);
 }
 .toggle input::after {
   content: "";
@@ -443,7 +448,7 @@
   height: 14px;
   border-radius: 50%;
   background: var(--thumb);
-  transition: transform 0.15s;
+  transition: transform var(--dur-fast) var(--ease);
 }
 .toggle input:checked {
   background: var(--accent);
@@ -1275,7 +1280,7 @@
   overflow: hidden;
   padding: 12px;
   background: var(--panel);
-  transition: background 0.15s;
+  transition: background var(--dur-fast) var(--ease);
 }
 .project-grid article:hover {
   background: var(--surface);
@@ -2005,10 +2010,5 @@ a {
   }
   .effects-body {
     width: min(300px, calc(100vw - 40px));
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .studio * {
-    transition: none !important;
   }
 }

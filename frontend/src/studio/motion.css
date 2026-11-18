@@ -1,0 +1,225 @@
+/* ==========================================================================
+   Motion
+   --------------------------------------------------------------------------
+   One place for how Flair moves. Three kinds of motion, all short:
+
+   1. Feedback  – hover/colour changes and a small dip when a control is
+                  pressed, so every click is acknowledged under the finger.
+   2. Entrances – popovers, panels and toasts fade in while travelling a few
+                  pixels from where they are anchored, so it is clear where
+                  they came from.
+   3. Settling  – content that swaps in place (inspector tabs, the selected
+                  icon) fades up gently; see src/motion.ts.
+
+   Timings and easing come from the tokens in src/index.css. Everything here
+   is switched off for people who ask their system for reduced motion (bottom
+   of this file).
+   ========================================================================== */
+
+/* ---------- 1. Feedback ------------------------------------------------- */
+
+/* Links that act as buttons (workspace switch, header links, icon tiles,
+   breadcrumbs) get the same easing as real buttons. */
+.studio a {
+  transition:
+    background var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
+}
+
+/* The press dip. A 4% shrink reads as a physical push without making text
+   wobble. Disabled buttons stay still because nothing happens on press. */
+.studio button:not(:disabled):active,
+.studio .mode-switch a:active,
+.studio .header-link:active,
+.studio .dev-icon-tile:active,
+.studio summary:active {
+  transform: scale(var(--press));
+}
+
+/* Large targets dip less: a full-width row or a big tile shrinking by 4%
+   moves its edges a lot, so they get a gentler press. */
+.studio .export-menu button:not(:disabled):active,
+.studio .menu-item:active,
+.studio .layer-row:active,
+.studio .wide:not(:disabled):active,
+.studio .image-drop > button:active,
+.studio .template-grid button:active {
+  transform: scale(0.985);
+}
+
+/* The invisible full-screen layer that closes the export menu must never
+   scale: it covers the viewport and would visibly shift the page. */
+.studio button.menu-dismiss:active {
+  transform: none;
+}
+
+/* Summary elements (the Line effects trigger) animate like buttons. */
+.studio summary {
+  transition:
+    background var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
+}
+
+/* Switches: the knob glides and the track colour follows. */
+.toggle input,
+.toggle input::after {
+  transition:
+    background var(--dur-fast) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+/* Slider thumbs grow slightly while held, so the grab is obvious. */
+.studio input[type="range"]::-webkit-slider-thumb {
+  transition:
+    transform var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
+}
+.studio input[type="range"]:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+
+/* The selection ring on swatches and gradients fades in instead of
+   appearing, since its box-shadow is what marks the active choice. */
+.studio .color-dot,
+.studio .gradient-grid button,
+.studio .swatch-row .dot {
+  transition:
+    box-shadow var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
+}
+
+/* ---------- 2. Entrances ------------------------------------------------ */
+
+/* Menus that drop down from a trigger above them. */
+@keyframes drop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+/* Popovers that rise from a trigger below them (the block bar). */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.98);
+  }
+}
+
+/* Plain fade for things that are already in place, like canvas panels that
+   open beside their toolbar button. */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Toasts are centred with translateX(-50%), so their keyframe has to keep
+   that offset while it adds the rise. */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 6px);
+  }
+}
+
+/* Export menu: grows from its top-right corner, under the Export button. */
+.export-menu {
+  transform-origin: top right;
+  animation: drop-in var(--dur) var(--ease);
+}
+
+/* Line effects: grows upward from the block bar it belongs to. */
+.effects-body {
+  transform-origin: bottom left;
+  animation: rise-in var(--dur) var(--ease);
+}
+
+/* Canvas board menu and layers drop from the board bar; the selection panel
+   drops beside it; the shortcuts sheet rises from its corner button. */
+.board-menu,
+.layers-panel {
+  transform-origin: top left;
+  animation: drop-in var(--dur) var(--ease);
+}
+.props-panel {
+  transform-origin: top right;
+  animation: drop-in var(--dur) var(--ease);
+}
+.keys-panel {
+  transform-origin: bottom right;
+  animation: rise-in var(--dur) var(--ease);
+}
+
+/* Presentation controls and the empty-canvas prompt simply fade in. */
+.presentation-nav,
+.canvas-empty {
+  animation: fade-in var(--dur) var(--ease);
+}
+
+.toast {
+  animation: toast-in var(--dur) var(--ease);
+}
+
+/* Library cards and the empty library fade up as the projects page opens. */
+.project-grid article,
+.library-empty {
+  animation: rise-in var(--dur) var(--ease) backwards;
+}
+
+/* The danger state of Delete fades in so the colour change is noticed. */
+.studio .project-grid .section-title button.danger-confirm {
+  animation: fade-in var(--dur-fast) var(--ease);
+}
+
+/* The theme icon turns a little as sun and moon swap places. */
+@keyframes turn-in {
+  from {
+    opacity: 0;
+    transform: rotate(-60deg) scale(0.8);
+  }
+}
+.theme-icon {
+  display: inline-flex;
+  animation: turn-in var(--dur) var(--ease);
+}
+
+/* Dev Tools: a newly selected icon pops into the preview from slightly
+   smaller, which ties the click on a tile to the change on the right. */
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+.dev-preview-art {
+  display: inline-flex;
+  animation: pop-in var(--dur) var(--ease);
+}
+
+/* ---------- Reduced motion ---------------------------------------------- */
+
+/* Respect the system setting: no travel, no scaling, no fades. State
+   changes still happen instantly, so nothing is lost. */
+@media (prefers-reduced-motion: reduce) {
+  .studio *,
+  .studio *::before,
+  .studio *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  /* Kept separate: an unknown pseudo-element would void the whole list
+     above in browsers that are not WebKit-based. */
+  .studio input[type="range"]::-webkit-slider-thumb {
+    transition: none !important;
+    transform: none !important;
+  }
+  .studio button:active,
+  .studio a:active,
+  .studio summary:active {
+    transform: none !important;
+  }
+}
