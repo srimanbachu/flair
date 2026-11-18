@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Search, X } from "lucide-react";
 import { categories } from "./search";
 import type { Category } from "./search";
@@ -18,20 +19,42 @@ export function IconSearch({
   onCategory: (value: Category) => void;
   onCollection: (value: string) => void;
 }) {
+  const input = useRef<HTMLInputElement>(null);
+  // "/" jumps to search from anywhere on the page, as in most icon sites.
+  useEffect(() => {
+    const key = (event: KeyboardEvent) => {
+      if (event.key !== "/" || event.metaKey || event.ctrlKey) return;
+      const target = event.target as HTMLElement;
+      if (target.closest("input, textarea, select, [contenteditable]")) return;
+      event.preventDefault();
+      input.current?.focus();
+    };
+    window.addEventListener("keydown", key);
+    return () => window.removeEventListener("keydown", key);
+  }, []);
   return (
     <div className="dev-toolbar">
       <div className="dev-search">
         <Search size={16} aria-hidden="true" />
         <input
+          ref={input}
           aria-label="Search icons"
           placeholder="Search icons…"
           value={query}
           onChange={(event) => onQuery(event.target.value)}
         />
-        {query && (
-          <button aria-label="Clear search" onClick={() => onQuery("")}>
+        {query ? (
+          <button
+            aria-label="Clear search"
+            onClick={() => {
+              onQuery("");
+              input.current?.focus();
+            }}
+          >
             <X size={14} />
           </button>
+        ) : (
+          <kbd aria-hidden="true">/</kbd>
         )}
       </div>
       <select
