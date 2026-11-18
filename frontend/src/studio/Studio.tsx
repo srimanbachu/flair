@@ -544,8 +544,8 @@ export default function Studio() {
                 <FolderOpen size={32} />
                 <h3>No saved projects yet</h3>
                 <p>
-                  Save the current {work.kind === "card" ? "card" : "canvas"}{" "}
-                  to keep it here, or press <kbd>⌘/Ctrl</kbd> <kbd>S</kbd> any
+                  Save the current {work.kind === "card" ? "card" : "canvas"} to
+                  keep it here, or press <kbd>⌘/Ctrl</kbd> <kbd>S</kbd> any
                   time.
                 </p>
                 <button className="primary" onClick={save}>

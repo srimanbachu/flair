@@ -20,6 +20,10 @@ npm run format     # Format studio and tests
 
 Browser tests use an installed Google Chrome (`channel: chrome`). Change the Playwright configuration if using Playwright-managed Chromium instead.
 
+## Appearance
+
+Flair ships a pitch-black dark theme and a pure-white light theme. The first visit follows the system setting; the sun/moon button beside the logo switches themes and remembers the choice in `localStorage` (`flair.theme`). Theme tokens live on `:root` in `src/index.css`, and surfaces are separated by tone rather than borders. The canvas board stays dark in both themes so drawings match their PNG/SVG exports.
+
 ## Code cards
 
 - Multiple independently editable code blocks, language selection, custom labels, file names, and code copying.
@@ -43,7 +47,7 @@ Use the floating toolbar to select, pan, draw with pen/pencil/brush, erase whole
 - Select an arrow and choose **Connect from** and **Connect to**. Endpoints follow shape boundaries as shapes move and rotate.
 - Add a frame and use **Group frame contents** to move contained objects together. **Present frames** displays frames in layer order, with arrow-key navigation and Escape to exit.
 - Add comments to selected objects. Comments are local project data.
-- Wheel to zoom, use the hand to pan, and **Fit** to show the board. Optional snapping uses a 10px grid. Background choices are dots, grid, plain dark, and plain light.
+- Wheel to zoom, use the hand to pan, and **Fit** to show the board. Optional snapping uses a 10px grid. Background choices are dots, grid, and plain.
 - Architecture, flowchart, mind-map, and wireframe templates supply editable objects and attached connectors.
 - Canvas exports include all objects independently of the current pan, zoom, or selection. Download PNG, SVG, or editable project JSON. Large PNGs are scaled to fit an 8192px maximum edge; SVG preserves vector geometry.
 

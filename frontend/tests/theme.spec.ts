@@ -12,6 +12,8 @@ for (const width of [1920, 1440, 1101, 900, 761, 390])
       await page.goto(route);
       const nav = page.getByLabel("Workspace");
       await expect(nav).toBeVisible();
+      // Measure after the web font swaps in, so text width is final.
+      await page.evaluate(() => document.fonts.ready);
       const box = (await nav.boundingBox())!;
       const pos = { x: box.x, y: box.y, width: box.width };
       if (!first) first = pos;
@@ -88,8 +90,9 @@ test("studio chrome has no strokes", async ({ page }) => {
         const s = getComputedStyle(el);
         return ["Top", "Right", "Bottom", "Left"].some(
           (side) =>
-            parseFloat(s.getPropertyValue(`border-${side.toLowerCase()}-width`)) >
-              0 &&
+            parseFloat(
+              s.getPropertyValue(`border-${side.toLowerCase()}-width`),
+            ) > 0 &&
             s.getPropertyValue(`border-${side.toLowerCase()}-style`) !== "none",
         );
       })
