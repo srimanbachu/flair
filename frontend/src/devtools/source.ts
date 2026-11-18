@@ -76,3 +76,33 @@ export function jsxSource(
       )
     : jsx;
 }
+
+export function tsxSource(
+  name: string,
+  artwork: IconData,
+  size: number,
+  strokeWidth: number,
+  license?: string,
+) {
+  const identifier = name.replace(/[^a-zA-Z0-9_$]/g, "") || "Custom";
+  const component = /^[a-zA-Z_$]/.test(identifier)
+    ? `${identifier}Icon`
+    : `Icon${identifier}`;
+  let jsx = jsxSource(artwork, size, strokeWidth);
+  if (artwork.stroke)
+    jsx = jsx.replace(/strokeWidth=\{[^}]*\}/g, "strokeWidth={strokeWidth}");
+  jsx = jsx.replace(
+    /^(<svg\b[^>]*)(>)/,
+    `$1${artwork.stroke ? " strokeWidth={strokeWidth}" : ""} {...props}$2`,
+  );
+  const props = artwork.stroke
+    ? `{ strokeWidth = ${strokeWidth}, ...props }: SVGProps<SVGSVGElement>`
+    : "props: SVGProps<SVGSVGElement>";
+  const notice = license
+    ? `/*\n${license.replaceAll("*/", "* /")}\n*/\n\n`
+    : "";
+  return `${notice}import type { SVGProps } from "react";\n\nexport default function ${component}(${props}) {\n  return (\n${jsx
+    .split("\n")
+    .map((line) => `    ${line}`)
+    .join("\n")}\n  );\n}\n`;
+}
