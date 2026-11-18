@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { SearchX } from "lucide-react";
 import { catalog, collections, defaultIcon } from "./catalog";
 import { searchIcons } from "./search";
@@ -6,6 +7,7 @@ import type { Category } from "./search";
 import { IconSearch } from "./IconSearch";
 import { IconGrid } from "./IconGrid";
 import { IconInspector } from "./IconInspector";
+import { iconAtPath } from "./iconRoutes";
 import "./devtools.css";
 
 export default function DevTools({
@@ -13,15 +15,18 @@ export default function DevTools({
 }: {
   notify: (message: string) => void;
 }) {
+  const location = useLocation();
+  const isLibrary = location.pathname.replace(/\/+$/, "") === "/dev-tools";
+  const selected = isLibrary ? defaultIcon : iconAtPath(location.pathname);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Category>("All icons");
   const [collection, setCollection] = useState("all");
-  const [selected, setSelected] = useState(defaultIcon);
   const [limit, setLimit] = useState(96);
   const results = useMemo(
     () => searchIcons(catalog, query, category, collection),
     [query, category, collection],
   );
+  if (!selected) return <main className="dev-empty"><h1>Icon not found</h1><p>This icon isn't in the library.</p><a href="/dev-tools">Browse icons</a></main>;
   return (
     <main className="dev-tools">
       <div className="dev-content">
@@ -66,7 +71,6 @@ export default function DevTools({
             selected={selected.id}
             limit={limit}
             onSelect={(entry) => {
-              setSelected(entry);
               if (window.matchMedia("(max-width: 680px)").matches)
                 document
                   .getElementById("dev-icon-details")
