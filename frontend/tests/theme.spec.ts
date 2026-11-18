@@ -100,3 +100,35 @@ test("studio chrome has no strokes", async ({ page }) => {
   });
   expect(stroked).toEqual([]);
 });
+
+for (const theme of ["dark", "light"] as const)
+  test(`hovering the card never paints over the code (${theme})`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ colorScheme: theme });
+    await page.goto("/cards/typography");
+    const editor = page.locator("textarea.code-editor").first();
+    await page.locator(".code-window").first().hover();
+    await expect(editor).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    await editor.focus();
+    await expect(editor).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    const title = page.getByLabel("Card title");
+    await title.hover();
+    await expect(title).not.toHaveCSS("background-color", "rgb(28, 28, 28)");
+  });
+
+test("Dev Tools search row controls share one height and line", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/dev-tools");
+  const boxes = await Promise.all(
+    [".dev-search", ".dev-collection-select", ".dev-categories"].map(
+      async (s) => (await page.locator(s).boundingBox())!,
+    ),
+  );
+  for (const b of boxes) {
+    expect(b.height).toBe(40);
+    expect(b.y).toBe(boxes[0].y);
+  }
+});

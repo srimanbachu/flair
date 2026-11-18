@@ -12,6 +12,7 @@
   --surface: #141414;
   --elev: #1c1c1c;
   --field: #171717;
+  --field-hover: #1f1f1f;
   --hover: #ffffff0b;
   --fill: #ffffff12;
   --fill-strong: #ffffff1c;
@@ -38,6 +39,7 @@
   --surface: #efeff1;
   --elev: #ffffff;
   --field: #ececee;
+  --field-hover: #e2e2e5;
   --hover: #0000000a;
   --fill: #0000000f;
   --fill-strong: #0000001c;

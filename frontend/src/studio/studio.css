@@ -79,10 +79,11 @@
   width: 34px;
   height: 34px;
   padding: 0;
-  color: var(--muted);
+  color: var(--text);
+  background: var(--surface);
 }
 .studio .theme-toggle:hover {
-  color: var(--text);
+  background: var(--elev);
 }
 .brand {
   display: flex;
@@ -298,13 +299,16 @@
   outline-offset: 1px;
   transition: background 0.15s;
 }
-.studio input:not([type="range"]):not([type="checkbox"]):hover,
-.studio select:hover,
-.studio textarea:hover,
-.studio input:not([type="range"]):not([type="checkbox"]):focus,
-.studio select:focus,
-.studio textarea:focus {
-  background: var(--elev);
+/* Filled fields lift on hover and focus. Transparent editors that sit over
+   artwork (the card code editor, canvas text, inline titles) are excluded:
+   painting them would hide the content underneath. */
+.studio
+  input:not([type="range"]):not([type="checkbox"]):not(.card-title-input):not(
+    .board-title
+  ):not(.dev-search input):is(:hover, :focus),
+.studio select:is(:hover, :focus),
+.studio textarea:not(.code-editor):not(.canvas-text-editor):is(:hover, :focus) {
+  background-color: var(--field-hover);
 }
 .studio select {
   font-size: 12px;
