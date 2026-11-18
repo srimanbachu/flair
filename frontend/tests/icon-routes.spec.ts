@@ -1,6 +1,38 @@
 import { test, expect } from "@playwright/test";
 import manifest from "../src/devtools/data/manifest.json" with { type: "json" };
 
+test("icon links preserve browser history and library search", async ({ page }) => {
+  await page.goto("/dev-tools");
+  await page.getByLabel("Search icons").fill("braces");
+  const first = page.locator('[data-icon-id="lucide:braces"]');
+  await expect(first).toHaveAttribute("href", "/dev-tools/outline/braces");
+  await first.click();
+  await expect(page).toHaveURL(/\/dev-tools\/outline\/braces$/);
+  await expect(page.locator(".dev-inspector h2")).toHaveText("Braces");
+  await page.getByLabel("Search icons").fill("terminal");
+  await page.locator('[data-icon-id="lucide:terminal"]').click();
+  await expect(page).toHaveURL(/\/dev-tools\/outline\/terminal$/);
+  await page.goBack();
+  await expect(page.locator(".dev-inspector h2")).toHaveText("Braces");
+  await expect(page.getByLabel("Search icons")).toHaveValue("terminal");
+  await page.goForward();
+  await expect(page.locator(".dev-inspector h2")).toHaveText("Terminal");
+  await page.getByRole("link", { name: "Icon library", exact: true }).click();
+  await expect(page).toHaveURL(/\/dev-tools$/);
+  await expect(page.getByLabel("Search icons")).toHaveValue("terminal");
+});
+
+test("missing and malformed icon URLs stay in Dev Tools with a return link", async ({ page }) => {
+  for (const path of ["/dev-tools/missing/terminal", "/dev-tools/outline/no-such-icon", "/dev-tools/outline", "/dev-tools/outline/terminal/extra"]) {
+    await page.goto(path);
+    await expect(page.getByRole("heading", { name: "Icon not found", exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Copy TSX", exact: true })).toHaveCount(0);
+    await page.getByRole("link", { name: "Browse all icons" }).click();
+    await expect(page).toHaveURL(/\/dev-tools$/);
+    await expect(page.locator(".dev-preview svg")).toBeVisible();
+  }
+});
+
 test("each collection supports direct icon URLs and reloads", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
