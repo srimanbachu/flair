@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { collections } from "./catalog";
 import type { IconEntry } from "./catalog";
-import { jsxSource, svgSource } from "./source";
+import { jsxSource, svgSource, tsxSource } from "./source";
 import { copyText } from "./clipboard";
 import { Artwork } from "./Artwork";
 import { useIconData } from "./useIconData";
@@ -22,13 +22,21 @@ export function IconInspector({
     (item) => item.prefix === entry.collection,
   )!;
   const copyKey = `${entry.id}:${size}:${strokeWidth}`;
-  async function copy(format: "JSX" | "SVG") {
+  async function copy(format: "JSX" | "TSX" | "SVG") {
     if (!data) return;
     try {
       await copyText(
         format === "JSX"
           ? jsxSource(data.artwork, size, strokeWidth, data.license)
-          : svgSource(data.artwork, size, strokeWidth, data.license),
+          : format === "TSX"
+            ? tsxSource(
+                entry.name,
+                data.artwork,
+                size,
+                strokeWidth,
+                data.license,
+              )
+            : svgSource(data.artwork, size, strokeWidth, data.license),
       );
       setCopied(`${copyKey}:${format}`);
       notify(`${entry.name} ${format} copied to clipboard.`);
@@ -102,7 +110,7 @@ export function IconInspector({
         </label>
       </div>
       <div className="dev-copy-actions">
-        {(["JSX", "SVG"] as const).map((format) => (
+        {(["JSX", "TSX", "SVG"] as const).map((format) => (
           <button
             key={format}
             disabled={!data}
@@ -126,7 +134,7 @@ export function IconInspector({
         </code>
       </pre>
       <p className="dev-inspector-note">
-        Self-contained SVG and JSX. No icon package required.
+        Self-contained SVG, JSX and typed TSX. No icon package required.
       </p>
       <a
         className="dev-license"
