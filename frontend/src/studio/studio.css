@@ -171,10 +171,9 @@
   top: 42px;
   width: 250px;
   background: var(--elev);
-  border: 1px solid #ffffff18;
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 6px;
-  box-shadow: 0 10px 40px #0006;
+  box-shadow: var(--shadow);
   z-index: 2;
 }
 .export-menu button {
@@ -1161,10 +1160,10 @@
   transform: translateX(-50%);
   padding: 14px 17px;
   background: var(--elev);
-  border: 1px solid var(--line-strong);
-  box-shadow: 0 8px 40px #0006;
+  color: var(--text);
+  box-shadow: var(--shadow);
   z-index: 100;
-  border-radius: 9px;
+  border-radius: 12px;
   font-size: 12px;
   display: flex;
   align-items: center;
@@ -1215,10 +1214,9 @@
   width: 760px;
   align-self: flex-start;
   background: var(--panel);
-  border: 1px solid var(--line-strong);
   border-radius: 16px;
   padding: 22px 24px 24px;
-  box-shadow: 0 30px 80px #000c;
+  box-shadow: var(--shadow);
 }
 .library-modal h2 {
   font-size: 18px;
@@ -1234,8 +1232,10 @@
 }
 .library-actions button {
   font-size: 13px;
-  background: #ffffff08;
-  border: 1px solid #ffffff0c;
+  background: var(--surface);
+}
+.library-actions button:hover {
+  background: var(--elev);
 }
 .project-grid {
   display: grid;
@@ -1243,11 +1243,14 @@
   gap: 18px;
 }
 .project-grid article {
-  border: 1px solid #ffffff10;
-  border-radius: 9px;
+  border-radius: 14px;
   overflow: hidden;
   padding: 12px;
-  background: #ffffff02;
+  background: var(--panel);
+  transition: background 0.15s;
+}
+.project-grid article:hover {
+  background: var(--surface);
 }
 .project-cover {
   height: 92px;
@@ -1329,10 +1332,8 @@
   position: absolute;
   z-index: 4;
   background: var(--surface);
-  border: 1px solid var(--line-strong);
   border-radius: 12px;
-  box-shadow: 0 10px 30px #0009;
-  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow);
 }
 .studio .icon-btn {
   width: 32px;
@@ -1396,7 +1397,6 @@
   padding: 3px;
   border-radius: 9px;
   background: var(--field);
-  border: 1px solid var(--line);
 }
 .studio .segmented button {
   flex: 1;
@@ -1442,10 +1442,8 @@
   gap: 2px;
   padding: 4px;
   background: var(--surface);
-  border: 1px solid var(--line-strong);
   border-radius: 12px;
-  box-shadow: 0 10px 30px #0009;
-  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow);
   max-width: calc(100% - 24px);
   overflow-x: auto;
   scrollbar-width: none;
@@ -1515,9 +1513,8 @@
     sans-serif;
   padding: 3px 6px;
   border-radius: 5px;
-  background: #ffffff0d;
-  border: 1px solid var(--line-strong);
-  color: #c9cad1;
+  background: var(--fill);
+  color: var(--text-2);
 }
 .tool-sep {
   width: 8px;
@@ -1619,8 +1616,8 @@
   width: 100%;
   justify-content: flex-start;
   font-size: 12px;
-  color: #b6b7c0;
-  border: 1px dashed var(--line-strong);
+  color: var(--text-2);
+  background: var(--field);
   margin: 4px 0 6px;
 }
 .studio .edit-hint kbd {
@@ -1663,7 +1660,7 @@
 }
 .local-comment {
   padding: 8px 10px;
-  border: 1px solid var(--line);
+  background: var(--field);
   border-radius: 8px;
   font-size: 12px;
   margin: 8px 0;
@@ -1683,7 +1680,7 @@
 .studio .comment-form button {
   font-size: 12px;
   white-space: nowrap;
-  border: 1px solid var(--line-strong);
+  background: var(--field);
 }
 .zoom-controls {
   bottom: 12px;
@@ -1744,7 +1741,7 @@
   pointer-events: auto;
 }
 .studio .template-chips button {
-  border: 1px solid var(--line-strong);
+  background: var(--surface);
   border-radius: 999px;
   font-size: 12px;
   padding: 6px 12px;
@@ -1760,8 +1757,8 @@
   left: 50%;
   transform: translateX(-50%);
   background: var(--surface);
-  border: 1px solid var(--line-strong);
   border-radius: 12px;
+  box-shadow: var(--shadow);
   display: flex;
   align-items: center;
   gap: 12px;
