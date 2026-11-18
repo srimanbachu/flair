@@ -195,6 +195,11 @@
   padding: 6px;
   box-shadow: var(--shadow);
   z-index: 2;
+  /* Stack the options; the header's nowrap must not leak into the menu. */
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  white-space: normal;
 }
 .export-menu button {
   width: 100%;

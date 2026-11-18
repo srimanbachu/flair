@@ -161,3 +161,24 @@ test("Dev Tools search row controls share one height and line", async ({
     expect(b.y).toBe(boxes[0].y);
   }
 });
+
+for (const route of ["/cards", "/canvas"])
+  test(`export menu options stack inside the menu on ${route}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(route);
+    await page.locator(".export-wrap > button").click();
+    const menu = (await page.locator(".export-menu").boundingBox())!;
+    const items = page.locator(".export-menu button");
+    await expect(items).toHaveCount(3);
+    let lastY = -1;
+    for (const box of await Promise.all(
+      (await items.all()).map(async (item) => (await item.boundingBox())!),
+    )) {
+      expect(box.x).toBeGreaterThanOrEqual(menu.x);
+      expect(box.x + box.width).toBeLessThanOrEqual(menu.x + menu.width + 0.5);
+      expect(box.y).toBeGreaterThan(lastY);
+      lastY = box.y;
+    }
+  });
