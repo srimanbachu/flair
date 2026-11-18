@@ -222,7 +222,6 @@
 .dev-inspector {
   padding: 28px 22px;
   background: var(--panel);
-  border-left: 1px solid var(--line);
   overflow-y: auto;
 }
 .dev-preview {
@@ -333,8 +332,6 @@
 @media (max-width: 680px) {
   .dev-tools-detail .dev-inspector {
     order: -1;
-    border-top: 0;
-    border-bottom: 1px solid var(--line);
   }
   .dev-tools {
     display: flex;
@@ -352,8 +349,6 @@
     font-size: 28px;
   }
   .dev-inspector {
-    border-left: 0;
-    border-top: 1px solid var(--line);
     overflow: visible;
     padding: 20px 16px;
   }

@@ -63,7 +63,6 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  border-bottom: 1px solid var(--line);
   flex-shrink: 0;
   gap: 20px;
 }
@@ -184,7 +183,6 @@
   flex: 1;
 }
 .tool-rail {
-  border-right: 1px solid var(--line);
   padding: 10px 6px;
   overflow-y: auto;
   display: flex;
@@ -216,7 +214,6 @@
   padding: 20px 20px 40px;
   overflow-y: auto;
   background: var(--panel);
-  border-right: 1px solid var(--line);
   scrollbar-width: thin;
   scrollbar-color: #3b3948 transparent;
 }
@@ -767,7 +764,6 @@
   gap: 2px;
   padding-right: 6px;
   margin-right: 2px;
-  border-right: 1px solid var(--line);
 }
 .studio .block-tabs button {
   width: 28px;
@@ -1505,10 +1501,7 @@
   color: #c9cad1;
 }
 .tool-sep {
-  width: 1px;
-  height: 20px;
-  margin: 0 4px;
-  background: var(--line-strong);
+  width: 8px;
   flex-shrink: 0;
 }
 .props-panel {
@@ -1624,14 +1617,12 @@
   display: flex;
   flex-wrap: wrap;
   gap: 2px;
-  padding-top: 10px;
+  padding-top: 4px;
   margin-top: 12px;
-  border-top: 1px solid var(--line);
 }
 .panel-more {
   margin-top: 10px;
-  border-top: 1px solid var(--line);
-  padding-top: 10px;
+  padding-top: 4px;
   font-size: 12px;
 }
 .panel-more summary {
@@ -1878,8 +1869,6 @@ a {
   .tool-rail {
     order: 1;
     flex-direction: row;
-    border-bottom: 1px solid var(--line);
-    border-right: 0;
     padding: 6px;
     gap: 2px;
     flex-shrink: 0;
@@ -1905,7 +1894,6 @@ a {
   .inspector {
     order: 2;
     overflow: visible;
-    border-right: 0;
     padding: 25px 22px;
   }
   .project-grid {
