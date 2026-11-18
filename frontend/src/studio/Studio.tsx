@@ -399,7 +399,11 @@ export default function Studio() {
                 <Plus size={16} />
                 <span>New {work.kind === "card" ? "card" : "canvas"}</span>
               </button>
-              <NavLink to="/projects" className="header-link">
+              <NavLink
+                to="/projects"
+                className="header-link"
+                title="My projects"
+              >
                 <FolderOpen size={16} />
                 <span>My projects</span>
               </NavLink>

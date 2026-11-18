@@ -69,12 +69,17 @@
 .studio-header {
   height: 56px;
   padding: 0 18px;
-  display: flex;
+  /* Equal outer columns keep the workspace switch at the exact centre on
+     every route, whatever actions the right-hand side shows. */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
   border-bottom: 1px solid var(--line);
   flex-shrink: 0;
   gap: 20px;
+}
+.studio-header .brand {
+  justify-self: start;
 }
 .brand {
   display: flex;
@@ -123,9 +128,11 @@
   box-shadow: 0 2px 5px #0002;
 }
 .header-actions {
+  justify-self: end;
   display: flex;
   align-items: center;
   gap: 6px;
+  min-height: 34px;
   font-size: 12px;
 }
 .draft-status {
@@ -1826,7 +1833,8 @@ a {
   .header-actions {
     gap: 1px;
   }
-  .header-actions > button > span {
+  .header-actions > button > span,
+  .header-actions > .header-link > span {
     display: none;
   }
   .card-workspace {
@@ -1845,7 +1853,7 @@ a {
   .studio-header {
     height: auto;
     min-height: 96px;
-    flex-wrap: wrap;
+    grid-template-columns: auto minmax(0, 1fr);
     padding: 12px 14px;
     gap: 10px;
   }
@@ -1858,6 +1866,7 @@ a {
   }
   .mode-switch {
     order: 3;
+    grid-column: 1 / -1;
     width: 100%;
     justify-content: center;
   }
