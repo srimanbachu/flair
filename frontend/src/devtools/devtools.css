@@ -122,6 +122,11 @@
   gap: 8px;
 }
 .studio .dev-icon-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
   min-height: 102px;
   min-width: 0;
   flex-direction: column;
