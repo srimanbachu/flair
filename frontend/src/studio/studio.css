@@ -10,7 +10,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  color-scheme: dark;
+  transition: background 0.2s, color 0.2s;
 }
 .studio * {
   box-sizing: border-box;
@@ -84,6 +84,10 @@
   height: 26px;
   object-fit: contain;
   border-radius: 8px;
+}
+/* The pale flame mark needs more weight to hold up on white. */
+[data-theme="light"] .brand-logo {
+  filter: brightness(0.62) saturate(1.5);
 }
 .mode-switch {
   display: flex;
@@ -490,7 +494,7 @@
   width: 100%;
   padding: 0;
   border-radius: 50%;
-  box-shadow: inset 0 0 0 1px var(--fill);
+  box-shadow: inset 0 0 0 1px var(--fill-strong);
   cursor: pointer;
 }
 .studio .color-dot.on {
@@ -533,7 +537,7 @@
   aspect-ratio: 1;
   padding: 0;
   border-radius: 10px;
-  box-shadow: inset 0 0 0 1px var(--fill);
+  box-shadow: inset 0 0 0 1px var(--fill-strong);
 }
 .studio .gradient-grid button.on {
   box-shadow:
@@ -1300,6 +1304,8 @@
 }
 .canvas-surface {
   position: relative;
+  background-color: var(--board);
+  color: var(--text);
   flex: 1;
   min-height: 0;
   overflow: hidden;
@@ -1559,7 +1565,7 @@
   height: 22px;
   padding: 0;
   border-radius: 50%;
-  box-shadow: inset 0 0 0 1px var(--fill);
+  box-shadow: inset 0 0 0 1px var(--fill-strong);
 }
 .studio .swatch-row .dot.none {
   background: linear-gradient(

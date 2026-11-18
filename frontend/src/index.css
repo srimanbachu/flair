@@ -1,8 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Bpmf+Huninn&family=Limelight&family=Outfit:wght@100..900&family=Vend+Sans:ital,wght@0,300..700;1,300..700&display=swap');
 
 /* Theme tokens. Surfaces are separated by tone rather than strokes, so each
-   step up (bg → panel → surface → elev) is a small, deliberate lift. */
-:root {
+   step up (bg → panel → surface → elev) is a small, deliberate lift.
+   The canvas board is a dark drawing surface in both themes: its ink colours
+   and PNG/SVG exports are tuned for dark, so it always takes the dark set. */
+:root,
+.canvas-surface {
   --bg: #000000;
   --stage: #000000;
   --panel: #0c0c0c;
@@ -24,8 +27,35 @@
   --accent-soft: #8fdcd81c;
   --shadow: 0 12px 40px #000000b3;
   --scrim: #000000a6;
-  font-family: "Outfit", sans-serif;
+  --board: #000000;
   color-scheme: dark;
+}
+:root[data-theme="light"] {
+  --bg: #ffffff;
+  --stage: #ffffff;
+  --panel: #f7f7f8;
+  --surface: #efeff1;
+  --elev: #ffffff;
+  --field: #ececee;
+  --hover: #0000000a;
+  --fill: #0000000f;
+  --fill-strong: #0000001c;
+  --line: #0000000f;
+  --line-strong: #0000001c;
+  --text: #0a0a0a;
+  --text-2: #3f3f46;
+  --muted: #71717a;
+  --thumb: #ffffff;
+  --accent: #0f766e;
+  --accent-hover: #115e59;
+  --accent-ink: #ffffff;
+  --accent-soft: #0f766e14;
+  --shadow: 0 12px 40px #0000001f, 0 2px 6px #0000000d;
+  --scrim: #00000059;
+  color-scheme: light;
+}
+:root {
+  font-family: "Outfit", sans-serif;
   background: var(--bg);
   color: var(--text);
 }

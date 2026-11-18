@@ -942,7 +942,7 @@ export function Canvas({
                     height={10}
                     rx={2}
                     fill="#8fdcd8"
-                    stroke="#0b0b0d"
+                    stroke="#000000"
                     style={{ cursor: "nwse-resize" }}
                     onPointerDown={(e) => {
                       e.stopPropagation();

@@ -278,7 +278,7 @@ export default function Studio() {
       canvas.width = b.w * factor;
       canvas.height = b.h * factor;
       const ctx = canvas.getContext("2d")!;
-      ctx.fillStyle = "#0e0e11";
+      ctx.fillStyle = "#000000";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       const a = document.createElement("a");
@@ -294,7 +294,7 @@ export default function Studio() {
     width: Math.round(dims.w),
     height: Math.round(dims.h),
     style: { transform: "none" },
-    backgroundColor: format === "jpeg" ? "#0b0b0d" : undefined,
+    backgroundColor: format === "jpeg" ? "#000000" : undefined,
     // Editing overlays (textarea, drawn caret) never appear in images.
     filter: (node: HTMLElement) =>
       !node.classList?.contains("code-editor") &&
