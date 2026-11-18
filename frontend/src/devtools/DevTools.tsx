@@ -8,6 +8,7 @@ import { IconSearch } from "./IconSearch";
 import { IconGrid } from "./IconGrid";
 import { IconInspector } from "./IconInspector";
 import { iconAtPath } from "./iconRoutes";
+import { IconNotFound } from "./IconNotFound";
 import "./devtools.css";
 
 export default function DevTools({
@@ -26,7 +27,7 @@ export default function DevTools({
     () => searchIcons(catalog, query, category, collection),
     [query, category, collection],
   );
-  if (!selected) return <main className="dev-empty"><h1>Icon not found</h1><p>This icon isn't in the library.</p><a href="/dev-tools">Browse icons</a></main>;
+  if (!selected) return <IconNotFound />;
   return (
     <main className="dev-tools">
       <div className="dev-content">
