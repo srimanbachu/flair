@@ -1,4 +1,11 @@
-import { lazy, Suspense, useState, useRef, useEffect, useCallback } from "react";
+import {
+  lazy,
+  Suspense,
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+} from "react";
 import {
   Navigate,
   NavLink,
@@ -365,98 +372,107 @@ export default function Studio() {
           </NavLink>
         </div>
         <div className="header-actions">
-          {!onDevTools && <>
-          <span className="draft-status" role="note" title={draftStatus}>
-            <i className="status-dot" />
-            <span>{draftStatus}</span>
-          </span>
-          <button
-            title={`Start a new ${work.kind === "card" ? "card" : "canvas"} (undo with ⌘/Ctrl Z)`}
-            onClick={() => {
-              // Undoable, so no confirmation is needed.
-              change(
-                work.kind === "card"
-                  ? { ...work, card: defaultCard() }
-                  : { ...work, board: emptyBoard() },
-              );
-              setProjectId(null);
-              setActiveBlock(0);
-              notify(
-                `Started a new ${work.kind === "card" ? "card" : "canvas"}. Press ⌘/Ctrl Z to undo.`,
-              );
-            }}
-          >
-            <Plus size={16} />
-            <span>New {work.kind === "card" ? "card" : "canvas"}</span>
-          </button>
-          <NavLink to="/projects" className="header-link">
-            <FolderOpen size={16} />
-            <span>My projects</span>
-          </NavLink>
-          <button
-            className="icon-button"
-            title="Undo (⌘/Ctrl Z)"
-            aria-label="Undo"
-            disabled={!past.length}
-            onClick={undo}
-          >
-            <Undo2 size={17} />
-          </button>
-          <button
-            className="icon-button"
-            title="Redo (⌘/Ctrl Shift Z)"
-            aria-label="Redo"
-            disabled={!future.length}
-            onClick={redo}
-          >
-            <Redo2 size={17} />
-          </button>
-          <button onClick={save}>
-            <Save size={16} />
-            <span>{saved ? "Saved" : "Save"}</span>
-          </button>
-          <div className="export-wrap">
-            <button
-              className="primary"
-              disabled={busy}
-              onClick={() => setMenu(!menu)}
-            >
-              <Download size={16} />
-              {busy ? "Exporting…" : "Export"}
-              <ChevronDown size={14} />
-            </button>
-            {menu && (
-              <>
+          {!onDevTools && (
+            <>
+              <span className="draft-status" role="note" title={draftStatus}>
+                <i className="status-dot" />
+                <span>{draftStatus}</span>
+              </span>
+              <button
+                title={`Start a new ${work.kind === "card" ? "card" : "canvas"} (undo with ⌘/Ctrl Z)`}
+                onClick={() => {
+                  // Undoable, so no confirmation is needed.
+                  change(
+                    work.kind === "card"
+                      ? { ...work, card: defaultCard() }
+                      : { ...work, board: emptyBoard() },
+                  );
+                  setProjectId(null);
+                  setActiveBlock(0);
+                  notify(
+                    `Started a new ${work.kind === "card" ? "card" : "canvas"}. Press ⌘/Ctrl Z to undo.`,
+                  );
+                }}
+              >
+                <Plus size={16} />
+                <span>New {work.kind === "card" ? "card" : "canvas"}</span>
+              </button>
+              <NavLink to="/projects" className="header-link">
+                <FolderOpen size={16} />
+                <span>My projects</span>
+              </NavLink>
+              <button
+                className="icon-button"
+                title="Undo (⌘/Ctrl Z)"
+                aria-label="Undo"
+                disabled={!past.length}
+                onClick={undo}
+              >
+                <Undo2 size={17} />
+              </button>
+              <button
+                className="icon-button"
+                title="Redo (⌘/Ctrl Shift Z)"
+                aria-label="Redo"
+                disabled={!future.length}
+                onClick={redo}
+              >
+                <Redo2 size={17} />
+              </button>
+              <button onClick={save}>
+                <Save size={16} />
+                <span>{saved ? "Saved" : "Save"}</span>
+              </button>
+              <div className="export-wrap">
                 <button
-                  className="menu-dismiss"
-                  aria-label="Close export menu"
-                  onClick={() => setMenu(false)}
-                />
-                <div className="export-menu">
-                  <button onClick={() => exportImage("png")}>
-                    PNG image <small>Share your creation</small>
-                  </button>
-                  {work.kind === "card" ? (
-                    <button onClick={() => exportImage("jpeg")}>
-                      JPEG image <small>Smaller file size</small>
-                    </button>
-                  ) : (
-                    <button onClick={() => exportImage("svg")}>
-                      SVG vector <small>Scalable canvas</small>
-                    </button>
-                  )}
-                  <button onClick={projectFile}>
-                    Editable project <small>JSON · save or share a copy</small>
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-          </>}
+                  className="primary"
+                  disabled={busy}
+                  onClick={() => setMenu(!menu)}
+                >
+                  <Download size={16} />
+                  {busy ? "Exporting…" : "Export"}
+                  <ChevronDown size={14} />
+                </button>
+                {menu && (
+                  <>
+                    <button
+                      className="menu-dismiss"
+                      aria-label="Close export menu"
+                      onClick={() => setMenu(false)}
+                    />
+                    <div className="export-menu">
+                      <button onClick={() => exportImage("png")}>
+                        PNG image <small>Share your creation</small>
+                      </button>
+                      {work.kind === "card" ? (
+                        <button onClick={() => exportImage("jpeg")}>
+                          JPEG image <small>Smaller file size</small>
+                        </button>
+                      ) : (
+                        <button onClick={() => exportImage("svg")}>
+                          SVG vector <small>Scalable canvas</small>
+                        </button>
+                      )}
+                      <button onClick={projectFile}>
+                        Editable project{" "}
+                        <small>JSON · save or share a copy</small>
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </header>
       {onDevTools ? (
-        <Suspense fallback={<main className="dev-loading" role="status">Loading Dev Tools…</main>}>
+        <Suspense
+          fallback={
+            <main className="dev-loading" role="status">
+              Loading Dev Tools…
+            </main>
+          }
+        >
           <DevTools notify={notify} />
         </Suspense>
       ) : onProjects ? (

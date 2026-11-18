@@ -5,6 +5,10 @@ export function jsxSource(name: string, size: number, strokeWidth: number) {
 export function svgSource(svg: SVGSVGElement) {
   const copy = svg.cloneNode(true) as SVGSVGElement;
   copy.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-  ["class", "aria-hidden", "focusable", "role", "aria-label"].forEach((name) => copy.removeAttribute(name));
-  return copy.outerHTML.replace(/></g, ">\n  <").replace(/\n  <\/svg>$/, "\n</svg>");
+  ["class", "aria-hidden", "focusable", "role", "aria-label"].forEach((name) =>
+    copy.removeAttribute(name),
+  );
+  return copy.outerHTML
+    .replace(/></g, ">\n  <")
+    .replace(/\n {2}<\/svg>$/, "\n</svg>");
 }
