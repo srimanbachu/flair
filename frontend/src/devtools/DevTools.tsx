@@ -26,7 +26,11 @@ export default function DevTools({ notify }: { notify: (message: string) => void
         onCategory={(value) => { setCategory(value); setLimit(96); }} />
       <p className="dev-result-count" role="status">{results.length.toLocaleString()} icons{query.trim() && ` matching “${query.trim()}”`}</p>
       {results.length ? <IconGrid entries={results} selected={selected.name} limit={limit}
-        onSelect={setSelected} onMore={() => setLimit((value) => value + 96)} /> :
+        onSelect={(entry) => {
+          setSelected(entry);
+          if (window.matchMedia("(max-width: 680px)").matches)
+            document.getElementById("dev-icon-details")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }} onMore={() => setLimit((value) => value + 96)} /> :
         <div className="dev-empty"><SearchX size={28} /><h2>No icons found</h2>
           <p>Try a different name or browse all icons.</p>
           <button onClick={() => { setQuery(""); setCategory("All icons"); setLimit(96); }}>Reset search</button></div>}
