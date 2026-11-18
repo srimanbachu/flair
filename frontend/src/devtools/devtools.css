@@ -225,13 +225,15 @@
   opacity: 0.4;
 }
 .dev-copy-actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 .studio .dev-copy-actions button {
-  flex: 1;
-  padding: 9px 8px;
-  font-size: 12px;
+  flex-direction: column;
+  min-width: 0;
+  padding: 9px 4px;
+  font-size: 11px;
 }
 .studio .dev-copy-svg {
   border: 1px solid var(--line-strong);
