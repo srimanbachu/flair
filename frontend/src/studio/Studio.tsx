@@ -364,6 +364,7 @@ export default function Studio() {
           </NavLink>
         </div>
         <div className="header-actions">
+          {!onDevTools && <>
           <span className="draft-status" role="note" title={draftStatus}>
             <i className="status-dot" />
             <span>{draftStatus}</span>
@@ -450,6 +451,7 @@ export default function Studio() {
               </>
             )}
           </div>
+          </>}
         </div>
       </header>
       {onProjects ? (
