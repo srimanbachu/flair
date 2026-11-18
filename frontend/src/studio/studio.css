@@ -34,17 +34,17 @@
   justify-content: center;
   gap: 8px;
   cursor: pointer;
-  border: 1px solid transparent;
-  border-radius: 7px;
+  border: 0;
+  border-radius: 8px;
   background: transparent;
   color: inherit;
   padding: 8px 10px;
   transition:
     background 0.15s,
-    border-color 0.15s;
+    color 0.15s;
 }
 .studio button:hover {
-  background: #ffffff09;
+  background: var(--hover);
 }
 .studio button:disabled {
   opacity: 0.3;
@@ -88,9 +88,8 @@
 .mode-switch {
   display: flex;
   padding: 4px;
-  border: 1px solid #ffffff0d;
-  border-radius: 9px;
-  background: #ffffff03;
+  border-radius: 10px;
+  background: var(--surface);
   gap: 3px;
 }
 .mode-switch a {
@@ -123,13 +122,34 @@
   min-height: 34px;
   font-size: 12px;
 }
+.header-actions > * {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
 .draft-status {
   display: inline-flex;
   align-items: center;
+  padding: 8px;
   color: var(--muted);
   font-size: 11px;
-  margin-right: 10px;
   white-space: nowrap;
+}
+/* Secondary labels only appear when the header has room for them, so the
+   actions never crowd the centred workspace switch. */
+.draft-status > span,
+.header-actions > .header-link > span,
+.header-actions > .new-button > span {
+  display: none;
+}
+@media (min-width: 1680px) {
+  .draft-status {
+    margin-right: 6px;
+  }
+  .draft-status > span,
+  .header-actions > .header-link > span,
+  .header-actions > .new-button > span {
+    display: inline;
+  }
 }
 .studio button.primary {
   background: var(--accent);
@@ -251,13 +271,22 @@
 .studio select,
 .studio textarea {
   background: var(--field);
-  border: 1px solid var(--line);
-  color: #dcdde3;
+  border: 0;
+  color: var(--text);
   border-radius: 8px;
   padding: 8px 10px;
   width: 100%;
   min-width: 0;
   outline-offset: 1px;
+  transition: background 0.15s;
+}
+.studio input:not([type="range"]):not([type="checkbox"]):hover,
+.studio select:hover,
+.studio textarea:hover,
+.studio input:not([type="range"]):not([type="checkbox"]):focus,
+.studio select:focus,
+.studio textarea:focus {
+  background: var(--elev);
 }
 .studio select {
   font-size: 12px;
@@ -349,7 +378,7 @@
 .studio .wide {
   width: 100%;
   padding: 11px;
-  border: 1px solid #ffffff16;
+  background: var(--surface);
   font-size: 12px;
 }
 .studio .chosen {
@@ -410,12 +439,12 @@
   font-size: 11.5px;
   line-height: 1.25;
   text-align: left;
-  color: #b6b7c0;
-  border: 1px solid var(--line);
+  color: var(--text-2);
+  background: var(--surface);
   border-radius: 10px;
 }
 .studio .template-grid button:hover {
-  border-color: var(--line-strong);
+  background: var(--elev);
   color: var(--text);
 }
 .template-art {
@@ -423,7 +452,6 @@
   border-radius: 7px;
   display: grid;
   place-items: center;
-  border: 1px solid #ffffff10;
 }
 .template-window {
   display: flex;
@@ -463,7 +491,7 @@
   width: 100%;
   padding: 0;
   border-radius: 50%;
-  border: 1px solid #ffffff1f;
+  box-shadow: inset 0 0 0 1px var(--fill);
   cursor: pointer;
 }
 .studio .color-dot.on {
@@ -506,7 +534,7 @@
   aspect-ratio: 1;
   padding: 0;
   border-radius: 10px;
-  border: 1px solid #ffffff14;
+  box-shadow: inset 0 0 0 1px var(--fill);
 }
 .studio .gradient-grid button.on {
   box-shadow:
@@ -535,10 +563,10 @@
   flex-direction: column;
   gap: 6px;
   padding: 22px 12px;
-  border: 1px dashed var(--line-strong);
+  background: var(--surface);
   border-radius: 12px;
   font-size: 13px;
-  color: #c9cad1;
+  color: var(--text-2);
 }
 .image-drop small {
   font-size: 11px;
@@ -553,7 +581,7 @@
 }
 .studio .image-drop > button:not(:only-child) {
   width: 100%;
-  border: 1px solid var(--line-strong);
+  background: var(--surface);
   font-size: 12px;
 }
 .studio .reset-link {
@@ -595,7 +623,6 @@
   padding: 0 6px;
   height: 22px;
   border-radius: 6px;
-  border: 1px solid #ffffff1a;
 }
 .theme-chip i {
   width: 6px;
@@ -612,11 +639,10 @@
   padding: 8px 4px;
   font-size: 12px;
   color: #b6b7c0;
-  border: 1px solid var(--line);
+  background: var(--surface);
   border-radius: 9px;
 }
 .studio .font-grid button.on {
-  border-color: var(--accent);
   background: var(--accent-soft);
   color: var(--text);
 }
@@ -632,11 +658,10 @@
   padding: 8px 6px;
   font-size: 11px;
   color: #a9aab3;
-  border: 1px solid var(--line);
+  background: var(--surface);
   border-radius: 10px;
 }
 .studio .window-grid button.on {
-  border-color: var(--accent);
   background: var(--accent-soft);
   color: var(--text);
 }
@@ -714,11 +739,10 @@
   padding: 8px 10px;
   font-size: 12px;
   color: #b6b7c0;
-  border: 1px solid var(--line);
+  background: var(--surface);
   border-radius: 9px;
 }
 .studio .size-grid button.active {
-  border-color: var(--accent);
   color: var(--text);
   background: var(--accent-soft);
 }
@@ -741,12 +765,11 @@
   margin-top: 14px;
 }
 .studio .export-actions button {
-  border: 1px solid var(--line-strong);
+  background: var(--surface);
   font-size: 12px;
 }
 .studio .export-actions .primary {
   grid-column: 1 / -1;
-  border-color: transparent;
 }
 .block-bar {
   display: flex;
@@ -754,7 +777,6 @@
   gap: 6px;
   margin: 0 20px 14px;
   padding: 6px;
-  border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--panel);
   position: relative;
@@ -792,7 +814,7 @@
 .studio .block-bar .add-block {
   font-size: 12px;
   padding: 6px 10px;
-  border: 1px solid var(--line-strong);
+  background: var(--surface);
 }
 .effects-pop {
   position: relative;
@@ -833,9 +855,8 @@
   width: 300px;
   padding: 4px 14px 12px;
   background: var(--elev);
-  border: 1px solid var(--line-strong);
   border-radius: 12px;
-  box-shadow: 0 16px 40px #000a;
+  box-shadow: var(--shadow);
 }
 .card-main {
   display: flex;
@@ -852,7 +873,6 @@
 }
 .studio .workspace-heading input.card-title-input {
   background: transparent;
-  border: 1px solid transparent;
   font-size: 15px;
   font-weight: 500;
   color: var(--text);
@@ -860,16 +880,15 @@
   max-width: 420px;
 }
 .studio .workspace-heading input.card-title-input:hover {
-  border-color: var(--line);
+  background: var(--hover);
 }
 .studio .workspace-heading input.card-title-input:focus {
-  border-color: var(--line-strong);
   background: var(--field);
 }
 .studio .size-chip {
   font-size: 12px;
   color: var(--muted);
-  border: 1px solid var(--line);
+  background: var(--surface);
   border-radius: 8px;
   padding: 5px 9px;
   white-space: nowrap;
@@ -1543,7 +1562,7 @@
   height: 22px;
   padding: 0;
   border-radius: 50%;
-  border: 1px solid #ffffff26;
+  box-shadow: inset 0 0 0 1px var(--fill);
 }
 .studio .swatch-row .dot.none {
   background: linear-gradient(
@@ -1796,6 +1815,21 @@ a {
     padding: 30px 26px;
   }
 }
+@media (max-width: 1240px) {
+  .header-actions > button > span {
+    display: none;
+  }
+}
+@media (min-width: 761px) and (max-width: 1000px) {
+  .header-actions .export-label {
+    display: none;
+  }
+}
+@media (min-width: 761px) and (max-width: 900px) {
+  .mode-switch a > span {
+    display: none;
+  }
+}
 @media (max-width: 1100px) {
   .studio-header {
     padding: 0 16px;
@@ -1804,18 +1838,11 @@ a {
   .brand {
     font-size: 22px;
   }
-  .draft-status > span {
-    display: none;
-  }
   .mode-switch a {
     padding: 8px 10px;
   }
   .header-actions {
     gap: 1px;
-  }
-  .header-actions > button > span,
-  .header-actions > .header-link > span {
-    display: none;
   }
   .card-workspace {
     grid-template-columns: 64px 270px 1fr;

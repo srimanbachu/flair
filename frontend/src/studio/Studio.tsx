@@ -360,17 +360,17 @@ export default function Studio() {
           <img className="brand-logo" src={flairLogo} alt="" />
         </a>
         <div className="mode-switch" aria-label="Workspace">
-          <NavLink to="/cards">
+          <NavLink to="/cards" title="Code Cards" aria-label="Code Cards">
             <Code2 size={16} />
-            Code Cards
+            <span>Code Cards</span>
           </NavLink>
-          <NavLink to="/canvas">
+          <NavLink to="/canvas" title="Canvas" aria-label="Canvas">
             <PenTool size={16} />
-            Canvas
+            <span>Canvas</span>
           </NavLink>
-          <NavLink to="/dev-tools">
+          <NavLink to="/dev-tools" title="Dev Tools" aria-label="Dev Tools">
             <Wrench size={16} />
-            Dev Tools
+            <span>Dev Tools</span>
           </NavLink>
         </div>
         <div className="header-actions">
@@ -381,6 +381,8 @@ export default function Studio() {
                 <span>{draftStatus}</span>
               </span>
               <button
+                className="new-button"
+                aria-label={`New ${work.kind === "card" ? "card" : "canvas"}`}
                 title={`Start a new ${work.kind === "card" ? "card" : "canvas"} (undo with ⌘/Ctrl Z)`}
                 onClick={() => {
                   // Undoable, so no confirmation is needed.
@@ -403,6 +405,7 @@ export default function Studio() {
                 to="/projects"
                 className="header-link"
                 title="My projects"
+                aria-label="My projects"
               >
                 <FolderOpen size={16} />
                 <span>My projects</span>
@@ -436,7 +439,9 @@ export default function Studio() {
                   onClick={() => setMenu(!menu)}
                 >
                   <Download size={16} />
-                  {busy ? "Exporting…" : "Export"}
+                  <span className="export-label">
+                    {busy ? "Exporting…" : "Export"}
+                  </span>
                   <ChevronDown size={14} />
                 </button>
                 {menu && (
