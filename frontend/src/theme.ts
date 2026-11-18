@@ -13,12 +13,28 @@ function stored(): Theme | null {
   }
 }
 
+let fadeTimer = 0;
+const reduced = () =>
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 function system(): Theme {
   return window.matchMedia(query).matches ? "light" : "dark";
 }
 
 function apply(theme: Theme) {
-  document.documentElement.dataset.theme = theme;
+  const root = document.documentElement;
+  // Cross-fade colours when the theme actually changes (not on first load).
+  // The class enables a short transition on every element, then is removed
+  // so day-to-day hovers keep their own, faster timing.
+  if (root.dataset.theme && root.dataset.theme !== theme && !reduced()) {
+    root.classList.add("theme-fading");
+    window.clearTimeout(fadeTimer);
+    fadeTimer = window.setTimeout(
+      () => root.classList.remove("theme-fading"),
+      260,
+    );
+  }
+  root.dataset.theme = theme;
   document
     .querySelector('meta[name="theme-color"]')
     ?.setAttribute("content", theme === "light" ? "#ffffff" : "#000000");

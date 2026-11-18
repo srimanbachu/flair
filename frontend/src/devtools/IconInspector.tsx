@@ -64,11 +64,14 @@ export function IconInspector({
     >
       <div className="dev-preview" aria-busy={!data && !error}>
         {data ? (
-          <Artwork
-            artwork={data.artwork}
-            size={size}
-            strokeWidth={strokeWidth}
-          />
+          // Keyed by icon so each newly picked icon pops into the preview.
+          <span className="dev-preview-art" key={entry.id}>
+            <Artwork
+              artwork={data.artwork}
+              size={size}
+              strokeWidth={strokeWidth}
+            />
+          </span>
         ) : error ? (
           <div role="alert">
             <p>{error}</p>

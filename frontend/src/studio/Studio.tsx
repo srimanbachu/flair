@@ -50,6 +50,9 @@ import { parseProject, validateBoard, validateCard } from "./projectFiles";
 import flairLogo from "../assets/flair.png";
 import { useTheme } from "../theme";
 import "./studio.css";
+// Loaded after the base styles so its motion rules layer on top of them.
+import "./motion.css";
+import { settle } from "../motion";
 const DevTools = lazy(() => import("../devtools/DevTools"));
 const tabIcons: Record<string, LucideIcon> = {
   Typography: Type,
@@ -114,6 +117,17 @@ export default function Studio() {
   const tabSlug = useMatch("/cards/:tab")?.params.tab;
   const tab = cardTabs.find((t) => t.toLowerCase() === tabSlug) ?? cardTabs[0];
   const openTab = (t: string) => navigate(`/cards/${t.toLowerCase()}`);
+  // Switching tabs reuses the same inspector panel, so CSS entrance
+  // animations would not replay; settle the new content in by hand.
+  const inspector = useRef<HTMLElement>(null);
+  const firstTab = useRef(true);
+  useEffect(() => {
+    if (firstTab.current) {
+      firstTab.current = false;
+      return;
+    }
+    settle(inspector.current);
+  }, [tab]);
   const preview = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const svg = useRef<SVGSVGElement>(null);
@@ -372,7 +386,10 @@ export default function Studio() {
             aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
             title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
           >
-            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+            {/* Keyed by theme so the new icon mounts and plays its turn-in. */}
+            <span className="theme-icon" key={theme}>
+              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+            </span>
           </button>
         </div>
         <div className="mode-switch" aria-label="Workspace">
@@ -643,7 +660,7 @@ export default function Studio() {
               );
             })}
           </nav>
-          <aside className="inspector">
+          <aside className="inspector" ref={inspector}>
             <CardControls
               card={work.card}
               tab={tab}
